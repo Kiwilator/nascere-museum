@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Museo Nascere</title>
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-babia-components/dist/aframe-babia-components.min.js"></script>
+    <script src="https://unpkg.com/aframe-environment-component@1.0.0/dist/aframe-environment-component.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.0/dist/aframe-extras.min.js"></script>
+  </head>
+
+  <body>
+    <a-scene
+      fog="type: exponential; color: #c6ddf1; density: 0.090; near: 0; far: 30"
+    >
+      <!-- Environment -->
+      <a-sky
+        src="https://cdn.glitch.global/6129616c-d685-405f-9e5a-3869316b8be0/entorno_universidad0001.jpg?v=1655202508267"
+        rotation="0 0 0"
+      ></a-sky>
+
+      <!-- Light with Animation -->
+      <a-light
+        id="animated-light"
+        type="point"
+        intensity="1.2"
+        position="0 3 0"
+        color="#c6ddf1"
+      >
+        <a-animation
+          attribute="color"
+          from="#c6ddf1"
+          to="#0099ff"
+          dur="3000"
+          repeat="indefinite"
+          direction="alternate"
+        ></a-animation>
+      </a-light>
+
+      <!-- Camera -->
+      <a-entity movement-controls="fly: true" position="0 0 4">
+        <a-entity camera position="0 1.6 0" look-controls></a-entity>
+        <a-entity cursor="rayOrigin:mouse"></a-entity>
+        <a-entity laser-controls="hand: right"></a-entity>
+      </a-entity>
+
+      <!-- Floor -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/553fe1ce2125e3ec2dd12904f15ab910.jpg?v=1725359321181"
+        depth="40"
+        height="0.1"
+        width="40"
+        position="0 0 0"
+        material="repeat: 18 18;"
+      ></a-box>
+
+      <!-- Front wall (1) -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511"
+        depth="40"
+        height="5"
+        width="0.5"
+        position="0 1.5 -6"
+        rotation="0 90 0"
+        material="repeat: 10 1;"
+      ></a-box>
+
+      <!-- Right wall (2) -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511"
+        depth="40"
+        height="5"
+        width="0.5"
+        position="6 1.5 0"
+        rotation="0 0 0"
+        material="repeat: 10 1;"
+      ></a-box>
+
+      <!-- Back wall (3) -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511"
+        depth="40"
+        height="5"
+        width="0.5"
+        position="0 1.5 6"
+        rotation="0 90 0"
+        material="repeat: 10 1;"
+      ></a-box>
+
+      <!-- Left wall (4) -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511"
+        depth="40"
+        height="5"
+        width="0.5"
+        position="-6 1.5 0"
+        rotation="0 0 0"
+        material="repeat: 10 1;"
+      ></a-box>
+
+      <!-- Ceiling -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/553fe1ce2125e3ec2dd12904f15ab910.jpg?v=1725359321181"
+        depth="40"
+        height="0.2"
+        width="40"
+        position="0 4 0"
+        rotation="180 0 0"
+        material="repeat: 10 10;"
+      ></a-box>
+
+      <!-- Expositores hexagonales -->
+      <a-entity
+        geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6"
+        material="color: #335c63"
+        position="-2 0.5 -2"
+      ></a-entity>
+      <a-entity
+        geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6"
+        material="color: #335c63"
+        position="2 0.5 -2"
+      ></a-entity>
+      <a-entity
+        geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6"
+        material="color: #335c63"
+        position="-2 0.5 2"
+      ></a-entity>
+      <a-entity
+        geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6"
+        material="color: #335c63"
+        position="2 0.5 2"
+      ></a-entity>
+
+      <!-- Cajas transparentes hexagonales sobre los expositores que llegan hasta el techo -->
+      <a-entity
+        geometry="primitive: cylinder; radius: 0.45; height: 5; segmentsRadial: 6"
+        material="color: #FFFFFF; opacity: 0.5"
+        position="-2 1.25 -2"
+      ></a-entity>
+      <a-entity
+        geometry="primitive: cylinder; radius: 0.45; height: 5; segmentsRadial: 6"
+        material="color: #FFFFFF; opacity: 0.5"
+        position="2 1.25 -2"
+      ></a-entity>
+      <a-entity
+        geometry="primitive: cylinder; radius: 0.45; height: 5; segmentsRadial: 6"
+        material="color: #FFFFFF; opacity: 0.5"
+        position="-2 1.25 2"
+      ></a-entity>
+      <a-entity
+        geometry="primitive: cylinder; radius: 0.45; height: 5; segmentsRadial: 6"
+        material="color: #FFFFFF; opacity: 0.5"
+        position="2 1.25 2"
+      ></a-entity>
+
+      <!-- Mural 1 -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/_388d7e97-9cb8-40b3-9130-14ad9acfd6f6.jpg?v=1725369210965"
+        depth="6"
+        height="5"
+        width="0.1"
+        position="-3 1.5 -5.7"
+        rotation="0 90 0"
+      ></a-box>
+
+      <!-- Mural 2 -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/_0f20b462-f23c-42f5-811b-485aaca6b5c8.jpg?v=1725369510176"
+        depth="6"
+        height="5"
+        width="0.1"
+        position="3 1.5 -5.7"
+        rotation="0 90 0"
+      ></a-box>
+
+      <!-- Cuadro -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/OIG2.jpg?v=1725360610392"
+        depth="2"
+        height="1.56"
+        width="0.2"
+        position="-5.8 1.5 -2"
+      ></a-box>
+
+      <!-- Cuadro 2 -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/_b54debe5-266c-4fb0-8baa-5dfe39c80cb8.jpg?v=1725376705918"
+        depth="2"
+        height="1.56"
+        width="0.2"
+        position="-5.8 1.5 2"
+      ></a-box>
+
+      <!-- Texto de frente Nascere -->
+      <a-entity
+        position="0 3.2 -5.5"
+        scale="12 12 12"
+        rotation="0 0 0"
+        text="font-family: 'Google Sans'; font-weight: bold; value: Nascere; color: #fff; align: center;"
+      ></a-entity>
+
+      <!-- Mobiliario -->
+      <a-box
+        src="https://raw.githubusercontent.com/oluisjuan/LongCovid-Pilot/6cb8541bd70d241880310ad02f84dee1ab6ba867/material/darktexture.jpg"
+        depth="10"
+        height="1"
+        width="0.5"
+        position="4 0.5 0"
+        rotation="0 0 0"
+        material="repeat: 10 1;"
+      ></a-box>
+
+      <!-- Lampara en el centro -->
+      <a-assets>
+        <a-asset-item
+          id="ceilingLamp"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/parametric_bench_002.glb?v=1725356631522"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#ceilingLamp"
+        scale="0.003 0.003 0.005"
+        position="0.3 3.9 0"
+        rotation="20 90 180"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Puerta de Entrada -->
+      <a-assets>
+        <a-asset-item
+          id="door"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/modern_door(1).glb?v=1725362226636"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#door"
+        scale="0.4 0.24 0.24"
+        position="-0.2 0 5.75"
+        rotation="0 -90 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Luz del techo -->
+      <a-assets>
+        <a-asset-item
+          id="lightCeiling"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ceiling_light.glb?v=1725363725823"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#lightCeiling"
+        scale="0.5 0.5 0.9"
+        position="-0.1 3.86 0.2"
+        rotation="0 0 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Ordenador -->
+      <a-assets>
+        <a-asset-item
+          id="computer"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/desktop_computer.glb?v=1725362257133"
+        ></a-asset-item> </a-assets
+      >s
+
+      <a-entity
+        gltf-model="#computer"
+        scale="0.7 0.7 0.7"
+        position="4 1.22 3"
+        rotation="0 90 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Ordenador 2 -->
+      <a-assets>
+        <a-asset-item
+          id="computer2"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/desktop_computer.glb?v=1725362257133"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#computer2"
+        scale="0.7 0.7 0.7"
+        position="4 1.22 1"
+        rotation="0 90 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Pendiente Coral 1 -->
+      <a-assets>
+        <a-asset-item
+          id="earringCoral"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/pendiente_coral1.glb?v=1725368658394"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#earringCoral"
+        scale="1 1 1"
+        position="1 1 1"
+        rotation="0 0 0"
+      ></a-entity>
+
+      <!-- Pendiente Coral 2 -->
+      <a-assets>
+        <a-asset-item
+          id="earringCoral2"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/pendiente_coral_2.glb?v=1725370678165"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#earringCoral2"
+        scale="10 10 10"
+        position="2 2 2"
+        rotation="0 0 0"
+      ></a-entity>
+
+      <!-- Anillo Coral 1 -->
+      <a-assets>
+        <a-asset-item
+          id="ringCoral"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/anillo_coral1.glb?v=1725369167655"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#ringCoral"
+        scale="1 1 1"
+        position="1 1 1"
+        rotation="0 0 0"
+      ></a-entity>
+
+      <!-- Anillo Coral 2 -->
+      <a-assets>
+        <a-asset-item
+          id="ringCoral2"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/anillo_coral_2.glb?v=1725370654031"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#ringCoral2"
+        scale="1 1 1"
+        position="1 1 1"
+        rotation="0 0 0"
+      ></a-entity>
+      <!-- Podio 1 -->
+      <a-assets>
+        <a-asset-item
+          id="podium1"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/display_podium.glb?v=1725362251323"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#podium1"
+        scale="0.1 0.1 0.1"
+        position="-2 0.95 2"
+        rotation="0 0 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Podio 2 -->
+      <a-assets>
+        <a-asset-item
+          id="podium2"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/display_podium.glb?v=1725362251323"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#podium2"
+        scale="0.1 0.1 0.1"
+        position="2 0.95 2"
+        rotation="0 0 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Podio 3 -->
+      <a-assets>
+        <a-asset-item
+          id="podium3"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/display_podium.glb?v=1725362251323"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#podium3"
+        scale="0.1 0.1 0.1"
+        position="2 0.95 -2"
+        rotation="0 0 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Podio 4 -->
+      <a-assets>
+        <a-asset-item
+          id="podium4"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/display_podium.glb?v=1725362251323"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#podium4"
+        scale="0.1 0.1 0.1"
+        position="-2 0.95 -2"
+        rotation="0 0 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Expositor Recepción -->
+      <a-assets>
+        <a-asset-item
+          id="displayCase"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/display_case_maya.glb?v=1725362262321"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#displayCase"
+        scale="6 6 50"
+        position="4 0.8 -2.3w"
+        rotation="0 0 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Banco -->
+      <a-assets>
+        <a-asset-item
+          id="bench"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/bendy_bench_game_ready.glb?v=1725371299054"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#bench"
+        scale="1 1 1"
+        position="0 0 0"
+        rotation="0 0 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Papeles -->
+      <a-assets>
+        <a-asset-item
+          id="papers"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/tablet_folder.glb?v=1725362246572"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#papers"
+        scale="0.01 0.01 0.01"
+        position="4 1 2.4"
+        rotation="0 -20 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+      
+      <!-- Silla 1 -->
+      <a-assets>
+        <a-asset-item
+          id="chair1"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/office_chair_modern.glb?v=1725377096097"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#chair1"
+        scale="1 1 1"
+        position="4.8 0 3"
+        rotation="0 -60 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+      
+      <!-- Silla 2 -->
+      <a-assets>
+        <a-asset-item
+          id="chair2"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/office_chair_modern.glb?v=1725377096097"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#chair2"
+        scale="1 1 1"
+        position="4.8 0 1"
+        rotation="0 -94 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Estatua -->
+      <a-assets>
+        <a-asset-item
+          id="sealStatue"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/sea_lion_statue_marina_san_francisco_1.glb?v=1725377097262"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#sealStatue"
+        scale="1 1 1"
+        position="-4.8 -0.3 5"
+        rotation="0 40 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Basura -->
+      <a-assets>
+        <a-asset-item
+          id="trashcan"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/abstract_trashcan.glb?v=1725377099075"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#trashcan"
+        scale="0.8 0.8 0.8"
+        position="0.2 0.37 -0.8"
+        rotation="0 40 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+    </a-scene>
+  </body>
+</html>
