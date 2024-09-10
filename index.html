@@ -10,6 +10,536 @@
   </head>
 
   <body>
+    <a-scene
+      fog="type: exponential; color: #c6ddf1; density: 0.090; near: 0; far: 30"
+    >
+      <!-- Environment -->
+      <a-sky
+        src="/assets/entorno_universidad0001.jpg"
+        rotation="0 0 0"
+      ></a-sky>
 
+      <!-- Light with Animation -->
+      <a-light
+        id="animated-light"
+        type="point"
+        intensity="1.2"
+        position="0 3 0"
+        color="#c6ddf1"
+      >
+        <a-animation
+          attribute="color"
+          from="#c6ddf1"
+          to="#0099ff"
+          dur="3000"
+          repeat="indefinite"
+          direction="alternate"
+        ></a-animation>
+      </a-light>
+
+      <!-- Camera -->
+      <a-entity movement-controls="fly: true" position="0 0 4">
+        <a-entity camera position="0 1.6 0" look-controls></a-entity>
+        <a-entity cursor="rayOrigin:mouse"></a-entity>
+        <a-entity laser-controls="hand: right"></a-entity>
+      </a-entity>
+
+      <!-- Floor -->
+      <a-box
+        src="/assets/553fe1ce2125e3ec2dd12904f15ab910.jpg"
+        depth="40"
+        height="0.1"
+        width="40"
+        position="0 0 0"
+        material="repeat: 18 18;"
+      ></a-box>
+
+      <!-- Front wall (1) -->
+      <a-box
+        src="/assets/ab41fbcb999101f44ec24634cdf4625e.jpg"
+        depth="40"
+        height="5"
+        width="0.5"
+        position="0 1.5 -6"
+        rotation="0 90 0"
+        material="repeat: 10 1;"
+      ></a-box>
+
+      <!-- Right wall (2) -->
+      <a-box
+        src="/assets/ab41fbcb999101f44ec24634cdf4625e.jpg"
+        depth="40"
+        height="5"
+        width="0.5"
+        position="6 1.5 0"
+        rotation="0 0 0"
+        material="repeat: 10 1;"
+      ></a-box>
+
+      <!-- Back wall (3) -->
+      <a-box
+        src="/assets/ab41fbcb999101f44ec24634cdf4625e.jpg"
+        depth="40"
+        height="5"
+        width="0.5"
+        position="0 1.5 6"
+        rotation="0 90 0"
+        material="repeat: 10 1;"
+      ></a-box>
+
+      <!-- Left wall (4) -->
+      <a-box
+        src="/assets/ab41fbcb999101f44ec24634cdf4625e.jpg"
+        depth="40"
+        height="5"
+        width="0.5"
+        position="-6 1.5 0"
+        rotation="0 0 0"
+        material="repeat: 10 1;"
+      ></a-box>
+
+      <!-- Ceiling -->
+      <a-box
+        src="/assets/553fe1ce2125e3ec2dd12904f15ab910.jpg"
+        depth="40"
+        height="0.2"
+        width="40"
+        position="0 4 0"
+        rotation="180 0 0"
+        material="repeat: 10 10;"
+      ></a-box>
+
+      <!-- Expositores hexagonales -->
+      <a-entity
+        geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6"
+        material="color: #335c63"
+        position="-2 0.5 -2"
+      ></a-entity>
+      <a-entity
+        geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6"
+        material="color: #335c63"
+        position="2 0.5 -2"
+      ></a-entity>
+      <a-entity
+        geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6"
+        material="color: #335c63"
+        position="-2 0.5 2"
+      ></a-entity>
+      <a-entity
+        geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6"
+        material="color: #335c63"
+        position="2 0.5 2"
+      ></a-entity>
+
+      <!-- Cajas transparentes hexagonales sobre los expositores que llegan hasta el techo -->
+      <a-entity
+        geometry="primitive: cylinder; radius: 0.45; height: 5; segmentsRadial: 6"
+        material="color: #FFFFFF; opacity: 0.5"
+        position="-2 1.25 -2"
+      ></a-entity>
+      <a-entity
+        geometry="primitive: cylinder; radius: 0.45; height: 5; segmentsRadial: 6"
+        material="color: #FFFFFF; opacity: 0.5"
+        position="2 1.25 -2"
+      ></a-entity>
+      <a-entity
+        geometry="primitive: cylinder; radius: 0.45; height: 5; segmentsRadial: 6"
+        material="color: #FFFFFF; opacity: 0.5"
+        position="-2 1.25 2"
+      ></a-entity>
+      <a-entity
+        geometry="primitive: cylinder; radius: 0.45; height: 5; segmentsRadial: 6"
+        material="color: #FFFFFF; opacity: 0.5"
+        position="2 1.25 2"
+      ></a-entity>
+
+      <!-- Mural 1 -->
+      <a-box
+        src="/assets/_388d7e97-9cb8-40b3-9130-14ad9acfd6f6.jpg"
+        depth="6"
+        height="5"
+        width="0.1"
+        position="-3 1.5 -5.7"
+        rotation="0 90 0"
+      ></a-box>
+
+      <!-- Mural 2 -->
+      <a-box
+        src="/assets/_0f20b462-f23c-42f5-811b-485aaca6b5c8.jpg"
+        depth="6"
+        height="5"
+        width="0.1"
+        position="3 1.5 -5.7"
+        rotation="0 90 0"
+      ></a-box>
+
+      <!-- Cuadro -->
+      <a-box
+        src="/assets/OIG2.jpg?v=1725360610392"
+        depth="2"
+        height="1.56"
+        width="0.2"
+        position="-5.8 1.5 -2"
+      ></a-box>
+
+      <!-- Cuadro 2 -->
+      <a-box
+        src="/assets/_b54debe5-266c-4fb0-8baa-5dfe39c80cb8.jpg"
+        depth="2"
+        height="1.56"
+        width="0.2"
+        position="-5.8 1.5 2"
+      ></a-box>
+
+      <!-- Texto de frente Nascere -->
+      <a-entity
+        position="0 3.2 -5.5"
+        scale="12 12 12"
+        rotation="0 0 0"
+        text="font-family: 'Google Sans'; font-weight: bold; value: Nascere; color: #fff; align: center;"
+      ></a-entity>
+
+      <!-- Mobiliario -->
+      <a-box
+        src="https://raw.githubusercontent.com/oluisjuan/LongCovid-Pilot/6cb8541bd70d241880310ad02f84dee1ab6ba867/material/darktexture.jpg"
+        depth="10"
+        height="1"
+        width="0.5"
+        position="4 0.5 0"
+        rotation="0 0 0"
+        material="repeat: 10 1;"
+      ></a-box>
+
+      <!-- Lampara en el centro -->
+      <a-assets>
+        <a-asset-item
+          id="ceilingLamp"
+          src="/assets/parametric_bench_002.glb?v=1725356631522"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#ceilingLamp"
+        scale="0.003 0.003 0.005"
+        position="0.3 3.9 0"
+        rotation="20 90 180"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Puerta de Entrada -->
+      <a-assets>
+        <a-asset-item
+          id="door"
+          src="/assets/modern_door(1).glb"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#door"
+        scale="0.4 0.24 0.24"
+        position="-0.2 0 5.75"
+        rotation="0 -90 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Luz del techo -->
+      <a-assets>
+        <a-asset-item
+          id="lightCeiling"
+          src="/assets/ceiling_light.glb"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#lightCeiling"
+        scale="0.5 0.5 0.9"
+        position="-0.1 3.86 0.2"
+        rotation="0 0 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Ordenador -->
+      <a-assets>
+        <a-asset-item
+          id="computer"
+          src="/assets/desktop_computer.glb"
+        ></a-asset-item> </a-assets
+      >s
+
+      <a-entity
+        gltf-model="#computer"
+        scale="0.7 0.7 0.7"
+        position="4 1.22 3"
+        rotation="0 90 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Ordenador 2 -->
+      <a-assets>
+        <a-asset-item
+          id="computer2"
+          src="/assets/desktop_computer.glb"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#computer2"
+        scale="0.7 0.7 0.7"
+        position="4 1.22 1"
+        rotation="0 90 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Pendiente Coral 1 -->
+      <a-assets>
+        <a-asset-item
+          id="earringCoral"
+          src="/assets/pendiente_coral1.glb"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#earringCoral"
+        scale="1 1 1"
+        position="1 1 1"
+        rotation="0 0 0"
+      ></a-entity>
+
+      <!-- Pendiente Coral 2 -->
+      <a-assets>
+        <a-asset-item
+          id="earringCoral2"
+          src="/assets/pendiente_coral_2.glb"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#earringCoral2"
+        scale="10 10 10"
+        position="2 2 2"
+        rotation="0 0 0"
+      ></a-entity>
+
+      <!-- Anillo Coral 1 -->
+      <a-assets>
+        <a-asset-item
+          id="ringCoral"
+          src="/assets/anillo_coral1.glb"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#ringCoral"
+        scale="1 1 1"
+        position="1 1 1"
+        rotation="0 0 0"
+      ></a-entity>
+
+      <!-- Anillo Coral 2 -->
+      <a-assets>
+        <a-asset-item
+          id="ringCoral2"
+          src="/assets/anillo_coral_2.glb"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#ringCoral2"
+        scale="1 1 1"
+        position="1 1 1"
+        rotation="0 0 0"
+      ></a-entity>
+      <!-- Podio 1 -->
+      <a-assets>
+        <a-asset-item
+          id="podium1"
+          src="/assets/display_podium.glb"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#podium1"
+        scale="0.1 0.1 0.1"
+        position="-2 0.95 2"
+        rotation="0 0 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Podio 2 -->
+      <a-assets>
+        <a-asset-item
+          id="podium2"
+          src="/assets/display_podium.glb"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#podium2"
+        scale="0.1 0.1 0.1"
+        position="2 0.95 2"
+        rotation="0 0 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Podio 3 -->
+      <a-assets>
+        <a-asset-item
+          id="podium3"
+          src="/assets/display_podium.glb"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#podium3"
+        scale="0.1 0.1 0.1"
+        position="2 0.95 -2"
+        rotation="0 0 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Podio 4 -->
+      <a-assets>
+        <a-asset-item
+          id="podium4"
+          src="/assets/display_podium.glb"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#podium4"
+        scale="0.1 0.1 0.1"
+        position="-2 0.95 -2"
+        rotation="0 0 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Expositor Recepción -->
+      <a-assets>
+        <a-asset-item
+          id="displayCase"
+          src="/assets/display_case_maya.glb"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#displayCase"
+        scale="6 6 50"
+        position="4 0.8 -2.3w"
+        rotation="0 0 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Banco -->
+      <a-assets>
+        <a-asset-item
+          id="bench"
+          src="/assets/bendy_bench_game_ready.glb"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#bench"
+        scale="1 1 1"
+        position="0 0 0"
+        rotation="0 0 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Papeles -->
+      <a-assets>
+        <a-asset-item
+          id="papers"
+          src="/assets/tablet_folder.glb"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#papers"
+        scale="0.01 0.01 0.01"
+        position="4 1 2.4"
+        rotation="0 -20 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+      
+      <!-- Silla 1 -->
+      <a-assets>
+        <a-asset-item
+          id="chair1"
+          src="/assets/office_chair_modern.glb"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#chair1"
+        scale="1 1 1"
+        position="4.8 0 3"
+        rotation="0 -60 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+      
+      <!-- Silla 2 -->
+      <a-assets>
+        <a-asset-item
+          id="chair2"
+          src="/assets/office_chair_modern.glb"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#chair2"
+        scale="1 1 1"
+        position="4.8 0 1"
+        rotation="0 -94 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Estatua -->
+      <a-assets>
+        <a-asset-item
+          id="sealStatue"
+          src="/assets/sea_lion_statue_marina_san_francisco_1.glb"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#sealStatue"
+        scale="1 1 1"
+        position="-4.8 -0.3 5"
+        rotation="0 40 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Basura -->
+      <a-assets>
+        <a-asset-item
+          id="trashcan"
+          src="/assets/abstract_trashcan.glb"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#trashcan"
+        scale="0.8 0.8 0.8"
+        position="0.2 0.37 -0.8"
+        rotation="0 40 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+    </a-scene>
   </body>
 </html>
