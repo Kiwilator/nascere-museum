@@ -358,6 +358,37 @@
         rotation="0 0 0"
         animation="property: rotation; to: 0 0 360; loop: true; dur: 15000; easing: linear"
       ></a-entity>
+      
+      <!-- Anillo Coral 3 -->
+      <a-assets>
+        <a-asset-item
+          id="ringCoral3"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/anillo_coral_3.glb?v=1726127796146"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#ringCoral3"
+        scale="0.007 0.007 0.007"
+        position="3.65 1.2 -0.5"
+        rotation="0 90 0"
+      ></a-entity>
+      
+      <!-- Anillo Coral 4 -->
+      <a-assets>
+        <a-asset-item
+          id="ringCoral4"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/anillo_coral_4.glb?v=1726128295632"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#ringCoral4"
+        scale="0.007 0.007 0.007"
+        position="3.42 1.2 -1.5"
+        rotation="0 90 0"
+      ></a-entity>
+      
       <!-- Podio 1 -->
       <a-assets>
         <a-asset-item
@@ -541,6 +572,23 @@
         scale="0.8 0.8 0.8"
         position="0.2 0.37 -0.8"
         rotation="0 40 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Sello -->
+      <a-assets>
+        <a-asset-item
+          id="sign"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/sello_blanco.glb?v=1726126781433"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#sign"
+        scale="0.05 0.05 0.05"
+        position="5.71 2.1 0"
+        rotation="90 -90 0"
         material="color: white"
         animation-mixer
       ></a-entity>
