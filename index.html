@@ -16,8 +16,9 @@
 
       <!-- Musiquita de Mar -->
       <a-sound
+        id="seaSound"
         src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/sea_theme.mp3?v=1726130217666"
-        autoplay="true"
+        autoplay="false"
         loop="true"
         volume="0.5"
         position="0 1.6 0"
@@ -633,5 +634,23 @@
         animation-mixer
       ></a-entity>
     </a-scene>
+
   </body>
 </html>
+<script>
+// Function to play the sound
+function playSound() {
+  // Get the a-sound element by its ID
+  const sound = document.querySelector('#seaSound');
+  
+  // Check if the sound component is found and play it
+  if (sound) {
+    sound.components.sound.playSound();
+  }
+} 
+
+// Add a click event listener to the document
+document.addEventListener('click', function() {
+  playSound();
+});
+</script>
