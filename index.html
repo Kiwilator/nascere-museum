@@ -49,11 +49,11 @@
       </a-light>
 
       <!-- Camera -->
-      <a-entity movement-controls="fly: true" position="0 0 4">
-        <a-entity camera position="0 1.6 0" look-controls></a-entity>
-        <a-entity cursor="rayOrigin:mouse"></a-entity>
-        <a-entity laser-controls="hand: right"></a-entity>
-      </a-entity>
+<a-entity movement-controls="fly: true" position="0 0 4">
+  <a-entity camera position="0 1.6 0" look-controls="pointerLockEnabled: false"></a-entity>
+  <a-entity cursor="rayOrigin: mouse"></a-entity>
+  <a-entity laser-controls="hand: right"></a-entity>
+</a-entity>
 
       <!-- Floor -->
       <a-box
@@ -498,6 +498,74 @@
         animation-mixer
       ></a-entity>
 
+      <!-- Botón 1 -->
+      <a-assets>
+        <a-asset-item
+          id="button1"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/button_light_blue_nascere.glb?v=1726768460591"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#button1"
+        scale="0.25 0.25 0.25"
+        position="1.55 0.75 1.7"
+        rotation="-90 90 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Botón 2 -->
+      <a-assets>
+        <a-asset-item
+          id="button2"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/button_light_blue_nascere.glb?v=1726768460591"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#button2"
+        scale="0.25 0.25 0.25"
+        position="1.57 0.75 -2.25"
+        rotation="-90 90 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Botón 3 -->
+      <a-assets>
+        <a-asset-item
+          id="button3"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/button_light_blue_nascere.glb?v=1726768460591"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#button3"
+        scale="0.25 0.25 0.25"
+        position="-1.55 0.75 1.7"
+        rotation="90 90 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+
+      <!-- Botón 4 -->
+      <a-assets>
+        <a-asset-item
+          id="button4"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/button_light_blue_nascere.glb?v=1726768460591"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#button4"
+        scale="0.25 0.25 0.25"
+        position="-1.57 0.75 -2.25"
+        rotation="90 90 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+      
       <!-- Expositor Recepción -->
       <a-assets>
         <a-asset-item
@@ -653,4 +721,6 @@ function playSound() {
 document.addEventListener('click', function() {
   playSound();
 });
+
+
 </script>
