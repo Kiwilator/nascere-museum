@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>Museo Nascere</title>
-    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
     <script src="https://unpkg.com/aframe-babia-components/dist/aframe-babia-components.min.js"></script>
     <script src="https://unpkg.com/aframe-environment-component@1.0.0/dist/aframe-environment-component.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.0/dist/aframe-extras.min.js"></script>
@@ -13,7 +13,6 @@
     <a-scene
       fog="type: exponential; color: #c6ddf1; density: 0.090; near: 0; far: 30"
     >
-
       <!-- Musiquita de Mar -->
       <a-sound
         id="seaSound"
@@ -49,15 +48,21 @@
       </a-light>
 
       <!-- Camera -->
-<a-entity movement-controls="fly: true" position="0 0 4">
-  <a-entity camera position="0 1.6 0" look-controls="pointerLockEnabled: false">
-  <a-entity cursor="fuse: true; fuseTimeout: 500"
+      <a-entity movement-controls="fly: true" position="0 0 4">
+        <a-entity
+          camera
+          position="0 1.6 0"
+          look-controls="pointerLockEnabled: false"
+        >
+          <a-entity
+            cursor="fuse: true; fuseTimeout: 500"
             position="0 0 -1"
             geometry="primitive: ring; radiusInner: 0.005; radiusOuter: 0.01"
-            material="color: white; shader: flat">
-  </a-entity>  
-  </a-entity>
-</a-entity>
+            material="color: white; shader: flat"
+          >
+          </a-entity>
+        </a-entity>
+      </a-entity>
 
       <!-- Floor -->
       <a-box
@@ -206,14 +211,6 @@
         position="-5.8 1.5 2"
       ></a-box>
 
-      <!-- Texto de frente Nascere -->
-      <a-entity
-        position="0 3.2 -5.5"
-        scale="12 12 12"
-        rotation="0 0 0"
-        text="font-family: 'Google Sans'; font-weight: bold; value: Nascere; color: #fff; align: center;"
-      ></a-entity>
-
       <!-- Mobiliario -->
       <a-box
         src="https://raw.githubusercontent.com/oluisjuan/LongCovid-Pilot/6cb8541bd70d241880310ad02f84dee1ab6ba867/material/darktexture.jpg"
@@ -314,14 +311,14 @@
       <a-assets>
         <a-asset-item
           id="earringCoral"
-          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/pendiente_coral1.glb?v=1725368658394"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/pendiente_coral_nascere1.glb?v=1726913537738"
         ></a-asset-item>
       </a-assets>
 
       <a-entity
         gltf-model="#earringCoral"
-        scale="0.006 0.006 0.006"
-        position="1.4 1.33 -1.7"
+        scale="0.008 0.008 0.008"
+        position="0.7 1.33 -1.7"
         rotation="0 0 0"
         animation="property: rotation; to: 20 20 20; loop: true; dur: 5000; dir: alternate; easing: linear"
       ></a-entity>
@@ -330,7 +327,7 @@
       <a-assets>
         <a-asset-item
           id="earringCoral2"
-          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/pendiente_coral_2.glb?v=1725370678165"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/pendiente_coral_nascere2.glb?v=1726913544885"
         ></a-asset-item>
       </a-assets>
 
@@ -341,12 +338,12 @@
         rotation="0 0 0"
         animation="property: rotation; to: 10 10 10; loop: true; dir: alternate; dur: 5000; easing: linear"
       ></a-entity>
-      
+
       <!-- Pendiente Coral 3 -->
       <a-assets>
         <a-asset-item
           id="earringCoral3"
-          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/pendiente_coral_3.glb?v=1726128883425"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/pendiente_coral_nascere3.glb?v=1726913555722"
         ></a-asset-item>
       </a-assets>
 
@@ -361,7 +358,7 @@
       <a-assets>
         <a-asset-item
           id="earringCoral4"
-          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/pendiente_coral_4.glb?v=1726129361207"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/pendiente_coral_nascere4.glb?v=1726913561175"
         ></a-asset-item>
       </a-assets>
 
@@ -371,12 +368,12 @@
         position="5.36 1.2 -4"
         rotation="0 90 0"
       ></a-entity>
-      
+
       <!-- Anillo Coral 1 -->
       <a-assets>
         <a-asset-item
           id="ringCoral"
-          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/anillo_coral1.glb?v=1725369167655"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/anillo_coral_nascere1.glb?v=1726913476758"
         ></a-asset-item>
       </a-assets>
 
@@ -392,7 +389,7 @@
       <a-assets>
         <a-asset-item
           id="ringCoral2"
-          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/anillo_coral_2.glb?v=1725370654031"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/anillo_coral_nascere2.glb?v=1726913672249"
         ></a-asset-item>
       </a-assets>
 
@@ -403,12 +400,12 @@
         rotation="90 90 90"
         animation="property: rotation; to: 0 0 360; loop: true; dir: alternate; dur: 15000; easing: linear"
       ></a-entity>
-      
+
       <!-- Anillo Coral 3 -->
       <a-assets>
         <a-asset-item
           id="ringCoral3"
-          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/anillo_coral_3.glb?v=1726127796146"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/anillo_coral_nascere3.glb?v=1726913508106"
         ></a-asset-item>
       </a-assets>
 
@@ -418,12 +415,12 @@
         position="3.65 1.2 -0.5"
         rotation="0 90 0"
       ></a-entity>
-      
+
       <!-- Anillo Coral 4 -->
       <a-assets>
         <a-asset-item
           id="ringCoral4"
-          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/anillo_coral_4.glb?v=1726128295632"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/anillo_coral_nascere4.glb?v=1726913519350"
         ></a-asset-item>
       </a-assets>
 
@@ -433,7 +430,7 @@
         position="3.42 1.2 -2.5"
         rotation="0 90 0"
       ></a-entity>
-      
+
       <!-- Podio 1 -->
       <a-assets>
         <a-asset-item
@@ -573,7 +570,7 @@
         animation-mixer
         cursor-listener-button4
       ></a-entity>
-      
+
       <!-- Expositor Recepción -->
       <a-assets>
         <a-asset-item
@@ -624,7 +621,7 @@
         material="color: white"
         animation-mixer
       ></a-entity>
-      
+
       <!-- Silla 1 -->
       <a-assets>
         <a-asset-item
@@ -641,7 +638,7 @@
         material="color: white"
         animation-mixer
       ></a-entity>
-      
+
       <!-- Silla 2 -->
       <a-assets>
         <a-asset-item
@@ -710,119 +707,210 @@
         animation-mixer
       ></a-entity>
     </a-scene>
-
   </body>
 </html>
 <script>
-// Function to play the sound
-function playSound() {
-  // Get the a-sound element by its ID
-  const sound = document.querySelector('#seaSound');
-  
-  // Check if the sound component is found and play it
-  if (sound) {
-    sound.components.sound.playSound();
-  }
-} 
+  // Function to play the sound
+  function playSound() {
+    // Get the a-sound element by its ID
+    const sound = document.querySelector("#seaSound");
 
-// Add a click event listener to the document
-document.addEventListener('click', function() {
-  playSound();
-});
-  
-// Function for #button1
-AFRAME.registerComponent('cursor-listener-button1', {
+    // Check if the sound component is found and play it
+    if (sound) {
+      sound.components.sound.playSound();
+    }
+  }
+
+  // Add a click event listener to the document
+  document.addEventListener("click", function () {
+    playSound();
+  });
+
+  // Function for #button1
+ AFRAME.registerComponent("cursor-listener-button1", {
   init: function () {
     var el = this.el;
 
-    var text = document.createElement('a-text');
-    text.setAttribute('value', 'Hello, you are looking at Button 1');
-    text.setAttribute('position', '-0.7 1 0');
-    text.setAttribute('rotation', '-90 0 180');
-    text.setAttribute('align', 'center');  
-    text.setAttribute('color', '#FFFFFF');
-    text.setAttribute('visible', 'false');
+    // Background for text
+    var background1 = document.createElement("a-plane");
+    background1.setAttribute("position", "-2 1 0.3");
+    background1.setAttribute("rotation", "-90 0 180");
+    background1.setAttribute("width", "5.5");
+    background1.setAttribute("height", "3");
+    background1.setAttribute("color", "black");
+    background1.setAttribute("opacity", "0.6");
+    background1.setAttribute("visible", "false");
+    el.appendChild(background1);
+
+    var text = document.createElement("a-text");
+    text.setAttribute(
+      "value",
+      "I. Nascere es un proyecto que combina técnicas tradicionales y tecnología digital para crear joyería usando materiales reciclados, como el poliestireno expandido. El objetivo es reutilizar estos residuos plásticos y convertirlos en piezas únicas mediante impresión 3D."
+    );
+    text.setAttribute("font", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuente_nascere-msdf.json?v=1726917663169");
+    text.setAttribute("font-image", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuentenascere.png?v=1726917645411");
+    text.setAttribute("negate", "false");
+    text.setAttribute("position", "0.5 1 1");
+    text.setAttribute("rotation", "-90 0 180");
+    text.setAttribute("align", "left");
+    text.setAttribute("color", "white");
+    text.setAttribute("visible", "false");
     el.appendChild(text);
 
-    el.addEventListener('mouseenter', function () {
-      text.setAttribute('visible', 'true');
+    var text2 = document.createElement("a-text");
+    text2.setAttribute(
+      "value",
+      "El museo virtual se ha creado para mostrar estas piezas de forma accesible, sin necesidad de un espacio físico. Así, se reduce el impacto ambiental y se permite a las personas conocer las creaciones y el proceso de reciclaje desde cualquier lugar."
+    );
+    text2.setAttribute("font", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuente_nascere-msdf.json?v=1726917663169");
+    text2.setAttribute("font-image", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuentenascere.png?v=1726917645411");
+    text2.setAttribute("negate", "false");
+    text2.setAttribute("position", "0.5 1 -0.5");
+    text2.setAttribute("rotation", "-90 0 180");
+    text2.setAttribute("align", "left");
+    text2.setAttribute("color", "#FFFFFF");
+    text2.setAttribute("visible", "false");
+    el.appendChild(text2);
+
+    el.addEventListener("mouseenter", function () {
+      text.setAttribute("visible", "true");
+      background1.setAttribute("visible", "true");
     });
 
-    el.addEventListener('mouseleave', function () {
-      text.setAttribute('visible', 'false');
+    el.addEventListener("mouseleave", function () {
+      text.setAttribute("visible", "false");
+      background1.setAttribute("visible", "false");
     });
-  }
+
+    el.addEventListener("mouseenter", function () {
+      text2.setAttribute("visible", "true");
+      background2.setAttribute("visible", "true");
+    });
+
+    el.addEventListener("mouseleave", function () {
+      text2.setAttribute("visible", "false");
+      background2.setAttribute("visible", "false");
+    });
+  },
 });
 
-// Function for #button2
-AFRAME.registerComponent('cursor-listener-button2', {
-  init: function () {
-    var el = this.el;
+  // Function for #button2
+  AFRAME.registerComponent("cursor-listener-button2", {
+    init: function () {
+      var el = this.el;
 
-    var text = document.createElement('a-text');
-    text.setAttribute('value', 'Hello, you are looking at Button 2');
-    text.setAttribute('position', '-0.7 1 0');
-    text.setAttribute('rotation', '-90 0 180');
-    text.setAttribute('align', 'center');  
-    text.setAttribute('color', '#FFFFFF');
-    text.setAttribute('visible', 'false');
-    el.appendChild(text);
+    // Background for text
+    var background1 = document.createElement("a-plane");
+    background1.setAttribute("position", "-2 1 0.3");
+    background1.setAttribute("rotation", "-90 0 180");
+    background1.setAttribute("width", "5.5");
+    background1.setAttribute("height", "3");
+    background1.setAttribute("color", "black");
+    background1.setAttribute("opacity", "0.6");
+    background1.setAttribute("visible", "false");
+    el.appendChild(background1);
 
-    el.addEventListener('mouseenter', function () {
-      text.setAttribute('visible', 'true');
-    });
+      var text = document.createElement("a-text");
+      text.setAttribute("value", "II. Se ha elegido el poliestireno expandido porque es un material que, a pesar de ser muy común, es difícil de reciclar debido a su alto contenido de aire (alrededor del 98%). Esto hace que su transporte para reciclaje sea costoso y poco eficiente. Sin embargo, al utilizarlo localmente y reciclarlo de manera casera, se puede aprovechar este material para crear nuevas piezas de valor, como joyería. Además, su reutilización ayuda a reducir los residuos plásticos que, de otro modo, terminarían en vertederos o contaminando el medio ambiente.");
+      text.setAttribute("font", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuente_nascere-msdf.json?v=1726917663169");
+      text.setAttribute("font-image", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuentenascere.png?v=1726917645411");
+      text.setAttribute("negate", "false"); 
+      text.setAttribute("position", "0.4 1 0");
+      text.setAttribute("rotation", "-90 0 180");
+      text.setAttribute("align", "left");
+      text.setAttribute("color", "#FFFFFF");
+      text.setAttribute("visible", "false");
+      el.appendChild(text);
 
-    el.addEventListener('mouseleave', function () {
-      text.setAttribute('visible', 'false');
-    });
-  }
-});
+      el.addEventListener("mouseenter", function () {
+        text.setAttribute("visible", "true");
+        background1.setAttribute("visible", "true");
+      });
 
-// Function for #button3
-AFRAME.registerComponent('cursor-listener-button3', {
-  init: function () {
-    var el = this.el;
+      el.addEventListener("mouseleave", function () {
+        text.setAttribute("visible", "false");
+        background1.setAttribute("visible", "false");
+      });
+    },
+  });
 
-    var text = document.createElement('a-text');
-    text.setAttribute('value', 'Hello, you are looking at Button 3');
-    text.setAttribute('position', '-0.7 1 0');
-    text.setAttribute('rotation', '-90 0 0');
-    text.setAttribute('align', 'center');  
-    text.setAttribute('color', '#FFFFFF');
-    text.setAttribute('visible', 'false');
-    el.appendChild(text);
+  // Function for #button3
+  AFRAME.registerComponent("cursor-listener-button3", {
+    init: function () {
+      var el = this.el;
+      
+    // Background for text
+    var background1 = document.createElement("a-plane");
+    background1.setAttribute("position", "-2 1 0.3");
+    background1.setAttribute("rotation", "-90 0 180");
+    background1.setAttribute("width", "5.5");
+    background1.setAttribute("height", "3");
+    background1.setAttribute("color", "black");
+    background1.setAttribute("opacity", "0.6");
+    background1.setAttribute("visible", "false");
+    el.appendChild(background1);
+      
+      var text = document.createElement("a-text");
+      text.setAttribute("value", "III. La economía circular es una mejor opción para el poliestireno expandido porque permite reutilizar este material localmente, evitando los altos costos y el impacto ambiental asociados a su transporte. Dado que el poliestireno expandido es mayormente aire, su reciclaje en grandes distancias no es rentable. Al crear un sistema donde los residuos se recolectan, procesan y reutilizan en la misma zona, se reduce el desperdicio y se aprovecha al máximo un material que, de otra forma, acabaría en vertederos. Este enfoque fomenta un ciclo continuo de uso y reciclaje, reduciendo la necesidad de materias primas nuevas y disminuyendo el impacto ambiental.");
+      text.setAttribute("font", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuente_nascere-msdf.json?v=1726917663169");
+      text.setAttribute("font-image", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuentenascere.png?v=1726917645411");
+      text.setAttribute("negate", "false"); 
+      text.setAttribute("position", "-1.7 1 0");
+      text.setAttribute("rotation", "-90 0 0");
+      text.setAttribute("align", "left");
+      text.setAttribute("color", "#FFFFFF");
+      text.setAttribute("visible", "false");
+      el.appendChild(text);
 
-    el.addEventListener('mouseenter', function () {
-      text.setAttribute('visible', 'true');
-    });
+      el.addEventListener("mouseenter", function () {
+        text.setAttribute("visible", "true");
+        background1.setAttribute("visible", "true");
+      });
 
-    el.addEventListener('mouseleave', function () {
-      text.setAttribute('visible', 'false');
-    });
-  }
-});
+      el.addEventListener("mouseleave", function () {
+        text.setAttribute("visible", "false");
+        background1.setAttribute("visible", "false");
+      });
+    },
+  });
 
-// Function for #button4
-AFRAME.registerComponent('cursor-listener-button4', {
-  init: function () {
-    var el = this.el;
+  // Function for #button4
+  AFRAME.registerComponent("cursor-listener-button4", {
+    init: function () {
+      var el = this.el;
 
-    var text = document.createElement('a-text');
-    text.setAttribute('value', 'Hello, you are looking at Button 4');
-    text.setAttribute('position', '-0.7 1 0');
-    text.setAttribute('rotation', '-90 0 0');
-    text.setAttribute('align', 'center');  
-    text.setAttribute('color', '#FFFFFF');
-    text.setAttribute('visible', 'false');
-    el.appendChild(text);
+    // Background for text
+    var background1 = document.createElement("a-plane");
+    background1.setAttribute("position", "-2 1 0.3");
+    background1.setAttribute("rotation", "-90 0 180");
+    background1.setAttribute("width", "5.5");
+    background1.setAttribute("height", "3");
+    background1.setAttribute("color", "black");
+    background1.setAttribute("opacity", "0.6");
+    background1.setAttribute("visible", "false");
+    el.appendChild(background1);
 
-    el.addEventListener('mouseenter', function () {
-      text.setAttribute('visible', 'true');
-    });
+      var text = document.createElement("a-text");
+      text.setAttribute("value", "IV. La inspiración marítima surge porque gran parte del poliestireno expandido que no se recicla acaba en los océanos, contribuyendo a la contaminación y al problema de los microplásticos. Al utilizar este material para crear joyería, se busca simbolizar una forma de ayudar al mar, evitando que más plásticos terminen en sus aguas. Los diseños inspirados en elementos marinos, como conchas y corales, no solo representan la belleza del océano, sino también el compromiso de reducir la contaminación plástica y proteger los ecosistemas marinos. De esta manera, el proyecto no solo crea piezas únicas, sino que también contribuye a disminuir el impacto negativo de los residuos plásticos en el medio ambiente.");
+      text.setAttribute("font", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuente_nascere-msdf.json?v=1726917663169");
+      text.setAttribute("font-image", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuentenascere.png?v=1726917645411");
+      text.setAttribute("negate", "false"); 
+      text.setAttribute("position", "-1.7 1 0");
+      text.setAttribute("rotation", "-90 0 0");
+      text.setAttribute("align", "left");
+      text.setAttribute("color", "#FFFFFF");
+      text.setAttribute("visible", "false");
+      el.appendChild(text);
 
-    el.addEventListener('mouseleave', function () {
-      text.setAttribute('visible', 'false');
-    });
-  }
-});
+      el.addEventListener("mouseenter", function () {
+        text.setAttribute("visible", "true");
+        background1.setAttribute("visible", "true");
+      });
+
+      el.addEventListener("mouseleave", function () {
+        text.setAttribute("visible", "false");
+        background1.setAttribute("visible", "false");
+      });
+    },
+  });
 </script>
