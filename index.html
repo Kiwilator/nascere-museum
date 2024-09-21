@@ -33,7 +33,7 @@
       <a-light
         id="animated-light"
         type="point"
-        intensity="0.5"
+        intensity="0.6"
         position="0 3 0"
         color="#c6ddf1"
         light="castShadow:true;"
@@ -44,22 +44,22 @@
       <a-light
         id="animated-light-right"
         type="point"
-        intensity="0.5"
+        intensity="0.4"
         position="0 3 10"
-        color="#c6ddf1"
+        color="#0a3575"
         light="castShadow:true;"
       >
       </a-light>
-
+      
       <!-- Light Left -->
       <a-light
         id="animated-light-left"
         type="point"
-        intensity="0.5"
-        position="0 3 -10"
-        color="#c6ddf1"
+        intensity="0.4"
+        position="0 0.5 -10"
+        color="#0a3575"
         light="castShadow:true;"
-      >
+        >
       </a-light>
       
       <a-entity
@@ -330,7 +330,18 @@
         depth="2"
         height="1"
         width="0.45"
-        position="0 1.5 -12.4"
+        position="0 1.5 -12.2"
+        rotation="0 90 0"
+        shadow="receive: false"
+      ></a-box>
+      
+      <!-- Paisaje 2 -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/shutterstock_682265785_4.2e16d0ba.fill-1600x775.jpg?v=1726947243453"
+        depth="1.4"
+        height="0.9"
+        width="0.45"
+        position="0 1.6 11.97"
         rotation="0 90 0"
         shadow="receive: false"
       ></a-box>
@@ -444,6 +455,23 @@
         gltf-model="#windowLeft"
         scale="0.4 0.4 0.4"
         position="-0 1.6 -11.72"
+        rotation="0 -90 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+      
+      <!-- Ventana de la Derecha -->
+      <a-assets>
+        <a-asset-item
+          id="windowRight"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/wall_of_the_spaceship.glb?v=1726946926998"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#windowRight"
+        scale="0.4 0.4 0.4"
+        position="-0 1.6 11.74"
         rotation="0 -90 0"
         material="color: white"
         animation-mixer
@@ -912,7 +940,7 @@
 </html>
 <script>
   // Function to play the sound
-  function playSound() {
+ function playSound() {
     // Get the a-sound element by its ID
     const sound = document.querySelector("#seaSound");
 
