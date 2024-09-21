@@ -57,7 +57,7 @@
           <a-entity
             cursor="fuse: true; fuseTimeout: 500"
             position="0 0 -1"
-            geometry="primitive: ring; radiusInner: 0.001; radiusOuter: 0.002"
+            geometry="primitive: ring; radiusInner: 0.003; radiusOuter: 0.006"
             material="color: white; shader: flat"
           >
           </a-entity>
@@ -134,6 +134,7 @@
         geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6"
         material="color: #335c63"
         position="-2 0.5 -2"
+        light="type:directional; castShadow:true;"
       ></a-entity>
       <a-entity
         geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6"
