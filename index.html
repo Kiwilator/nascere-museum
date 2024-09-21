@@ -50,9 +50,13 @@
 
       <!-- Camera -->
 <a-entity movement-controls="fly: true" position="0 0 4">
-  <a-entity camera position="0 1.6 0" look-controls="pointerLockEnabled: false"></a-entity>
-  <a-entity cursor="rayOrigin: mouse"></a-entity>
-  <a-entity laser-controls="hand: right"></a-entity>
+  <a-entity camera position="0 1.6 0" look-controls="pointerLockEnabled: false">
+  <a-entity cursor="fuse: true; fuseTimeout: 500"
+            position="0 0 -1"
+            geometry="primitive: ring; radiusInner: 0.005; radiusOuter: 0.01"
+            material="color: white; shader: flat">
+  </a-entity>  
+  </a-entity>
 </a-entity>
 
       <!-- Floor -->
@@ -513,6 +517,7 @@
         rotation="-90 90 0"
         material="color: white"
         animation-mixer
+        cursor-listener-button1
       ></a-entity>
 
       <!-- Botón 2 -->
@@ -530,6 +535,7 @@
         rotation="-90 90 0"
         material="color: white"
         animation-mixer
+        cursor-listener-button2
       ></a-entity>
 
       <!-- Botón 3 -->
@@ -547,6 +553,7 @@
         rotation="90 90 0"
         material="color: white"
         animation-mixer
+        cursor-listener-button3
       ></a-entity>
 
       <!-- Botón 4 -->
@@ -564,6 +571,7 @@
         rotation="90 90 0"
         material="color: white"
         animation-mixer
+        cursor-listener-button4
       ></a-entity>
       
       <!-- Expositor Recepción -->
@@ -721,6 +729,100 @@ function playSound() {
 document.addEventListener('click', function() {
   playSound();
 });
+  
+// Function for #button1
+AFRAME.registerComponent('cursor-listener-button1', {
+  init: function () {
+    var el = this.el;
 
+    var text = document.createElement('a-text');
+    text.setAttribute('value', 'Hello, you are looking at Button 1');
+    text.setAttribute('position', '-0.7 1 0');
+    text.setAttribute('rotation', '-90 0 180');
+    text.setAttribute('align', 'center');  
+    text.setAttribute('color', '#FFFFFF');
+    text.setAttribute('visible', 'false');
+    el.appendChild(text);
 
+    el.addEventListener('mouseenter', function () {
+      text.setAttribute('visible', 'true');
+    });
+
+    el.addEventListener('mouseleave', function () {
+      text.setAttribute('visible', 'false');
+    });
+  }
+});
+
+// Function for #button2
+AFRAME.registerComponent('cursor-listener-button2', {
+  init: function () {
+    var el = this.el;
+
+    var text = document.createElement('a-text');
+    text.setAttribute('value', 'Hello, you are looking at Button 2');
+    text.setAttribute('position', '-0.7 1 0');
+    text.setAttribute('rotation', '-90 0 180');
+    text.setAttribute('align', 'center');  
+    text.setAttribute('color', '#FFFFFF');
+    text.setAttribute('visible', 'false');
+    el.appendChild(text);
+
+    el.addEventListener('mouseenter', function () {
+      text.setAttribute('visible', 'true');
+    });
+
+    el.addEventListener('mouseleave', function () {
+      text.setAttribute('visible', 'false');
+    });
+  }
+});
+
+// Function for #button3
+AFRAME.registerComponent('cursor-listener-button3', {
+  init: function () {
+    var el = this.el;
+
+    var text = document.createElement('a-text');
+    text.setAttribute('value', 'Hello, you are looking at Button 3');
+    text.setAttribute('position', '-0.7 1 0');
+    text.setAttribute('rotation', '-90 0 0');
+    text.setAttribute('align', 'center');  
+    text.setAttribute('color', '#FFFFFF');
+    text.setAttribute('visible', 'false');
+    el.appendChild(text);
+
+    el.addEventListener('mouseenter', function () {
+      text.setAttribute('visible', 'true');
+    });
+
+    el.addEventListener('mouseleave', function () {
+      text.setAttribute('visible', 'false');
+    });
+  }
+});
+
+// Function for #button4
+AFRAME.registerComponent('cursor-listener-button4', {
+  init: function () {
+    var el = this.el;
+
+    var text = document.createElement('a-text');
+    text.setAttribute('value', 'Hello, you are looking at Button 4');
+    text.setAttribute('position', '-0.7 1 0');
+    text.setAttribute('rotation', '-90 0 0');
+    text.setAttribute('align', 'center');  
+    text.setAttribute('color', '#FFFFFF');
+    text.setAttribute('visible', 'false');
+    el.appendChild(text);
+
+    el.addEventListener('mouseenter', function () {
+      text.setAttribute('visible', 'true');
+    });
+
+    el.addEventListener('mouseleave', function () {
+      text.setAttribute('visible', 'false');
+    });
+  }
+});
 </script>
