@@ -747,8 +747,8 @@
     playSound();
   });
 
-  // Function for #button1
- AFRAME.registerComponent("cursor-listener-button1", {
+// Function for #button1
+AFRAME.registerComponent("cursor-listener-button1", {
   init: function () {
     var el = this.el;
 
@@ -759,8 +759,7 @@
     background1.setAttribute("width", "5.5");
     background1.setAttribute("height", "3");
     background1.setAttribute("color", "black");
-    background1.setAttribute("opacity", "0.6");
-    background1.setAttribute("visible", "false");
+    background1.setAttribute("opacity", "0.0");
     el.appendChild(background1);
 
     var text = document.createElement("a-text");
@@ -775,11 +774,11 @@
     text.setAttribute("rotation", "-90 0 180");
     text.setAttribute("align", "left");
     text.setAttribute("color", "white");
-    text.setAttribute("visible", "false");
+    text.setAttribute("opacity", "0.0");
     el.appendChild(text);
 
     var text2 = document.createElement("a-text");
-    text2.setAttribute(
+    text2.setAttribute( 
       "value",
       "El museo virtual se ha creado para mostrar estas piezas de forma accesible, sin necesidad de un espacio físico. Así, se reduce el impacto ambiental y se permite a las personas conocer las creaciones y el proceso de reciclaje desde cualquier lugar."
     );
@@ -790,35 +789,38 @@
     text2.setAttribute("rotation", "-90 0 180");
     text2.setAttribute("align", "left");
     text2.setAttribute("color", "#FFFFFF");
-    text2.setAttribute("visible", "false");
+    text2.setAttribute("opacity", "0.0");
     el.appendChild(text2);
 
     el.addEventListener("mouseenter", function () {
-      text.setAttribute("visible", "true");
-      background1.setAttribute("visible", "true");
+      // Animate background and text visibility on mouse enter
+      background1.setAttribute("animation", "property: opacity; to: 0.6; dur: 500; easing: easeInOutQuad");
+      text.setAttribute("animation", "property: opacity; to: 1; dur: 500; easing: easeInOutQuad");
     });
 
     el.addEventListener("mouseleave", function () {
-      text.setAttribute("visible", "false");
-      background1.setAttribute("visible", "false");
+      // Animate background and text visibility on mouse leave
+      background1.setAttribute("animation", "property: opacity; to: 0; dur: 500; easing: easeInOutQuad");
+      text.setAttribute("animation", "property: opacity; to: 0; dur: 500; easing: easeInOutQuad");
     });
-
     el.addEventListener("mouseenter", function () {
-      text2.setAttribute("visible", "true");
-      background2.setAttribute("visible", "true");
+      // Animate background and text visibility on mouse enter
+      background1.setAttribute("animation", "property: opacity; to: 0.6; dur: 500; easing: easeInOutQuad");
+      text2.setAttribute("animation", "property: opacity; to: 1; dur: 500; easing: easeInOutQuad");
     });
 
     el.addEventListener("mouseleave", function () {
-      text2.setAttribute("visible", "false");
-      background2.setAttribute("visible", "false");
-    });
+      // Animate background and text visibility on mouse leave
+      background1.setAttribute("animation", "property: opacity; to: 0; dur: 500; easing: easeInOutQuad");
+      text2.setAttribute("animation", "property: opacity; to: 0; dur: 500; easing: easeInOutQuad");
+    });    
   },
 });
 
-  // Function for #button2
-  AFRAME.registerComponent("cursor-listener-button2", {
-    init: function () {
-      var el = this.el;
+// Function for #button2
+AFRAME.registerComponent("cursor-listener-button2", {
+  init: function () {
+    var el = this.el;
 
     // Background for text
     var background1 = document.createElement("a-plane");
@@ -827,38 +829,37 @@
     background1.setAttribute("width", "5.5");
     background1.setAttribute("height", "3");
     background1.setAttribute("color", "black");
-    background1.setAttribute("opacity", "0.6");
-    background1.setAttribute("visible", "false");
+    background1.setAttribute("opacity", "0.0");
     el.appendChild(background1);
 
-      var text = document.createElement("a-text");
-      text.setAttribute("value", "II. Se ha elegido el poliestireno expandido porque es un material que, a pesar de ser muy común, es difícil de reciclar debido a su alto contenido de aire (alrededor del 98%). Esto hace que su transporte para reciclaje sea costoso y poco eficiente. Sin embargo, al utilizarlo localmente y reciclarlo de manera casera, se puede aprovechar este material para crear nuevas piezas de valor, como joyería. Además, su reutilización ayuda a reducir los residuos plásticos que, de otro modo, terminarían en vertederos o contaminando el medio ambiente.");
-      text.setAttribute("font", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuente_nascere-msdf.json?v=1726917663169");
-      text.setAttribute("font-image", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuentenascere.png?v=1726917645411");
-      text.setAttribute("negate", "false"); 
-      text.setAttribute("position", "0.4 1 0");
-      text.setAttribute("rotation", "-90 0 180");
-      text.setAttribute("align", "left");
-      text.setAttribute("color", "#FFFFFF");
-      text.setAttribute("visible", "false");
-      el.appendChild(text);
+    var text = document.createElement("a-text");
+    text.setAttribute("value", "II. Se ha elegido el poliestireno expandido porque es un material que, a pesar de ser muy común, es difícil de reciclar debido a su alto contenido de aire (alrededor del 98%). Esto hace que su transporte para reciclaje sea costoso y poco eficiente. Sin embargo, al utilizarlo localmente y reciclarlo de manera casera, se puede aprovechar este material para crear nuevas piezas de valor, como joyería. Además, su reutilización ayuda a reducir los residuos plásticos que, de otro modo, terminarían en vertederos o contaminando el medio ambiente.");
+    text.setAttribute("font", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuente_nascere-msdf.json?v=1726917663169");
+    text.setAttribute("font-image", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuentenascere.png?v=1726917645411");
+    text.setAttribute("negate", "false");
+    text.setAttribute("position", "0.4 1 0");
+    text.setAttribute("rotation", "-90 0 180");
+    text.setAttribute("align", "left");
+    text.setAttribute("color", "#FFFFFF");
+    text.setAttribute("opacity", "0.0");
+    el.appendChild(text);
 
-      el.addEventListener("mouseenter", function () {
-        text.setAttribute("visible", "true");
-        background1.setAttribute("visible", "true");
-      });
+    el.addEventListener("mouseenter", function () {
+      background1.setAttribute("animation", "property: opacity; to: 0.6; dur: 500; easing: easeInOutQuad");
+      text.setAttribute("animation", "property: opacity; to: 1; dur: 500; easing: easeInOutQuad");
+    });
 
-      el.addEventListener("mouseleave", function () {
-        text.setAttribute("visible", "false");
-        background1.setAttribute("visible", "false");
-      });
-    },
-  });
-
-  // Function for #button3
-  AFRAME.registerComponent("cursor-listener-button3", {
-    init: function () {
-      var el = this.el;
+    el.addEventListener("mouseleave", function () {
+      background1.setAttribute("animation", "property: opacity; to: 0; dur: 500; easing: easeInOutQuad");
+      text.setAttribute("animation", "property: opacity; to: 0; dur: 500; easing: easeInOutQuad");
+    });
+  },
+});
+  
+// Function for #button3
+AFRAME.registerComponent("cursor-listener-button3", {
+  init: function () {
+    var el = this.el;
       
     // Background for text
     var background1 = document.createElement("a-plane");
@@ -867,38 +868,37 @@
     background1.setAttribute("width", "5.5");
     background1.setAttribute("height", "4");
     background1.setAttribute("color", "black");
-    background1.setAttribute("opacity", "0.6");
-    background1.setAttribute("visible", "false");
+    background1.setAttribute("opacity", "0.0");
     el.appendChild(background1);
       
-      var text = document.createElement("a-text");
-      text.setAttribute("value", "III. La economía circular es una mejor opción para el poliestireno expandido porque permite reutilizar este material localmente, evitando los altos costos y el impacto ambiental asociados a su transporte. Dado que el poliestireno expandido es mayormente aire, su reciclaje en grandes distancias no es rentable. Al crear un sistema donde los residuos se recolectan, procesan y reutilizan en la misma zona, se reduce el desperdicio y se aprovecha al máximo un material que, de otra forma, acabaría en vertederos. Este enfoque fomenta un ciclo continuo de uso y reciclaje, reduciendo la necesidad de materias primas nuevas y disminuyendo el impacto ambiental.");
-      text.setAttribute("font", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuente_nascere-msdf.json?v=1726917663169");
-      text.setAttribute("font-image", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuentenascere.png?v=1726917645411");
-      text.setAttribute("negate", "false"); 
-      text.setAttribute("position", "-1.7 1 0");
-      text.setAttribute("rotation", "-90 0 0");
-      text.setAttribute("align", "left");
-      text.setAttribute("color", "#FFFFFF");
-      text.setAttribute("visible", "false");
-      el.appendChild(text);
+    var text = document.createElement("a-text");
+    text.setAttribute("value", "III. La economía circular es una mejor opción para el poliestireno expandido porque permite reutilizar este material localmente, evitando los altos costos y el impacto ambiental asociados a su transporte. Dado que el poliestireno expandido es mayormente aire, su reciclaje en grandes distancias no es rentable. Al crear un sistema donde los residuos se recolectan, procesan y reutilizan en la misma zona, se reduce el desperdicio y se aprovecha al máximo un material que, de otra forma, acabaría en vertederos. Este enfoque fomenta un ciclo continuo de uso y reciclaje, reduciendo la necesidad de materias primas nuevas y disminuyendo el impacto ambiental.");
+    text.setAttribute("font", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuente_nascere-msdf.json?v=1726917663169");
+    text.setAttribute("font-image", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuentenascere.png?v=1726917645411");
+    text.setAttribute("negate", "false");
+    text.setAttribute("position", "-1.7 1 0");
+    text.setAttribute("rotation", "-90 0 0");
+    text.setAttribute("align", "left");
+    text.setAttribute("color", "#FFFFFF");
+    text.setAttribute("opacity", "0.0");
+    el.appendChild(text);
 
-      el.addEventListener("mouseenter", function () {
-        text.setAttribute("visible", "true");
-        background1.setAttribute("visible", "true");
-      });
+    el.addEventListener("mouseenter", function () {
+      background1.setAttribute("animation", "property: opacity; to: 0.6; dur: 500; easing: easeInOutQuad");
+      text.setAttribute("animation", "property: opacity; to: 1; dur: 500; easing: easeInOutQuad");
+    });
 
-      el.addEventListener("mouseleave", function () {
-        text.setAttribute("visible", "false");
-        background1.setAttribute("visible", "false");
-      });
-    },
-  });
+    el.addEventListener("mouseleave", function () {
+      background1.setAttribute("animation", "property: opacity; to: 0; dur: 500; easing: easeInOutQuad");
+      text.setAttribute("animation", "property: opacity; to: 0; dur: 500; easing: easeInOutQuad");
+    });
+  },
+});
 
-  // Function for #button4
-  AFRAME.registerComponent("cursor-listener-button4", {
-    init: function () {
-      var el = this.el;
+// Function for #button4
+AFRAME.registerComponent("cursor-listener-button4", {
+  init: function () {
+    var el = this.el;
 
     // Background for text
     var background1 = document.createElement("a-plane");
@@ -907,31 +907,30 @@
     background1.setAttribute("width", "5.5");
     background1.setAttribute("height", "4");
     background1.setAttribute("color", "black");
-    background1.setAttribute("opacity", "0.6");
-    background1.setAttribute("visible", "false");
+    background1.setAttribute("opacity", "0.0");
     el.appendChild(background1);
 
-      var text = document.createElement("a-text");
-      text.setAttribute("value", "IV. La inspiración marítima surge porque gran parte del poliestireno expandido que no se recicla acaba en los océanos, contribuyendo a la contaminación y al problema de los microplásticos. Al utilizar este material para crear joyería, se busca simbolizar una forma de ayudar al mar, evitando que más plásticos terminen en sus aguas. Los diseños inspirados en elementos marinos, como conchas y corales, no solo representan la belleza del océano, sino también el compromiso de reducir la contaminación plástica y proteger los ecosistemas marinos. De esta manera, el proyecto no solo crea piezas únicas, sino que también contribuye a disminuir el impacto negativo de los residuos plásticos en el medio ambiente.");
-      text.setAttribute("font", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuente_nascere-msdf.json?v=1726917663169");
-      text.setAttribute("font-image", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuentenascere.png?v=1726917645411");
-      text.setAttribute("negate", "false"); 
-      text.setAttribute("position", "-1.7 1 0.5");
-      text.setAttribute("rotation", "-90 0 0");
-      text.setAttribute("align", "left");
-      text.setAttribute("color", "#FFFFFF");
-      text.setAttribute("visible", "false");
-      el.appendChild(text);
+    var text = document.createElement("a-text");
+    text.setAttribute("value", "IV. La inspiración marítima surge porque gran parte del poliestireno expandido que no se recicla acaba en los océanos, contribuyendo a la contaminación y al problema de los microplásticos. Al utilizar este material para crear joyería, se busca simbolizar una forma de ayudar al mar, evitando que más plásticos terminen en sus aguas. Los diseños inspirados en elementos marinos, como conchas y corales, no solo representan la belleza del océano, sino también el compromiso de reducir la contaminación plástica y proteger los ecosistemas marinos. De esta manera, el proyecto no solo crea piezas únicas, sino que también contribuye a disminuir el impacto negativo de los residuos plásticos en el medio ambiente.");
+    text.setAttribute("font", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuente_nascere-msdf.json?v=1726917663169");
+    text.setAttribute("font-image", "https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/fuentenascere.png?v=1726917645411");
+    text.setAttribute("negate", "false");
+    text.setAttribute("position", "-1.7 1 0.5");
+    text.setAttribute("rotation", "-90 0 0");
+    text.setAttribute("align", "left");
+    text.setAttribute("color", "#FFFFFF");
+    text.setAttribute("opacity", "0.0");
+    el.appendChild(text);
 
-      el.addEventListener("mouseenter", function () {
-        text.setAttribute("visible", "true");
-        background1.setAttribute("visible", "true");
-      });
+    el.addEventListener("mouseenter", function () {
+      background1.setAttribute("animation", "property: opacity; to: 0.6; dur: 500; easing: easeInOutQuad");
+      text.setAttribute("animation", "property: opacity; to: 1; dur: 500; easing: easeInOutQuad");
+    });
 
-      el.addEventListener("mouseleave", function () {
-        text.setAttribute("visible", "false");
-        background1.setAttribute("visible", "false");
-      });
-    },
-  });
+    el.addEventListener("mouseleave", function () {
+      background1.setAttribute("animation", "property: opacity; to: 0; dur: 500; easing: easeInOutQuad");
+      text.setAttribute("animation", "property: opacity; to: 0; dur: 500; easing: easeInOutQuad");
+    });
+  },
+});
 </script>
