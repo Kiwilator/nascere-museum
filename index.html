@@ -29,12 +29,34 @@
         rotation="0 0 0"
       ></a-sky>
 
-      <!-- Light -->
+      <!-- Light Main -->
       <a-light
         id="animated-light"
         type="point"
-        intensity="1"
+        intensity="0.5"
         position="0 3 0"
+        color="#c6ddf1"
+        light="castShadow:true;"
+      >
+      </a-light>
+      
+      <!-- Light Right -->
+      <a-light
+        id="animated-light-right"
+        type="point"
+        intensity="0.5"
+        position="0 3 10"
+        color="#c6ddf1"
+        light="castShadow:true;"
+      >
+      </a-light>
+
+      <!-- Light Left -->
+      <a-light
+        id="animated-light-left"
+        type="point"
+        intensity="0.5"
+        position="0 3 -10"
         color="#c6ddf1"
         light="castShadow:true;"
       >
@@ -45,10 +67,10 @@
       </a-entity>
 
       <!-- Camera -->
-      <a-entity movement-controls="fly: true" position="0 0 4">
+      <a-entity rotation="0 -90 0" movement-controls="fly: true" position="0 0 4">
         <a-entity
           camera
-          position="0 1.6 0"
+          position="-4 1.6 5"
           look-controls="pointerLockEnabled: false"
         >
           <a-entity
@@ -78,8 +100,80 @@
         depth="40"
         height="5"
         width="0.5"
-        position="0 1.5 -6"
+        position="0 5.5 -6"
         rotation="0 90 0"
+        material="repeat: 10 1;"
+        shadow=""
+      ></a-box>
+      
+      <!-- Front wall (1) -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511"
+        depth="40"
+        height="5"
+        width="0.5"
+        position="0 4.8 -12"
+        rotation="0 90 0"
+        material="repeat: 10 1;"
+        shadow=""
+      ></a-box>
+      
+      <!-- Front wall (1) -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511"
+        depth="5"
+        height="5"
+        width="0.5"
+        position="3 1.5 -12"
+        rotation="0 90 0"
+        material="repeat: 2 1;"
+        shadow=""
+      ></a-box>
+      
+      <!-- Front wall (1) -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511"
+        depth="5"
+        height="5"
+        width="0.5"
+        position="-3 1.5 -12"
+        rotation="0 90 0"
+        material="repeat: 2 1;"
+        shadow=""
+      ></a-box>
+      
+      <!-- Front wall (1) -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511"
+        depth="40"
+        height="5"
+        width="0.5"
+        position="0 -1.6 -12"
+        rotation="0 90 0"
+        material="repeat: 10 1;"
+        shadow=""
+      ></a-box>
+      
+      <!-- Front wall (1) -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511"
+        depth="40"
+        height="5"
+        width="0.5"
+        position="3.5 1.5 -12"
+        rotation="0 45 0"
+        material="repeat: 10 1;"
+        shadow=""
+      ></a-box>
+      
+      <!-- Front wall (1) -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511"
+        depth="40"
+        height="5"
+        width="0.5"
+        position="-3.5 1.5 -12"
+        rotation="0 -45 0"
         material="repeat: 10 1;"
         shadow=""
       ></a-box>
@@ -102,8 +196,44 @@
         depth="40"
         height="5"
         width="0.5"
-        position="0 1.5 6"
+        position="0 5.5 6"
         rotation="0 90 0"
+        material="repeat: 10 1;"
+        shadow=""
+      ></a-box>
+
+      <!-- Back wall (3) -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511"
+        depth="40"
+        height="5"
+        width="0.5"
+        position="0 1.5 12"
+        rotation="0 90 0"
+        material="repeat: 10 1;"
+        shadow=""
+      ></a-box>
+      
+      <!-- Back wall (3) -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511"
+        depth="40"
+        height="5"
+        width="0.5"
+        position="-3.5 1.5 12"
+        rotation="0 45 0"
+        material="repeat: 10 1;"
+        shadow=""
+      ></a-box>
+      
+      <!-- Back wall (3) -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511"
+        depth="40"
+        height="5"
+        width="0.5"
+        position="3.5 1.5 12"
+        rotation="0 -45 0"
         material="repeat: 10 1;"
         shadow=""
       ></a-box>
@@ -188,10 +318,21 @@
         src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/_388d7e97-9cb8-40b3-9130-14ad9acfd6f6.jpg?v=1725369210965"
         depth="6"
         height="5"
-        width="0.1"
-        position="-3 1.5 -5.7"
+        width="0.45"
+        position="-4 1.5 -6"
         rotation="0 90 0"
         shadow="receive: true"
+      ></a-box>
+      
+      <!-- Paisaje 1 -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/shutterstock_682265785_4.2e16d0ba.fill-1600x775.jpg?v=1726947243453"
+        depth="2"
+        height="1"
+        width="0.45"
+        position="0 1.5 -12.4"
+        rotation="0 90 0"
+        shadow="receive: false"
       ></a-box>
 
       <!-- Mural 2 -->
@@ -199,19 +340,41 @@
         src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/_0f20b462-f23c-42f5-811b-485aaca6b5c8.jpg?v=1725369510176"
         depth="6"
         height="5"
-        width="0.1"
-        position="3 1.5 -5.7"
+        width="0.45"
+        position="4 1.5 -6"
         rotation="0 90 0"
         shadow="receive: true"
       ></a-box>
 
+      <!-- Mural 3 -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/_388d7e97-9cb8-40b3-9130-14ad9acfd6f6.jpg?v=1725369210965"
+        depth="6"
+        height="5"
+        width="0.45"
+        position="-4 1.5 6"
+        rotation="0 90 0"
+        shadow="receive: true"
+      ></a-box>
+
+      <!-- Mural 4 -->
+      <a-box
+        src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/_0f20b462-f23c-42f5-811b-485aaca6b5c8.jpg?v=1725369510176"
+        depth="6"
+        height="5"
+        width="0.45"
+        position="4 1.5 6"
+        rotation="0 90 0"
+        shadow="receive: true"
+      ></a-box>
+      
       <!-- Cuadro -->
       <a-box
         src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/OIG2.jpg?v=1725360610392"
         depth="2"
         height="1.56"
         width="0.2"
-        position="-5.8 1.5 -2"
+        position="-5.8 1.5 -3.3"
       ></a-box>
 
       <!-- Cuadro 2 -->
@@ -220,7 +383,7 @@
         depth="2"
         height="1.56"
         width="0.2"
-        position="-5.8 1.5 2"
+        position="-5.8 1.5 3"
       ></a-box>
 
       <!-- Mobiliario -->
@@ -263,7 +426,24 @@
       <a-entity
         gltf-model="#door"
         scale="0.4 0.24 0.24"
-        position="-0.2 0 5.75"
+        position="-5.68 0 0"
+        rotation="0 0 0"
+        material="color: white"
+        animation-mixer
+      ></a-entity>
+      
+      <!-- Ventana de la Izquierda -->
+      <a-assets>
+        <a-asset-item
+          id="windowLeft"
+          src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/wall_of_the_spaceship.glb?v=1726946926998"
+        ></a-asset-item>
+      </a-assets>
+
+      <a-entity
+        gltf-model="#windowLeft"
+        scale="0.4 0.4 0.4"
+        position="-0 1.6 -11.72"
         rotation="0 -90 0"
         material="color: white"
         animation-mixer
