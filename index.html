@@ -161,13 +161,18 @@ AFRAME.registerComponent('rig-collider', {
       light="type:ambient;intensity:0.25;">
       </a-entity>
       
-      <!-- Camera -->
+      <!-- Camera 
       <a-entity rotation="0 -90 0" movement-controls="fly: false" position="0 0 4">
         <a-entity
           camera
           position="-4 1.6 5"
           look-controls="pointerLockEnabled: false"
-        >
+        >--><a-entity id="rig"
+          rotation="0 -90 0"
+          movement-controls="fly: true"
+          position="-4 1.6 5"
+          rig-collider="wallSelector: .wall; radius: 0.35; debug: false">
+  <a-entity camera position="0 1.6 0" look-controls="pointerLockEnabled: false">
           <a-entity
             cursor="fuse: true; fuseTimeout: 500"
             position="0 0 -1"
@@ -1258,6 +1263,7 @@ AFRAME.registerComponent('wall-collider', {
   }
 });
 </script>
+
 
 
 
