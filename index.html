@@ -7,6 +7,7 @@
     <script src="https://unpkg.com/aframe-babia-components/dist/aframe-babia-components.min.js"></script>
     <script src="https://unpkg.com/aframe-environment-component@1.0.0/dist/aframe-environment-component.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.0/dist/aframe-extras.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/n5ro/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
   </head>
 
   <body>
@@ -66,7 +67,13 @@
       light="type:ambient;intensity:0.25;">
       </a-entity>
 
-      <!-- Camera -->
+<a-entity id="rig" movement-controls="constrainToNavMesh: false" 
+          kinematic-body
+          position="0 1.6 0">
+  <a-entity camera look-controls></a-entity>
+</a-entity>
+      
+      <!-- Camera 
       <a-entity rotation="0 -90 0" movement-controls="fly: true" position="0 0 4">
         <a-entity
           camera
@@ -95,7 +102,7 @@
       ></a-box>
 
       <!-- Front wall (1) -->
-      <a-box
+      <a-box class="wall" static-body
         src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511"
         depth="40"
         height="5"
@@ -179,7 +186,7 @@
       ></a-box>
 
       <!-- Right wall (2) -->
-      <a-box
+      <a-box class="wall" static-body
         src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511"
         depth="40"
         height="5"
@@ -191,7 +198,7 @@
       ></a-box>
 
       <!-- Back wall (3) -->
-      <a-box
+      <a-box class="wall" static-body
         src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511"
         depth="40"
         height="5"
@@ -239,7 +246,7 @@
       ></a-box>
 
       <!-- Left wall (4) -->
-      <a-box
+      <a-box class="wall" static-body
         src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511"
         depth="40"
         height="5"
@@ -262,25 +269,25 @@
       ></a-box>
 
       <!-- Expositores hexagonales -->
-      <a-entity
+      <a-entity class="wall" static-body
         geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6"
         material="color: #335c63"
         position="-2 0.5 -2"
         shadow="receive: true"
       ></a-entity>
-      <a-entity
+      <a-entity class="wall" static-body
         geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6"
         material="color: #335c63"
         position="2 0.5 -2"
         shadow="receive: true"
       ></a-entity>
-      <a-entity
+      <a-entity class="wall" static-body
         geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6"
         material="color: #335c63"
         position="-2 0.5 2"
         shadow="receive: true"
       ></a-entity>
-      <a-entity
+      <a-entity class="wall" static-body
         geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6"
         material="color: #335c63"
         position="2 0.5 2"
@@ -1142,6 +1149,7 @@ AFRAME.registerComponent("cursor-listener-button4", {
   },
 });
 </script>
+
 
 
 
