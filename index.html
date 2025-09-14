@@ -10,6 +10,100 @@
     <script src="https://cdn.jsdelivr.net/gh/n5ro/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
   </head>
 
+<script>
+/**
+ * rig-collider
+ * - wallSelector: selector CSS para los muros (por defecto ".wall")
+ * - radius: radio de la "esfera" del jugador (ajusta a tu tamaño)
+ * - debug: si true, crea una esfera visible para ver el collider
+ *
+ * Uso:
+ * 1) Añade class="wall" a los <a-box> que deben bloquear al jugador.
+ * 2) Añade el componente al entity que tiene movement-controls (tu "rig").
+ *    Ej: <a-entity id="rig" movement-controls="fly:true" rig-collider></a-entity>
+ */
+AFRAME.registerComponent('rig-collider', {
+  schema: {
+    wallSelector: { type: 'string', default: '.wall' },
+    radius: { type: 'number', default: 0.35 },
+    debug: { type: 'boolean', default: false }
+  },
+
+  init: function () {
+    // paredes (selector)
+    this.walls = Array.from(document.querySelectorAll(this.data.wallSelector));
+
+    // bounding tools
+    this.playerSphere = new THREE.Sphere(new THREE.Vector3(), this.data.radius);
+    this.tempBox = new THREE.Box3();
+
+    // guardar posiciones previas (local y world) para revertir si colisiona
+    this.prevLocal = new THREE.Vector3().copy(this.el.object3D.position);
+    this.prevWorld = new THREE.Vector3();
+    this.el.object3D.getWorldPosition(this.prevWorld);
+
+    // debug: esfera visible para ver collider (opcional)
+    if (this.data.debug) {
+      this.debugEl = document.createElement('a-sphere');
+      this.debugEl.setAttribute('radius', this.data.radius);
+      this.debugEl.setAttribute('opacity', 0.35);
+      this.debugEl.setAttribute('visible', true);
+      this.debugEl.setAttribute('material', 'shader: flat');
+      // se añade como hijo del rig (se actualizará su posición en tick)
+      this.el.appendChild(this.debugEl);
+    }
+  },
+
+  tick: function () {
+    // local pos y world pos del rig (el que se mueve)
+    const localPos = this.el.object3D.position;
+    const worldPos = new THREE.Vector3();
+    this.el.object3D.getWorldPosition(worldPos);
+
+    // actualizar esfera del jugador (en coordenadas world)
+    this.playerSphere.center.copy(worldPos);
+
+    // actualizar debug sphere local position (si existe)
+    if (this.debugEl) {
+      // convertir center (world) a coordenadas locales del rig para mostrar sphere como hijo
+      const localCenter = this.el.object3D.worldToLocal(this.playerSphere.center.clone());
+      this.debugEl.object3D.position.copy(localCenter);
+    }
+
+    // comprobar cada muro
+    for (let wall of this.walls) {
+      if (!wall.object3D) continue;
+      try {
+        this.tempBox.setFromObject(wall.object3D);
+      } catch (e) {
+        // si algún objeto no tiene geometría, saltarlo
+        continue;
+      }
+      if (this.tempBox.intersectsSphere(this.playerSphere)) {
+        // colisión: revertir al último local pos seguro
+        this.el.setAttribute('position', {
+          x: this.prevLocal.x,
+          y: this.prevLocal.y,
+          z: this.prevLocal.z
+        });
+
+        // intentar anular la velocidad si movement-controls la usa
+        const mc = this.el.components['movement-controls'];
+        if (mc && mc.velocity && typeof mc.velocity.set === 'function') {
+          mc.velocity.set(0, 0, 0);
+        }
+
+        return; // salir, no actualizar prev
+      }
+    }
+
+    // si no colisionó, actualizar prevs
+    this.prevLocal.copy(localPos);
+    this.el.object3D.getWorldPosition(this.prevWorld);
+  }
+});
+</script>
+  
   <body>
     <a-scene
       fog="type: exponential; color: #c6ddf1; density: 0.090; near: 0; far: 30"
@@ -1164,6 +1258,7 @@ AFRAME.registerComponent('wall-collider', {
   }
 });
 </script>
+
 
 
 
