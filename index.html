@@ -169,8 +169,8 @@ AFRAME.registerComponent('rig-collider', {
           look-controls="pointerLockEnabled: false"
         >--><a-entity id="rig"
           rotation="0 -90 0"
-          movement-controls="fly: true"
-          position="-4 1.6 5"
+          movement-controls="fly: false"
+          position="-5 0 0"
           rig-collider="wallSelector: .wall; radius: 0.35; debug: false">
   <a-entity camera position="0 1.6 0" look-controls="pointerLockEnabled: false">
           <a-entity
@@ -498,7 +498,7 @@ AFRAME.registerComponent('rig-collider', {
       ></a-box>
 
       <!-- Mobiliario -->
-      <a-box
+      <a-box class="wall" static-body
         src="https://raw.githubusercontent.com/oluisjuan/LongCovid-Pilot/6cb8541bd70d241880310ad02f84dee1ab6ba867/material/darktexture.jpg"
         depth="10"
         height="1"
@@ -527,7 +527,7 @@ AFRAME.registerComponent('rig-collider', {
       ></a-entity>
 
       <!-- Puerta de Entrada -->
-      <a-assets>
+      <a-assets> 
         <a-asset-item
           id="door"
           src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/modern_door(1).glb?v=1725362226636"
@@ -1263,6 +1263,7 @@ AFRAME.registerComponent('wall-collider', {
   }
 });
 </script>
+
 
 
 
