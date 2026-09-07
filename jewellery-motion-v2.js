@@ -11,6 +11,16 @@
     document.head.appendChild(labelScript);
   }
 
+  /* The old sea-theme file is remote and has proved unreliable in the browser.
+     Load a local Web Audio ambience so the SONIDO control always works from a
+     direct user click, with no CDN/CORS dependency. */
+  if (!document.querySelector('script[data-nascere-sound-fix]')) {
+    const soundScript = document.createElement('script');
+    soundScript.src = './sound-fix-v2.js?v=1';
+    soundScript.dataset.nascereSoundFix = 'true';
+    document.head.appendChild(soundScript);
+  }
+
   function buildSelfSpinPivot(el, index) {
     const mesh = el?.getObject3D('mesh');
     if (!mesh || activeSpins.has(el)) return;
