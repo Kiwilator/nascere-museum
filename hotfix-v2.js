@@ -35,11 +35,9 @@
 
   /* ---------------------------------------------------------------
      2. JEWELLERY
-     Use the GLBs that are actually stored in this repository. The old
-     Nascere models used external Glitch URLs; forcing those URLs again
-     made the pieces disappear in V2. We keep Nascere's composition but
-     centre each loaded mesh visually, so model-origin offsets cannot
-     throw a piece outside its tube/display case.
+     Use repository-local GLBs. Fit each mesh by its visible bounds, then
+     reduce it to 50% of the previous V2 size and restore a very subtle
+     floating motion so the pieces feel suspended rather than static.
      --------------------------------------------------------------- */
   const LOCAL_JEWELLERY = [
     './assets/pendiente_coral.glb',
@@ -53,24 +51,41 @@
   ];
 
   const JEWELLERY_LAYOUT = [
-    /* central tubes: earring right/rear, earring left/rear, ring left/front, ring right/front */
     { target: new THREE.Vector3( 2, 1.55, -2), max: new THREE.Vector3(0.52, 0.62, 0.52), rotation: '0 15 0' },
     { target: new THREE.Vector3(-2, 1.55, -2), max: new THREE.Vector3(0.52, 0.62, 0.52), rotation: '0 -15 0' },
     { target: new THREE.Vector3(-2, 1.52,  2), max: new THREE.Vector3(0.48, 0.48, 0.48), rotation: '20 20 20' },
     { target: new THREE.Vector3( 2, 1.52,  2), max: new THREE.Vector3(0.48, 0.48, 0.48), rotation: '90 20 90' },
-
-    /* side vitrine: four evenly spaced positions inside the original case */
     { target: new THREE.Vector3(4.02, 1.20, -0.55), max: new THREE.Vector3(0.38, 0.42, 0.55), rotation: '0 90 0' },
     { target: new THREE.Vector3(4.02, 1.20, -1.70), max: new THREE.Vector3(0.38, 0.42, 0.55), rotation: '0 90 0' },
     { target: new THREE.Vector3(4.02, 1.20, -2.85), max: new THREE.Vector3(0.38, 0.38, 0.48), rotation: '0 90 0' },
     { target: new THREE.Vector3(4.02, 1.20, -4.00), max: new THREE.Vector3(0.38, 0.38, 0.48), rotation: '0 90 0' }
   ];
 
-  function fitLoadedModel(el, layout) {
+  function addFloatingMotion(el, index) {
+    if (!el?.object3D) return;
+    const p = el.object3D.position;
+    const r = el.getAttribute('rotation') || { x: 0, y: 0, z: 0 };
+    const rise = index < 4 ? 0.055 : 0.035;
+    const floatDur = 2500 + (index % 4) * 320;
+    const turnDur = 7000 + (index % 4) * 900;
+
+    el.setAttribute(
+      'animation__float',
+      `property: position; from: ${p.x} ${p.y} ${p.z}; to: ${p.x} ${p.y + rise} ${p.z}; dir: alternate; loop: true; dur: ${floatDur}; easing: easeInOutSine`
+    );
+    el.setAttribute(
+      'animation__turn',
+      `property: rotation; from: ${r.x} ${r.y} ${r.z}; to: ${r.x} ${r.y + 10} ${r.z}; dir: alternate; loop: true; dur: ${turnDur}; easing: easeInOutSine`
+    );
+  }
+
+  function fitLoadedModel(el, layout, index) {
     const mesh = el?.getObject3D('mesh');
     if (!mesh || !layout) return;
 
     el.removeAttribute('animation');
+    el.removeAttribute('animation__float');
+    el.removeAttribute('animation__turn');
     el.setAttribute('rotation', layout.rotation);
     el.object3D.updateMatrixWorld(true);
 
@@ -86,8 +101,8 @@
       safe(layout.max.z, size.z)
     );
 
-    /* Only shrink/expand within a sane range around the GLB's current scale. */
-    const factor = THREE.MathUtils.clamp(fit, 0.08, 8);
+    /* Previous V2 fitted to the full max volume. User wants 50% less. */
+    const factor = THREE.MathUtils.clamp(fit, 0.08, 8) * 0.5;
     el.object3D.scale.multiplyScalar(factor);
     el.object3D.updateMatrixWorld(true);
 
@@ -97,6 +112,8 @@
     const delta = layout.target.clone().sub(center);
     el.object3D.position.add(delta);
     el.object3D.updateMatrixWorld(true);
+
+    addFloatingMotion(el, index);
   }
 
   function prepareJewellery() {
@@ -110,7 +127,7 @@
       el.setAttribute('gltf-model', local);
       el.setAttribute('visible', true);
 
-      const place = () => requestAnimationFrame(() => fitLoadedModel(el, layout));
+      const place = () => requestAnimationFrame(() => fitLoadedModel(el, layout, index));
       if (el.getObject3D('mesh')) place();
       el.addEventListener('model-loaded', place, { once: true });
       el.addEventListener('model-error', () => {
@@ -136,7 +153,8 @@
 
   /* ---------------------------------------------------------------
      3. STAND BUTTONS
-     Geometry only, no square texture. All face the same direction.
+     Geometry only. Number has a restrained scale and sits comfortably
+     inside the circular face instead of competing with the stand.
      --------------------------------------------------------------- */
   const STANDS = [
     { key: 'project',  number: '01', x:  2, z:  2 },
@@ -189,8 +207,7 @@
       label.setAttribute('align', 'center');
       label.setAttribute('anchor', 'center');
       label.setAttribute('baseline', 'center');
-      label.setAttribute('width', '1.18');
-      label.setAttribute('wrap-count', '2');
+      label.setAttribute('width', '0.68');
       label.setAttribute('color', '#082d35');
       label.setAttribute('position', '0 -0.010 0.059');
       label.setAttribute('material', 'shader: flat; side: double');
