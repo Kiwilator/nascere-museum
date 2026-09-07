@@ -23,8 +23,6 @@
     markers.forEach((marker, index) => {
       const stand = STANDS[index];
       if (!stand) return;
-
-      /* The button is now partially embedded in the stand face and lower. */
       marker.setAttribute('position', `${stand.x - 0.49} 0.54 ${stand.z}`);
       marker.setAttribute('rotation', '0 -90 0');
 
@@ -32,7 +30,6 @@
       const face = marker.querySelector('a-circle');
       const ring = marker.querySelector('a-ring');
       const label = marker.querySelector('a-text');
-
       if (body) {
         body.setAttribute('height', '0.022');
         body.setAttribute('position', '0 0 0.003');
@@ -42,11 +39,9 @@
       if (label) label.setAttribute('position', '0 -0.010 0.022');
     });
 
-    /* The cyan podium ring should sit on the top, not float above it. */
     document.querySelectorAll('.nascere-podium-accent').forEach((ring) => {
       const p = ring.getAttribute('position');
-      if (!p) return;
-      ring.setAttribute('position', `${p.x} 1.025 ${p.z}`);
+      if (p) ring.setAttribute('position', `${p.x} 1.025 ${p.z}`);
     });
   }
 
@@ -64,8 +59,8 @@
   }
 
   function clearActiveFocus() {
-    const lights = [...document.querySelectorAll('.nascere-jewel-light')].slice(0, 4);
-    lights.forEach((light) => light.setAttribute('light', 'intensity', 0.22));
+    [...document.querySelectorAll('.nascere-jewel-light')].slice(0, 4)
+      .forEach((light) => light.setAttribute('light', 'intensity', 0.22));
     document.querySelectorAll('.nascere-podium-accent').forEach((ring) => {
       ring.setAttribute('material', 'opacity', 0.90);
       ring.setAttribute('material', 'emissiveIntensity', 0.75);
@@ -75,14 +70,11 @@
   function focusStand(index) {
     const stand = STANDS[index];
     if (!stand) return;
-
-    const lights = [...document.querySelectorAll('.nascere-jewel-light')].slice(0, 4);
-    lights.forEach((light, lightIndex) => {
+    [...document.querySelectorAll('.nascere-jewel-light')].slice(0, 4).forEach((light, lightIndex) => {
       const coords = LIGHT_ORDER[lightIndex];
       const active = coords && coords.x === stand.x && coords.z === stand.z;
       light.setAttribute('light', 'intensity', active ? 0.58 : 0.09);
     });
-
     document.querySelectorAll('.nascere-podium-accent').forEach((ring) => {
       const p = ring.getAttribute('position');
       const active = p && Math.abs(p.x - stand.x) < 0.03 && Math.abs(p.z - stand.z) < 0.03;
@@ -92,8 +84,7 @@
   }
 
   function bindStandStates() {
-    const markers = getMarkers();
-    markers.forEach((marker, index) => {
+    getMarkers().forEach((marker, index) => {
       if (marker.dataset.nascereStateBound === 'true') return;
       marker.dataset.nascereStateBound = 'true';
       marker.addEventListener('click', () => {
@@ -107,7 +98,6 @@
     const scene = document.getElementById('museum-scene');
     if (!scene) return;
     document.querySelectorAll('.nascere-micro-label').forEach((el) => el.remove());
-
     const lang = document.documentElement.lang === 'en' ? 'en' : 'es';
     STANDS.forEach((stand) => {
       const label = document.createElement('a-text');
@@ -139,7 +129,6 @@
     const scene = document.getElementById('museum-scene');
     if (!scene) return;
     document.querySelectorAll('.nascere-vitrine-support').forEach((el) => el.remove());
-
     [-0.55, -1.70, -2.85, -4.00].forEach((z) => {
       const support = document.createElement('a-cylinder');
       support.classList.add('nascere-vitrine-support');
@@ -165,7 +154,6 @@
     const panel = document.getElementById('exhibit-panel');
     if (!panel || panel.dataset.nascereObserverBound === 'true') return;
     panel.dataset.nascereObserverBound = 'true';
-
     let veil = document.getElementById('nascere-panel-veil');
     if (!veil) {
       veil = document.createElement('div');
@@ -179,7 +167,6 @@
       });
       document.body.appendChild(veil);
     }
-
     const sync = () => {
       const open = panel.classList.contains('is-open');
       veil.style.opacity = open ? '1' : '0';
@@ -206,14 +193,19 @@
     bindLanguageRefresh();
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
+  function start() {
     const scene = document.getElementById('museum-scene');
     const afterScene = () => {
-      /* visual-fix-v2 performs its last pass at ~1200 ms, so finish after it. */
       window.setTimeout(applyFinishingPass, 1350);
       window.setTimeout(applyFinishingPass, 2200);
     };
     if (scene?.hasLoaded) afterScene();
     else scene?.addEventListener('loaded', afterScene, { once: true });
-  }, { once: true });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  } else {
+    start();
+  }
 })();
