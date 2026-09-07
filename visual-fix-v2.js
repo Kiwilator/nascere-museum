@@ -115,12 +115,12 @@
         mats.forEach((mat) => {
           if (!mat) return;
           mat.transparent = true;
-          mat.opacity = 0.12;
+          mat.opacity = 0.10;
           mat.depthWrite = false;
           mat.depthTest = true;
           mat.side = THREE.DoubleSide;
           if (mat.color) mat.color.set('#dffcff');
-          if ('roughness' in mat) mat.roughness = 0.10;
+          if ('roughness' in mat) mat.roughness = 0.08;
           if ('metalness' in mat) mat.metalness = 0.02;
           mat.needsUpdate = true;
         });
@@ -153,6 +153,113 @@
     });
   }
 
+  /* Keep the wall illustrations, but cool them down so they support the jewellery
+     instead of competing with it. The texture remains visible; this is only a tint. */
+  function softenGraphicWalls() {
+    const imageTokens = ['_388d7e97', '_0f20b462', '_b54debe5', 'OIG2.jpg'];
+    document.querySelectorAll('a-box[src]').forEach((el) => {
+      const src = String(el.getAttribute('src') || '');
+      if (!imageTokens.some((token) => src.includes(token))) return;
+      el.setAttribute('material', 'color', '#c4dce1');
+      el.setAttribute('material', 'roughness', 0.92);
+    });
+  }
+
+  /* Darker, quieter podiums. A separate cyan ring preserves the luminous identity
+     without leaving the whole top surface as a saturated blue disk. */
+  function refinePodiums() {
+    const scene = document.getElementById('museum-scene');
+    const podiums = [...document.querySelectorAll('[gltf-model*="display_podium.glb"]')];
+    podiums.forEach((podium) => {
+      const tone = () => {
+        const mesh = podium.getObject3D('mesh');
+        if (!mesh) return;
+        mesh.traverse((obj) => {
+          if (!obj.isMesh) return;
+          const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+          mats.forEach((mat) => {
+            if (!mat) return;
+            if (mat.color) mat.color.lerp(new THREE.Color('#173b43'), 0.72);
+            if ('roughness' in mat) mat.roughness = 0.34;
+            if ('metalness' in mat) mat.metalness = 0.16;
+            if ('emissiveIntensity' in mat) mat.emissiveIntensity *= 0.30;
+            mat.needsUpdate = true;
+          });
+        });
+      };
+      if (podium.getObject3D('mesh')) tone();
+      else podium.addEventListener('model-loaded', tone, { once: true });
+    });
+
+    if (!scene) return;
+    document.querySelectorAll('.nascere-podium-accent').forEach((el) => el.remove());
+    [[-2,-2],[2,-2],[-2,2],[2,2]].forEach(([x,z]) => {
+      const ring = document.createElement('a-ring');
+      ring.classList.add('nascere-podium-accent');
+      ring.setAttribute('position', `${x} 1.075 ${z}`);
+      ring.setAttribute('rotation', '-90 0 0');
+      ring.setAttribute('radius-inner', '0.335');
+      ring.setAttribute('radius-outer', '0.355');
+      ring.setAttribute('material', 'color: #64e5ed; emissive: #2fc7d0; emissiveIntensity: 0.75; opacity: 0.90; transparent: true; shader: standard; depthWrite: false');
+      scene.appendChild(ring);
+    });
+  }
+
+  /* Focused light around the exhibits: enough to reveal volume in the jewellery,
+     but low intensity so the room does not become even more washed out. */
+  function addJewelleryLights() {
+    const scene = document.getElementById('museum-scene');
+    if (!scene) return;
+    document.querySelectorAll('.nascere-jewel-light').forEach((el) => el.remove());
+
+    [[-2,-2],[2,-2],[-2,2],[2,2]].forEach(([x,z]) => {
+      const light = document.createElement('a-entity');
+      light.classList.add('nascere-jewel-light');
+      light.setAttribute('position', `${x} 1.72 ${z}`);
+      light.setAttribute('light', 'type: point; color: #eaffff; intensity: 0.22; distance: 1.55; decay: 2; castShadow: false');
+      scene.appendChild(light);
+    });
+
+    [
+      [3.90, 1.50, -1.10],
+      [3.90, 1.50, -3.45]
+    ].forEach(([x,y,z]) => {
+      const light = document.createElement('a-entity');
+      light.classList.add('nascere-jewel-light');
+      light.setAttribute('position', `${x} ${y} ${z}`);
+      light.setAttribute('light', 'type: point; color: #dffcff; intensity: 0.12; distance: 2.0; decay: 2; castShadow: false');
+      scene.appendChild(light);
+    });
+  }
+
+  /* A minimal interior base and two illuminated edges make the lateral case read
+     as an exhibition vitrine instead of a transparent volume floating over the counter. */
+  function refineSideVitrine() {
+    const scene = document.getElementById('museum-scene');
+    if (!scene) return;
+    document.querySelectorAll('.nascere-side-vitrine-detail').forEach((el) => el.remove());
+
+    const shelf = document.createElement('a-box');
+    shelf.classList.add('nascere-side-vitrine-detail');
+    shelf.setAttribute('position', '4.02 1.015 -2.28');
+    shelf.setAttribute('width', '0.34');
+    shelf.setAttribute('height', '0.022');
+    shelf.setAttribute('depth', '4.35');
+    shelf.setAttribute('material', 'color: #173b43; opacity: 0.64; transparent: true; roughness: 0.30; metalness: 0.12; depthWrite: false');
+    scene.appendChild(shelf);
+
+    [3.86, 4.18].forEach((x) => {
+      const rail = document.createElement('a-box');
+      rail.classList.add('nascere-side-vitrine-detail');
+      rail.setAttribute('position', `${x} 1.032 -2.28`);
+      rail.setAttribute('width', '0.012');
+      rail.setAttribute('height', '0.012');
+      rail.setAttribute('depth', '4.25');
+      rail.setAttribute('material', 'color: #64e5ed; emissive: #2fc7d0; emissiveIntensity: 0.55; opacity: 0.70; transparent: true; shader: standard; depthWrite: false');
+      scene.appendChild(rail);
+    });
+  }
+
   function apply() {
     fixGlass();
     fixSideDisplayCase();
@@ -164,6 +271,10 @@
     });
     doubleButtonNumbers();
     refineButtonDepth();
+    softenGraphicWalls();
+    refinePodiums();
+    addJewelleryLights();
+    refineSideVitrine();
   }
 
   document.addEventListener('DOMContentLoaded', () => {
