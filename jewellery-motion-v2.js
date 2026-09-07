@@ -2,6 +2,15 @@
 (() => {
   const activeSpins = new WeakSet();
 
+  /* Load the label correction after the existing interaction pass, without
+     touching the main scene structure. */
+  if (!document.querySelector('script[data-nascere-label-fix]')) {
+    const labelScript = document.createElement('script');
+    labelScript.src = './label-fix-v2.js?v=1';
+    labelScript.dataset.nascereLabelFix = 'true';
+    document.head.appendChild(labelScript);
+  }
+
   function buildSelfSpinPivot(el, index) {
     const mesh = el?.getObject3D('mesh');
     if (!mesh || activeSpins.has(el)) return;
