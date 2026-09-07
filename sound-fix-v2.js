@@ -1,134 +1,81 @@
-/* NASCERE V2 — robust sound control. Uses the original sea audio first,
-   with a procedural Web Audio fallback if the remote file cannot play. */
+/* NASCERE V2 — original sea-theme sound only. No generated noise fallback. */
 (() => {
-  const SEA_URL = 'https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/sea_theme.mp3?v=1726130217666';
+  const SOURCES = [
+    'https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/sea_theme.mp3?v=1726130217666',
+    'https://cdn.glitch.me/875c914b-5bf9-4bd8-8d5b-92c7da9612b5%2Fsea_theme.mp3?v=1726130217666',
+    'https://cdn.glitch.com/875c914b-5bf9-4bd8-8d5b-92c7da9612b5%2Fsea_theme.mp3?v=1726130217666'
+  ];
 
   let enabled = false;
   let media = null;
-  let ctx = null;
-  let master = null;
-  let noise = null;
-  let swell = null;
-  let fallbackReady = false;
+  let currentSource = -1;
+  let busy = false;
 
-  function setButtonState(button, on) {
+  function setButtonState(button, on, loading = false) {
     button.setAttribute('aria-pressed', on ? 'true' : 'false');
-    button.dataset.audioReady = on ? 'true' : 'false';
     const text = button.querySelector('[data-i18n="sound"]');
-    if (text) {
-      const lang = document.documentElement.lang === 'en' ? 'en' : 'es';
-      text.textContent = on ? (lang === 'en' ? 'SOUND ON' : 'SONIDO ON') : (lang === 'en' ? 'SOUND' : 'SONIDO');
-    }
+    if (!text) return;
+    const en = document.documentElement.lang === 'en';
+    if (loading) text.textContent = en ? 'SOUND…' : 'SONIDO…';
+    else if (on) text.textContent = en ? 'SOUND ON' : 'SONIDO ON';
+    else text.textContent = en ? 'SOUND' : 'SONIDO';
   }
 
   function getMedia() {
     if (media) return media;
-    media = new Audio();
-    media.src = SEA_URL;
+    media = document.createElement('audio');
+    media.id = 'nascere-original-sea-theme';
     media.loop = true;
     media.preload = 'auto';
-    media.volume = 0.48;
+    media.volume = 0.5;
     media.playsInline = true;
+    media.style.display = 'none';
+    document.body.appendChild(media);
     return media;
   }
 
-  function createNoiseBuffer(audioContext) {
-    const seconds = 5;
-    const length = Math.floor(audioContext.sampleRate * seconds);
-    const buffer = audioContext.createBuffer(1, length, audioContext.sampleRate);
-    const data = buffer.getChannelData(0);
-    let pink = 0;
-    for (let i = 0; i < length; i += 1) {
-      const white = Math.random() * 2 - 1;
-      pink = pink * 0.985 + white * 0.075;
-      data[i] = pink * 0.55;
-    }
-    return buffer;
-  }
+  async function playSource(url) {
+    const audio = getMedia();
+    audio.pause();
+    audio.removeAttribute('src');
+    audio.load();
+    audio.src = url;
+    audio.load();
 
-  function buildFallback() {
-    if (fallbackReady) return;
-    const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) throw new Error('Web Audio API no disponible');
-
-    ctx = new AudioCtx();
-    master = ctx.createGain();
-    master.gain.value = 0;
-    master.connect(ctx.destination);
-
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = 2100;
-    filter.Q.value = 0.35;
-    filter.connect(master);
-
-    const src = ctx.createBufferSource();
-    src.buffer = createNoiseBuffer(ctx);
-    src.loop = true;
-    src.connect(filter);
-    src.start();
-    noise = src;
-
-    swell = ctx.createOscillator();
-    const swellGain = ctx.createGain();
-    swell.type = 'sine';
-    swell.frequency.value = 0.09;
-    swellGain.gain.value = 0.10;
-    swell.connect(swellGain);
-    swellGain.connect(master.gain);
-    swell.start();
-
-    fallbackReady = true;
-  }
-
-  async function startFallback() {
-    buildFallback();
-    if (ctx.state === 'suspended') await ctx.resume();
-    const now = ctx.currentTime;
-    master.gain.cancelScheduledValues(now);
-    master.gain.setValueAtTime(Math.max(master.gain.value, 0.001), now);
-    master.gain.linearRampToValueAtTime(0.42, now + 0.12);
-  }
-
-  function stopFallback() {
-    if (!ctx || !master) return;
-    const now = ctx.currentTime;
-    master.gain.cancelScheduledValues(now);
-    master.gain.setValueAtTime(master.gain.value, now);
-    master.gain.linearRampToValueAtTime(0, now + 0.10);
+    const timeout = new Promise((_, reject) => {
+      window.setTimeout(() => reject(new Error('audio timeout')), 4500);
+    });
+    await Promise.race([audio.play(), timeout]);
   }
 
   async function turnOn(button) {
-    enabled = true;
-    setButtonState(button, true);
+    if (busy) return;
+    busy = true;
+    setButtonState(button, false, true);
 
-    const audio = getMedia();
-    try {
-      audio.currentTime = audio.currentTime || 0;
-      await audio.play();
-      stopFallback();
-      button.dataset.audioMode = 'file';
-      return;
-    } catch (error) {
-      console.warn('[Nascere] Audio marino remoto no disponible; usando ambiente local.', error);
+    let played = false;
+    for (let i = 0; i < SOURCES.length; i += 1) {
+      try {
+        await playSource(SOURCES[i]);
+        currentSource = i;
+        played = true;
+        break;
+      } catch (error) {
+        console.warn(`[Nascere] No se pudo reproducir la fuente de audio ${i + 1}.`, error);
+      }
     }
 
-    try {
-      await startFallback();
-      button.dataset.audioMode = 'generated';
-    } catch (error) {
-      console.error('[Nascere] No se pudo iniciar ningún modo de sonido:', error);
-      enabled = false;
-      setButtonState(button, false);
-      button.dataset.audioMode = 'failed';
-    }
+    enabled = played;
+    setButtonState(button, enabled, false);
+    button.dataset.audioMode = enabled ? `original-${currentSource + 1}` : 'unavailable';
+    busy = false;
   }
 
   function turnOff(button) {
+    const audio = getMedia();
+    audio.pause();
     enabled = false;
-    if (media) media.pause();
-    stopFallback();
-    setButtonState(button, false);
+    setButtonState(button, false, false);
     button.dataset.audioMode = 'off';
   }
 
@@ -136,12 +83,11 @@
     const original = document.getElementById('sound-toggle');
     if (!original) return;
 
-    /* Replace the element to remove the legacy click listener from script.js.
-       This leaves one single owner for sound state and avoids two handlers fighting. */
+    /* Replace the old node so only this controller owns the click. */
     const button = original.cloneNode(true);
     original.replaceWith(button);
     button.dataset.soundFixBound = 'true';
-    setButtonState(button, false);
+    setButtonState(button, false, false);
 
     button.addEventListener('click', (event) => {
       event.preventDefault();
