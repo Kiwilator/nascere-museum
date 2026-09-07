@@ -1,109 +1,154 @@
-/* NASCERE V2 — reliable sound toggle without external audio dependencies. */
+/* NASCERE V2 — robust sound control. Uses the original sea audio first,
+   with a procedural Web Audio fallback if the remote file cannot play. */
 (() => {
+  const SEA_URL = 'https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/sea_theme.mp3?v=1726130217666';
+
+  let enabled = false;
+  let media = null;
   let ctx = null;
   let master = null;
-  let surfGain = null;
-  let source = null;
-  let lfo = null;
-  let lfoDepth = null;
-  let enabled = false;
-  let ready = false;
+  let noise = null;
+  let swell = null;
+  let fallbackReady = false;
 
-  function createOceanBuffer(audioContext) {
-    const seconds = 8;
-    const length = audioContext.sampleRate * seconds;
+  function setButtonState(button, on) {
+    button.setAttribute('aria-pressed', on ? 'true' : 'false');
+    button.dataset.audioReady = on ? 'true' : 'false';
+    const text = button.querySelector('[data-i18n="sound"]');
+    if (text) {
+      const lang = document.documentElement.lang === 'en' ? 'en' : 'es';
+      text.textContent = on ? (lang === 'en' ? 'SOUND ON' : 'SONIDO ON') : (lang === 'en' ? 'SOUND' : 'SONIDO');
+    }
+  }
+
+  function getMedia() {
+    if (media) return media;
+    media = new Audio();
+    media.src = SEA_URL;
+    media.loop = true;
+    media.preload = 'auto';
+    media.volume = 0.48;
+    media.playsInline = true;
+    return media;
+  }
+
+  function createNoiseBuffer(audioContext) {
+    const seconds = 5;
+    const length = Math.floor(audioContext.sampleRate * seconds);
     const buffer = audioContext.createBuffer(1, length, audioContext.sampleRate);
     const data = buffer.getChannelData(0);
-    let brown = 0;
-
+    let pink = 0;
     for (let i = 0; i < length; i += 1) {
       const white = Math.random() * 2 - 1;
-      brown = (brown + 0.018 * white) / 1.018;
-      const t = i / audioContext.sampleRate;
-      const swell = 0.58 + 0.22 * Math.sin(t * Math.PI * 0.42) + 0.10 * Math.sin(t * Math.PI * 1.13);
-      data[i] = brown * 3.2 * swell;
+      pink = pink * 0.985 + white * 0.075;
+      data[i] = pink * 0.55;
     }
     return buffer;
   }
 
-  function buildAudioGraph() {
-    if (ready) return;
+  function buildFallback() {
+    if (fallbackReady) return;
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     if (!AudioCtx) throw new Error('Web Audio API no disponible');
 
     ctx = new AudioCtx();
-
     master = ctx.createGain();
     master.gain.value = 0;
     master.connect(ctx.destination);
 
-    surfGain = ctx.createGain();
-    surfGain.gain.value = 0.58;
-    surfGain.connect(master);
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 2100;
+    filter.Q.value = 0.35;
+    filter.connect(master);
 
-    const lowpass = ctx.createBiquadFilter();
-    lowpass.type = 'lowpass';
-    lowpass.frequency.value = 1450;
-    lowpass.Q.value = 0.55;
-    lowpass.connect(surfGain);
+    const src = ctx.createBufferSource();
+    src.buffer = createNoiseBuffer(ctx);
+    src.loop = true;
+    src.connect(filter);
+    src.start();
+    noise = src;
 
-    const highpass = ctx.createBiquadFilter();
-    highpass.type = 'highpass';
-    highpass.frequency.value = 120;
-    highpass.Q.value = 0.4;
+    swell = ctx.createOscillator();
+    const swellGain = ctx.createGain();
+    swell.type = 'sine';
+    swell.frequency.value = 0.09;
+    swellGain.gain.value = 0.10;
+    swell.connect(swellGain);
+    swellGain.connect(master.gain);
+    swell.start();
 
-    source = ctx.createBufferSource();
-    source.buffer = createOceanBuffer(ctx);
-    source.loop = true;
-    source.connect(highpass);
-    highpass.connect(lowpass);
-
-    /* Slow swell so the ambience feels like surf instead of static noise. */
-    lfo = ctx.createOscillator();
-    lfo.type = 'sine';
-    lfo.frequency.value = 0.075;
-    lfoDepth = ctx.createGain();
-    lfoDepth.gain.value = 0.22;
-    lfo.connect(lfoDepth);
-    lfoDepth.connect(surfGain.gain);
-
-    source.start();
-    lfo.start();
-    ready = true;
+    fallbackReady = true;
   }
 
-  async function setSound(next, button) {
+  async function startFallback() {
+    buildFallback();
+    if (ctx.state === 'suspended') await ctx.resume();
+    const now = ctx.currentTime;
+    master.gain.cancelScheduledValues(now);
+    master.gain.setValueAtTime(Math.max(master.gain.value, 0.001), now);
+    master.gain.linearRampToValueAtTime(0.42, now + 0.12);
+  }
+
+  function stopFallback() {
+    if (!ctx || !master) return;
+    const now = ctx.currentTime;
+    master.gain.cancelScheduledValues(now);
+    master.gain.setValueAtTime(master.gain.value, now);
+    master.gain.linearRampToValueAtTime(0, now + 0.10);
+  }
+
+  async function turnOn(button) {
+    enabled = true;
+    setButtonState(button, true);
+
+    const audio = getMedia();
     try {
-      buildAudioGraph();
-      if (ctx.state === 'suspended') await ctx.resume();
-
-      enabled = next;
-      const now = ctx.currentTime;
-      master.gain.cancelScheduledValues(now);
-      master.gain.setValueAtTime(master.gain.value, now);
-      master.gain.linearRampToValueAtTime(enabled ? 0.34 : 0, now + 0.18);
-
-      button.setAttribute('aria-pressed', enabled ? 'true' : 'false');
-      button.dataset.audioReady = 'true';
+      audio.currentTime = audio.currentTime || 0;
+      await audio.play();
+      stopFallback();
+      button.dataset.audioMode = 'file';
+      return;
     } catch (error) {
-      console.error('[Nascere] No se pudo iniciar el sonido:', error);
+      console.warn('[Nascere] Audio marino remoto no disponible; usando ambiente local.', error);
+    }
+
+    try {
+      await startFallback();
+      button.dataset.audioMode = 'generated';
+    } catch (error) {
+      console.error('[Nascere] No se pudo iniciar ningún modo de sonido:', error);
       enabled = false;
-      button.setAttribute('aria-pressed', 'false');
-      button.dataset.audioReady = 'false';
+      setButtonState(button, false);
+      button.dataset.audioMode = 'failed';
     }
   }
 
-  function bind() {
-    const button = document.getElementById('sound-toggle');
-    if (!button || button.dataset.webAudioBound === 'true') return;
-    button.dataset.webAudioBound = 'true';
+  function turnOff(button) {
+    enabled = false;
+    if (media) media.pause();
+    stopFallback();
+    setButtonState(button, false);
+    button.dataset.audioMode = 'off';
+  }
 
-    /* Capture phase prevents the older A-Frame/remote-MP3 handler from running. */
+  function bind() {
+    const original = document.getElementById('sound-toggle');
+    if (!original) return;
+
+    /* Replace the element to remove the legacy click listener from script.js.
+       This leaves one single owner for sound state and avoids two handlers fighting. */
+    const button = original.cloneNode(true);
+    original.replaceWith(button);
+    button.dataset.soundFixBound = 'true';
+    setButtonState(button, false);
+
     button.addEventListener('click', (event) => {
       event.preventDefault();
-      event.stopImmediatePropagation();
-      setSound(!enabled, button);
-    }, true);
+      event.stopPropagation();
+      if (enabled) turnOff(button);
+      else turnOn(button);
+    });
   }
 
   if (document.readyState === 'loading') {
