@@ -119,6 +119,44 @@
     });
   }
 
+  /* The original display-case GLB is correct in shape and position, but its
+     old opaque grey material makes the vitrine read as a solid shelf. Keep
+     the geometry and turn its materials into pale, low-opacity glass. */
+  function fixSideDisplayCase() {
+    const display = [...document.querySelectorAll('[gltf-model], [deferred-gltf]')].find((el) => {
+      const gltf = String(el.getAttribute('gltf-model') || '');
+      const deferred = String(el.getAttribute('deferred-gltf') || '');
+      return gltf.includes('display_case_maya.glb') || deferred.includes('display_case_maya.glb');
+    });
+    if (!display) return;
+
+    const applyMaterial = () => {
+      const mesh = display.getObject3D('mesh');
+      if (!mesh) return;
+      mesh.renderOrder = 18;
+      mesh.traverse((obj) => {
+        if (!obj.isMesh) return;
+        obj.renderOrder = 18;
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach((mat) => {
+          if (!mat) return;
+          mat.transparent = true;
+          mat.opacity = 0.12;
+          mat.depthWrite = false;
+          mat.depthTest = true;
+          mat.side = THREE.DoubleSide;
+          if (mat.color) mat.color.set('#dffcff');
+          if ('roughness' in mat) mat.roughness = 0.10;
+          if ('metalness' in mat) mat.metalness = 0.02;
+          mat.needsUpdate = true;
+        });
+      });
+    };
+
+    if (display.getObject3D('mesh')) applyMaterial();
+    else display.addEventListener('model-loaded', applyMaterial, { once: true });
+  }
+
   function doubleButtonNumbers() {
     document.querySelectorAll('.nascere-hotspot:not(.nascere-stand-hitbox) a-text').forEach((label) => {
       label.setAttribute('width', '1.36');
@@ -128,6 +166,7 @@
 
   function apply() {
     fixGlass();
+    fixSideDisplayCase();
     const jewellery = [...document.querySelectorAll('.jewellery')].slice(0, 8);
     jewellery.forEach((el, index) => {
       const run = () => placeJewellery(el, CENTRAL_TARGETS[index], index);
