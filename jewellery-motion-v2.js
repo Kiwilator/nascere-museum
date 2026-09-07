@@ -2,20 +2,16 @@
 (() => {
   const activeSpins = new WeakSet();
 
-  /* Load the label correction after the existing interaction pass, without
-     touching the main scene structure. */
   if (!document.querySelector('script[data-nascere-label-fix]')) {
     const labelScript = document.createElement('script');
-    labelScript.src = './label-fix-v2.js?v=1';
+    labelScript.src = './label-fix-v2.js?v=2';
     labelScript.dataset.nascereLabelFix = 'true';
     document.head.appendChild(labelScript);
   }
 
-  /* The old sea-theme file is remote and has proved unreliable in the browser.
-     Load the dedicated sound controller. Version bump avoids stale browser cache. */
   if (!document.querySelector('script[data-nascere-sound-fix]')) {
     const soundScript = document.createElement('script');
-    soundScript.src = './sound-fix-v2.js?v=2';
+    soundScript.src = './sound-fix-v2.js?v=3';
     soundScript.dataset.nascereSoundFix = 'true';
     document.head.appendChild(soundScript);
   }
@@ -24,10 +20,6 @@
     const mesh = el?.getObject3D('mesh');
     if (!mesh || activeSpins.has(el)) return;
 
-    /* Keep the vertical float created by visual-fix-v2, but remove any A-Frame
-       rotation animation on the entity itself. Rotating the entity is wrong for
-       these GLBs because several have an off-centre internal pivot and therefore
-       orbit around the stand instead of spinning in place. */
     el.removeAttribute('animation__turn');
     el.object3D.updateMatrixWorld(true);
 
@@ -42,8 +34,6 @@
     pivot.position.copy(localCenter);
     el.object3D.add(pivot);
 
-    /* Reparent while preserving the current world transform. From this point on,
-       pivot.rotation.y turns the piece around its own visible centre. */
     pivot.attach(mesh);
     pivot.updateMatrixWorld(true);
 
@@ -74,7 +64,6 @@
   function start() {
     const scene = document.getElementById('museum-scene');
     const afterScene = () => {
-      /* visual-fix-v2 places the pieces first; build the local spin pivots after. */
       window.setTimeout(applyJewelleryMotion, 1500);
       window.setTimeout(applyJewelleryMotion, 2450);
     };
