@@ -105,7 +105,7 @@
       label.dataset.es = stand.es;
       label.dataset.en = stand.en;
       label.setAttribute('value', stand[lang]);
-      label.setAttribute('position', `${stand.x - 0.492} 0.82 ${stand.z}`);
+      label.setAttribute('position', `${stand.x - 0.492} 0.90 ${stand.z}`);
       label.setAttribute('rotation', '0 -90 0');
       label.setAttribute('align', 'center');
       label.setAttribute('anchor', 'center');
