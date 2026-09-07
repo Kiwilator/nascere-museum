@@ -38,7 +38,7 @@
   function addLabel(scene, stand, text) {
     const holder = document.createElement('a-entity');
     holder.classList.add('nascere-micro-label', 'nascere-canvas-label');
-    holder.setAttribute('position', `${stand.x - 0.497} 0.70 ${stand.z}`);
+    holder.setAttribute('position', `${stand.x - 0.497} 0.84 ${stand.z}`);
     holder.setAttribute('rotation', '0 -90 0');
     scene.appendChild(holder);
 
@@ -83,8 +83,6 @@
   function start() {
     const scene = document.getElementById('museum-scene');
     const afterScene = () => {
-      /* interaction-pass-v2 creates its own A-Frame text at ~2200 ms. Replace it
-         afterwards with a canvas texture so accented glyphs render reliably. */
       window.setTimeout(() => { rebuildLabels(); bindLanguage(); }, 2300);
       window.setTimeout(rebuildLabels, 3050);
     };
