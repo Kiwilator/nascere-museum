@@ -1,5 +1,121 @@
-(() => {
-  const frame = document.getElementById('museum-frame');
+/* NASCERE V2 — scene components are registered before <a-scene> is parsed. */
+AFRAME.registerComponent('museum-movement', {
+  schema: { speed: { type: 'number', default: 1.55 } },
+  init() {
+    this.keys = new Set();
+    this.joystickX = 0;
+    this.joystickY = 0;
+    this.onKeyDown = (event) => {
+      if (/^(KeyW|KeyA|KeyS|KeyD|ArrowUp|ArrowDown|ArrowLeft|ArrowRight)$/.test(event.code)) {
+        this.keys.add(event.code);
+        event.preventDefault();
+      }
+    };
+    this.onKeyUp = (event) => this.keys.delete(event.code);
+    window.addEventListener('keydown', this.onKeyDown, { passive: false });
+    window.addEventListener('keyup', this.onKeyUp);
+    this.forward = new THREE.Vector3();
+    this.right = new THREE.Vector3();
+    this.move = new THREE.Vector3();
+  },
+  setJoystick(x, y) {
+    this.joystickX = x;
+    this.joystickY = y;
+  },
+  tick(time, delta) {
+    const camera = document.getElementById('camera');
+    if (!camera || !delta) return;
+
+    let x = this.joystickX;
+    let y = this.joystickY;
+    if (this.keys.has('KeyA') || this.keys.has('ArrowLeft')) x -= 1;
+    if (this.keys.has('KeyD') || this.keys.has('ArrowRight')) x += 1;
+    if (this.keys.has('KeyW') || this.keys.has('ArrowUp')) y -= 1;
+    if (this.keys.has('KeyS') || this.keys.has('ArrowDown')) y += 1;
+    if (Math.abs(x) < 0.01 && Math.abs(y) < 0.01) return;
+
+    camera.object3D.getWorldDirection(this.forward);
+    this.forward.y = 0;
+    if (this.forward.lengthSq() < 0.0001) return;
+    this.forward.normalize();
+    this.right.set(-this.forward.z, 0, this.forward.x);
+    this.move.set(0, 0, 0)
+      .addScaledVector(this.right, x)
+      .addScaledVector(this.forward, -y);
+    if (this.move.lengthSq() > 1) this.move.normalize();
+    this.move.multiplyScalar(this.data.speed * Math.min(delta / 1000, 0.045));
+    this.el.object3D.position.add(this.move);
+  },
+  remove() {
+    window.removeEventListener('keydown', this.onKeyDown);
+    window.removeEventListener('keyup', this.onKeyUp);
+  }
+});
+
+AFRAME.registerComponent('rig-collider', {
+  schema: {
+    wallSelector: { type: 'string', default: '.wall' },
+    radius: { type: 'number', default: 0.35 }
+  },
+  init() {
+    this.playerSphere = new THREE.Sphere(new THREE.Vector3(), this.data.radius);
+    this.prevLocal = this.el.object3D.position.clone();
+    this.world = new THREE.Vector3();
+    this.wallBoxes = [];
+    const refresh = () => this.refreshWalls();
+    const scene = this.el.sceneEl;
+    if (scene && scene.hasLoaded) requestAnimationFrame(refresh);
+    else if (scene) scene.addEventListener('loaded', () => requestAnimationFrame(refresh), { once: true });
+  },
+  refreshWalls() {
+    this.wallBoxes = [...document.querySelectorAll(this.data.wallSelector)].map((wall) => {
+      wall.object3D.updateMatrixWorld(true);
+      return new THREE.Box3().setFromObject(wall.object3D);
+    }).filter((box) => !box.isEmpty());
+  },
+  tick() {
+    if (!this.wallBoxes.length) return;
+    this.el.object3D.getWorldPosition(this.world);
+    this.playerSphere.center.copy(this.world);
+    for (const box of this.wallBoxes) {
+      if (box.intersectsSphere(this.playerSphere)) {
+        this.el.object3D.position.copy(this.prevLocal);
+        return;
+      }
+    }
+    this.prevLocal.copy(this.el.object3D.position);
+  }
+});
+
+AFRAME.registerComponent('deferred-gltf', {
+  schema: {
+    src: { type: 'string' },
+    delay: { type: 'number', default: 1000 }
+  },
+  init() {
+    const load = () => {
+      if (!this.el.isConnected || !this.data.src) return;
+      this.el.setAttribute('gltf-model', this.data.src);
+    };
+    window.setTimeout(() => {
+      if ('requestIdleCallback' in window) requestIdleCallback(load, { timeout: 1200 });
+      else load();
+    }, this.data.delay);
+  }
+});
+
+AFRAME.registerComponent('face-camera', {
+  init() { this.camera = null; this.cameraPosition = new THREE.Vector3(); },
+  tick() {
+    if (!this.camera) this.camera = document.getElementById('camera');
+    if (!this.camera) return;
+    this.camera.object3D.getWorldPosition(this.cameraPosition);
+    this.el.object3D.lookAt(this.cameraPosition);
+  }
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+  const scene = document.getElementById('museum-scene');
   const loading = document.getElementById('loading-screen');
   const loadingStatus = document.getElementById('loading-status');
   const panel = document.getElementById('exhibit-panel');
@@ -17,12 +133,13 @@
   const brandButton = document.getElementById('brand-button');
   const closeButton = document.querySelector('.panel-close');
 
-  let museumWindow = null;
-  let museumDocument = null;
-  let scene = null;
   let currentLanguage = 'es';
   let soundOn = false;
+  let soundSourceAttached = false;
   let introTimer = null;
+  let sceneReady = false;
+  let criticalLoaded = 0;
+  let revealed = false;
 
   const UI = {
     es: {
@@ -134,9 +251,7 @@
       const key = node.dataset.i18n;
       if (UI[lang][key]) node.textContent = UI[lang][key];
     });
-    if (panel.classList.contains('is-open') && panel.dataset.exhibit) {
-      fillPanel(panel.dataset.exhibit);
-    }
+    if (panel.classList.contains('is-open') && panel.dataset.exhibit) fillPanel(panel.dataset.exhibit);
   }
 
   function fillPanel(key) {
@@ -171,103 +286,23 @@
     window.setTimeout(() => { introCard.style.pointerEvents = 'none'; }, 500);
   }
 
-  function injectLegacyStyles(doc) {
-    const style = doc.createElement('style');
-    style.textContent = `
-      html,body { background:#102f39 !important; }
-      canvas { cursor: grab; }
-      canvas:active { cursor: grabbing; }
-      .a-enter-vr-button {
-        right:18px !important; bottom:18px !important;
-        width:42px !important; height:42px !important;
-        border-radius:50% !important;
-        border:1px solid rgba(232,251,251,.28) !important;
-        background-color:rgba(8,34,42,.62) !important;
-        backdrop-filter:blur(8px);
-      }
-    `;
-    doc.head.appendChild(style);
-  }
-
   function createEntity(tag, attrs = {}) {
-    const el = museumDocument.createElement(tag);
+    const el = document.createElement(tag);
     Object.entries(attrs).forEach(([name, value]) => el.setAttribute(name, value));
     return el;
   }
 
-  function tuneAtmosphere() {
-    scene.setAttribute('renderer', 'colorManagement: true; antialias: true; sortObjects: true');
-    scene.setAttribute('fog', 'type: linear; color: #9bbbc2; near: 8; far: 24');
-
-    const main = museumDocument.querySelector('#animated-light');
-    const right = museumDocument.querySelector('#animated-light-right');
-    const left = museumDocument.querySelector('#animated-light-left');
-    if (main) main.setAttribute('light', 'type: point; intensity: 0.72; color: #e7ffff; castShadow: true');
-    if (right) right.setAttribute('light', 'type: point; intensity: 0.28; color: #55b8c4; castShadow: true');
-    if (left) left.setAttribute('light', 'type: point; intensity: 0.30; color: #4a9eaa; castShadow: true');
-
-    const ambient = createEntity('a-entity', {
-      light: 'type: hemisphere; color: #f1ffff; groundColor: #163d47; intensity: 0.42'
-    });
-    scene.appendChild(ambient);
-
-    const fill = createEntity('a-entity', {
-      position: '-2 3.6 -1',
-      light: 'type: directional; color: #c8f6f7; intensity: 0.22'
-    });
-    scene.appendChild(fill);
-
-    const floor = museumDocument.querySelector('a-box[height="0.1"][width="40"]');
-    if (floor) floor.setAttribute('material', 'repeat: 18 18; color: #d4e6e7; roughness: 0.88');
-    const ceiling = museumDocument.querySelector('a-box[height="0.2"][width="40"]');
-    if (ceiling) ceiling.setAttribute('material', 'repeat: 10 10; color: #dcebed; roughness: 0.95');
-
-    const cylinders = [...museumDocument.querySelectorAll('a-entity[geometry*="segmentsRadial: 6"]')];
-    cylinders.forEach((el, index) => {
-      if (index < 4) {
-        el.setAttribute('material', 'color: #254f57; roughness: 0.48; metalness: 0.14');
-      } else if (index < 8) {
-        el.setAttribute('material', 'color: #dffcff; opacity: 0.16; transparent: true; roughness: 0.08; metalness: 0.02; side: double');
-      }
-    });
-
-    ['-2 0.055 -2', '2 0.055 -2', '-2 0.055 2', '2 0.055 2'].forEach((position) => {
-      const ring = createEntity('a-ring', {
-        position,
-        rotation: '-90 0 0',
-        'radius-inner': '0.53',
-        'radius-outer': '0.555',
-        material: 'color: #75d8de; shader: flat; opacity: 0.42; transparent: true'
-      });
-      scene.appendChild(ring);
-    });
-  }
-
-  function removeOldButtons() {
-    ['cursor-listener-button1', 'cursor-listener-button2', 'cursor-listener-button3', 'cursor-listener-button4']
-      .forEach((attribute) => {
-        museumDocument.querySelectorAll(`[${attribute}]`).forEach((el) => {
-          el.setAttribute('visible', 'false');
-          [...el.children].forEach((child) => child.setAttribute('visible', 'false'));
-        });
-      });
-  }
-
   function addHotspots() {
-    let camera = museumDocument.querySelector('#camera') || museumDocument.querySelector('[camera]');
-    if (camera && !camera.id) camera.id = 'camera';
-
     HOTSPOTS.forEach(({ key, number, position }) => {
       const marker = createEntity('a-circle', {
         class: 'nascere-hotspot',
         position,
         radius: '0.105',
-        'look-at': '#camera',
+        'face-camera': '',
         material: 'color: #e9ffff; shader: flat; opacity: 0.94; transparent: true; side: double',
         animation__appear: 'property: scale; from: 0.01 0.01 0.01; to: 1 1 1; dur: 650; easing: easeOutBack'
       });
       marker.dataset.exhibit = key;
-
       const ring = createEntity('a-ring', {
         position: '0 0 0.003',
         'radius-inner': '0.125',
@@ -281,11 +316,10 @@
         color: '#123b43',
         width: '0.48',
         position: '0 -0.018 0.006',
-        material: 'shader: flat'
+        material: 'shader: flat; side: double'
       });
       marker.appendChild(ring);
       marker.appendChild(text);
-
       marker.addEventListener('mouseenter', () => {
         marker.setAttribute('scale', '1.16 1.16 1.16');
         exhibitHint.classList.add('is-visible');
@@ -305,78 +339,91 @@
     scene.appendChild(mouseCursor);
   }
 
-  function tuneJewelleryMotion() {
-    const models = [...museumDocument.querySelectorAll('[gltf-model]')].filter((el) => {
-      const model = el.getAttribute('gltf-model') || '';
-      return /ringCoral|earringCoral/i.test(model);
-    });
-    models.forEach((el, index) => {
-      if (!el.getAttribute('animation')) {
-        el.setAttribute('animation', `property: rotation; to: 0 ${360 + (index % 2) * 15} 0; dur: ${18000 + index * 900}; loop: true; easing: linear`);
-      }
-    });
+  function revealMuseum(force = false) {
+    if (revealed || !sceneReady) return;
+    if (!force && criticalLoaded < 2) return;
+    revealed = true;
+    loadingStatus.textContent = currentLanguage === 'es' ? 'Exposición lista' : 'Exhibition ready';
+    window.setTimeout(() => loading.classList.add('is-hidden'), 220);
+    introTimer = window.setTimeout(hideIntro, 9000);
   }
 
-  function setupMuseum() {
-    if (!frame.contentWindow || !frame.contentDocument) return;
-    museumWindow = frame.contentWindow;
-    museumDocument = frame.contentDocument;
-    scene = museumDocument.querySelector('a-scene');
-    if (!scene) return;
-
-    const onReady = () => {
-      try {
-        injectLegacyStyles(museumDocument);
-        tuneAtmosphere();
-        removeOldButtons();
-        addHotspots();
-        tuneJewelleryMotion();
-        loadingStatus.textContent = currentLanguage === 'es' ? 'Exposición lista' : 'Exhibition ready';
-        window.setTimeout(() => loading.classList.add('is-hidden'), 350);
-        introTimer = window.setTimeout(hideIntro, 9000);
-      } catch (error) {
-        console.error('Nascere V2 setup error:', error);
-        loading.classList.add('is-hidden');
-      }
+  const criticalModels = [...document.querySelectorAll('.critical-model')];
+  criticalModels.forEach((model) => {
+    const markLoaded = () => {
+      if (model.dataset.ready === '1') return;
+      model.dataset.ready = '1';
+      criticalLoaded += 1;
+      loadingStatus.textContent = currentLanguage === 'es'
+        ? `Cargando piezas ${criticalLoaded}/${criticalModels.length}`
+        : `Loading pieces ${criticalLoaded}/${criticalModels.length}`;
+      revealMuseum(false);
     };
+    if (model.getObject3D('mesh')) markLoaded();
+    else model.addEventListener('model-loaded', markLoaded, { once: true });
+  });
 
-    if (scene.hasLoaded) onReady();
-    else scene.addEventListener('loaded', onReady, { once: true });
-  }
+  scene.addEventListener('loaded', () => {
+    sceneReady = true;
+    addHotspots();
+    document.querySelectorAll('.jewellery').forEach((el, index) => {
+      if (!el.hasAttribute('animation')) {
+        el.setAttribute('animation', `property: rotation; to: 0 ${360 + (index % 2) * 15} 0; dur: ${18500 + index * 800}; loop: true; easing: linear`);
+      }
+    });
+    revealMuseum(false);
+  }, { once: true });
+
+  window.setTimeout(() => revealMuseum(true), 3400);
 
   function toggleSound() {
-    if (!museumDocument) return;
-    const sound = museumDocument.querySelector('#seaSound');
+    const sound = document.getElementById('seaSound');
     if (!sound || !sound.components || !sound.components.sound) return;
     soundOn = !soundOn;
-    if (soundOn) sound.components.sound.playSound();
-    else sound.components.sound.pauseSound();
     soundToggle.setAttribute('aria-pressed', soundOn ? 'true' : 'false');
+
+    const play = () => {
+      if (soundOn && sound.components.sound) sound.components.sound.playSound();
+    };
+
+    if (soundOn) {
+      if (!soundSourceAttached) {
+        soundSourceAttached = true;
+        sound.addEventListener('sound-loaded', play, { once: true });
+        sound.setAttribute('sound', 'src', sound.dataset.audioSrc);
+        window.setTimeout(play, 600);
+      } else play();
+    } else {
+      sound.components.sound.pauseSound();
+    }
   }
 
   function resetView() {
-    if (!museumDocument) return;
-    const rig = museumDocument.querySelector('#rig');
-    const camera = museumDocument.querySelector('#camera') || museumDocument.querySelector('[camera]');
+    const rig = document.getElementById('rig');
+    const camera = document.getElementById('camera');
     if (rig) {
-      rig.setAttribute('position', '-5 0 0');
-      rig.setAttribute('rotation', '0 -90 0');
+      rig.object3D.position.set(-5, 0, 0);
+      rig.object3D.rotation.set(0, THREE.MathUtils.degToRad(-90), 0);
     }
-    const look = camera && camera.components ? camera.components['look-controls'] : null;
-    if (look) {
-      if (look.pitchObject) look.pitchObject.rotation.x = 0;
-      if (look.yawObject) look.yawObject.rotation.y = 0;
-    }
+    const look = camera?.components?.['look-controls'];
+    if (look?.pitchObject) look.pitchObject.rotation.x = 0;
+    if (look?.yawObject) look.yawObject.rotation.y = 0;
     closePanel();
   }
 
   function setupJoystick() {
     const base = document.getElementById('joystick-base');
     const nub = document.getElementById('joystick-nub');
+    const movement = document.getElementById('rig')?.components?.['museum-movement'];
     if (!base || !nub) return;
-    const state = { active: false, x: 0, y: 0, pointerId: null };
+    const state = { active: false, pointerId: null };
 
-    function updateFromEvent(event) {
+    const setInput = (x, y) => {
+      const component = document.getElementById('rig')?.components?.['museum-movement'];
+      if (component) component.setJoystick(x, y);
+    };
+
+    function update(event) {
       const rect = base.getBoundingClientRect();
       const cx = rect.left + rect.width / 2;
       const cy = rect.top + rect.height / 2;
@@ -385,57 +432,31 @@
       let dy = event.clientY - cy;
       const length = Math.hypot(dx, dy);
       if (length > max) { dx = dx / length * max; dy = dy / length * max; }
-      state.x = dx / max;
-      state.y = dy / max;
       nub.style.transform = `translate(${dx}px, ${dy}px)`;
+      setInput(dx / max, dy / max);
     }
 
     base.addEventListener('pointerdown', (event) => {
       state.active = true;
       state.pointerId = event.pointerId;
       base.setPointerCapture(event.pointerId);
-      updateFromEvent(event);
+      update(event);
       hideIntro();
     });
     base.addEventListener('pointermove', (event) => {
-      if (state.active && event.pointerId === state.pointerId) updateFromEvent(event);
+      if (state.active && event.pointerId === state.pointerId) update(event);
     });
     const stop = (event) => {
       if (state.pointerId !== null && event.pointerId !== state.pointerId) return;
-      state.active = false; state.x = 0; state.y = 0; state.pointerId = null;
+      state.active = false;
+      state.pointerId = null;
       nub.style.transform = 'translate(0,0)';
+      setInput(0, 0);
     };
     base.addEventListener('pointerup', stop);
     base.addEventListener('pointercancel', stop);
-
-    let previous = performance.now();
-    function moveLoop(now) {
-      const dt = Math.min((now - previous) / 1000, 0.04);
-      previous = now;
-      if (state.active && museumDocument && museumWindow) {
-        const rig = museumDocument.querySelector('#rig');
-        const camera = museumDocument.querySelector('#camera') || museumDocument.querySelector('[camera]');
-        if (rig && camera && museumWindow.THREE) {
-          const THREE = museumWindow.THREE;
-          const forward = new THREE.Vector3();
-          camera.object3D.getWorldDirection(forward);
-          forward.y = 0;
-          if (forward.lengthSq() > 0) forward.normalize();
-          const right = new THREE.Vector3(-forward.z, 0, forward.x);
-          const move = new THREE.Vector3()
-            .addScaledVector(right, state.x)
-            .addScaledVector(forward, -state.y);
-          if (move.lengthSq() > 1) move.normalize();
-          move.multiplyScalar(1.35 * dt);
-          rig.object3D.position.add(move);
-        }
-      }
-      requestAnimationFrame(moveLoop);
-    }
-    requestAnimationFrame(moveLoop);
   }
 
-  frame.addEventListener('load', setupMuseum);
   soundToggle.addEventListener('click', toggleSound);
   resetButton.addEventListener('click', resetView);
   brandButton.addEventListener('click', () => openPanel('project'));
@@ -443,19 +464,11 @@
   document.querySelectorAll('[data-language]').forEach((button) => {
     button.addEventListener('click', () => setLanguage(button.dataset.language));
   });
-  document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') closePanel();
-  });
+  document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closePanel(); });
   document.addEventListener('pointerdown', (event) => {
     if (!event.target.closest('#exhibit-panel') && !event.target.closest('.topbar')) hideIntro();
   }, { once: true });
 
   setupJoystick();
   setLanguage('es');
-
-  window.setTimeout(() => {
-    if (!loading.classList.contains('is-hidden')) {
-      loadingStatus.textContent = currentLanguage === 'es' ? 'El museo está tardando un poco más…' : 'The museum is taking a little longer…';
-    }
-  }, 10000);
-})();
+});

@@ -5,25 +5,111 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <meta name="theme-color" content="#102c35" />
   <title>NASCERE — Museo virtual</title>
-  <link rel="stylesheet" href="./style.css?v=2" />
+  <link rel="preconnect" href="https://aframe.io" crossorigin>
+  <link rel="preconnect" href="https://cdn.glitch.global" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css?v=3" />
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="./script.js?v=3"></script>
 </head>
 <body>
   <div id="loading-screen" aria-live="polite">
-    <div class="loading-mark" aria-hidden="true">
-      <span></span><span></span><span></span>
-    </div>
+    <div class="loading-mark" aria-hidden="true"><span></span><span></span><span></span></div>
     <p class="loading-kicker">MUSEO VIRTUAL</p>
     <h1>NASCERE</h1>
     <p id="loading-status">Preparando la exposición</p>
     <div class="loading-track"><i></i></div>
   </div>
 
-  <iframe
-    id="museum-frame"
-    title="Museo virtual Nascere"
-    src="./legacy.html"
-    allow="autoplay; fullscreen; xr-spatial-tracking"
-  ></iframe>
+  <a-scene
+    id="museum-scene"
+    renderer="colorManagement: true; antialias: true; sortObjects: true; precision: mediump"
+    fog="type: linear; color: #9bbbc2; near: 8; far: 24"
+    background="color: #17363f"
+    vr-mode-ui="enabled: true"
+  >
+    <a-sky src="https://cdn.glitch.global/6129616c-d685-405f-9e5a-3869316b8be0/entorno_universidad0001.jpg?v=1655202508267"></a-sky>
+
+    <a-entity id="seaSound" sound="autoplay: false; loop: true; volume: 0.5" data-audio-src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/sea_theme.mp3?v=1726130217666"></a-entity>
+
+    <a-entity id="animated-light" light="type: point; intensity: 0.72; color: #e7ffff; castShadow: true" position="0 3 0"></a-entity>
+    <a-entity id="animated-light-right" light="type: point; intensity: 0.28; color: #55b8c4; castShadow: true" position="0 3 10"></a-entity>
+    <a-entity id="animated-light-left" light="type: point; intensity: 0.30; color: #4a9eaa; castShadow: true" position="0 0.5 -10"></a-entity>
+    <a-entity light="type: hemisphere; color: #f1ffff; groundColor: #163d47; intensity: 0.42"></a-entity>
+    <a-entity light="type: directional; color: #c8f6f7; intensity: 0.22" position="-2 3.6 -1"></a-entity>
+
+    <!-- Arquitectura: visible inmediatamente, sin esperar a los GLB decorativos -->
+    <a-box src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/553fe1ce2125e3ec2dd12904f15ab910.jpg?v=1725359321181" depth="40" height="0.1" width="40" position="0 0 0" material="repeat: 18 18; color: #d4e6e7; roughness: 0.88" shadow="receive: true"></a-box>
+    <a-box class="wall" src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511" depth="40" height="5" width="0.5" position="0 1.5 -6" rotation="0 90 0" material="repeat: 10 1" shadow="receive: true"></a-box>
+    <a-box class="wall" src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511" depth="40" height="5" width="0.5" position="6 1.5 0" material="repeat: 10 1" shadow="receive: true"></a-box>
+    <a-box class="wall" src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511" depth="40" height="5" width="0.5" position="0 1.5 6" rotation="0 90 0" material="repeat: 10 1" shadow="receive: true"></a-box>
+    <a-box class="wall" src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/ab41fbcb999101f44ec24634cdf4625e.jpg?v=1725359473511" depth="40" height="5" width="0.5" position="-6 1.5 0" material="repeat: 10 1" shadow="receive: true"></a-box>
+    <a-box src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/553fe1ce2125e3ec2dd12904f15ab910.jpg?v=1725359321181" depth="40" height="0.2" width="40" position="0 4 0" rotation="180 0 0" material="repeat: 10 10; color: #dcebed; roughness: 0.95"></a-box>
+
+    <!-- Peanas y vitrinas -->
+    <a-entity class="wall" geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6" material="color: #254f57; roughness: 0.48; metalness: 0.14" position="-2 0.5 -2"></a-entity>
+    <a-entity class="wall" geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6" material="color: #254f57; roughness: 0.48; metalness: 0.14" position="2 0.5 -2"></a-entity>
+    <a-entity class="wall" geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6" material="color: #254f57; roughness: 0.48; metalness: 0.14" position="-2 0.5 2"></a-entity>
+    <a-entity class="wall" geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6" material="color: #254f57; roughness: 0.48; metalness: 0.14" position="2 0.5 2"></a-entity>
+
+    <a-entity geometry="primitive: cylinder; radius: 0.45; height: 5; segmentsRadial: 6" material="color: #dffcff; opacity: 0.16; transparent: true; roughness: 0.08; side: double" position="-2 1.25 -2"></a-entity>
+    <a-entity geometry="primitive: cylinder; radius: 0.45; height: 5; segmentsRadial: 6" material="color: #dffcff; opacity: 0.16; transparent: true; roughness: 0.08; side: double" position="2 1.25 -2"></a-entity>
+    <a-entity geometry="primitive: cylinder; radius: 0.45; height: 5; segmentsRadial: 6" material="color: #dffcff; opacity: 0.16; transparent: true; roughness: 0.08; side: double" position="-2 1.25 2"></a-entity>
+    <a-entity geometry="primitive: cylinder; radius: 0.45; height: 5; segmentsRadial: 6" material="color: #dffcff; opacity: 0.16; transparent: true; roughness: 0.08; side: double" position="2 1.25 2"></a-entity>
+
+    <a-ring position="-2 0.055 -2" rotation="-90 0 0" radius-inner="0.53" radius-outer="0.555" material="color: #75d8de; shader: flat; opacity: 0.42; transparent: true"></a-ring>
+    <a-ring position="2 0.055 -2" rotation="-90 0 0" radius-inner="0.53" radius-outer="0.555" material="color: #75d8de; shader: flat; opacity: 0.42; transparent: true"></a-ring>
+    <a-ring position="-2 0.055 2" rotation="-90 0 0" radius-inner="0.53" radius-outer="0.555" material="color: #75d8de; shader: flat; opacity: 0.42; transparent: true"></a-ring>
+    <a-ring position="2 0.055 2" rotation="-90 0 0" radius-inner="0.53" radius-outer="0.555" material="color: #75d8de; shader: flat; opacity: 0.42; transparent: true"></a-ring>
+
+    <!-- Gráfica. Se sirve desde el propio repositorio -->
+    <a-box src="./assets/_388d7e97-9cb8-40b3-9130-14ad9acfd6f6.jpg" depth="5" height="5" width="0.45" position="-3 1.5 -5.95" rotation="0 90 0"></a-box>
+    <a-box src="./assets/_0f20b462-f23c-42f5-811b-485aaca6b5c8.jpg" depth="5" height="5" width="0.45" position="3 1.5 -5.95" rotation="0 90 0"></a-box>
+    <a-box src="./assets/_388d7e97-9cb8-40b3-9130-14ad9acfd6f6.jpg" depth="5" height="5" width="0.45" position="-3 1.5 5.95" rotation="0 90 0"></a-box>
+    <a-box src="./assets/_0f20b462-f23c-42f5-811b-485aaca6b5c8.jpg" depth="5" height="5" width="0.45" position="3 1.5 5.95" rotation="0 90 0"></a-box>
+    <a-box src="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/OIG2.jpg?v=1725360610392" depth="2" height="1.56" width="0.2" position="-5.8 1.5 -3.3"></a-box>
+    <a-box src="./assets/_b54debe5-266c-4fb0-8baa-5dfe39c80cb8.jpg" depth="2" height="1.56" width="0.2" position="-5.8 1.5 3"></a-box>
+
+    <a-box class="wall" src="https://raw.githubusercontent.com/oluisjuan/LongCovid-Pilot/6cb8541bd70d241880310ad02f84dee1ab6ba867/material/darktexture.jpg" depth="10" height="1" width="0.5" position="4 0.5 0" material="repeat: 10 1"></a-box>
+
+    <!-- Piezas principales: prioridad de carga -->
+    <a-entity class="critical-model jewellery" gltf-model="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/pendiente_coral_nascere1.glb?v=1726913537738" scale="0.008 0.008 0.008" position="0.7 1.33 -1.7" animation="property: rotation; to: 20 20 20; loop: true; dur: 7000; dir: alternate; easing: easeInOutSine"></a-entity>
+    <a-entity class="critical-model jewellery" gltf-model="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/pendiente_coral_nascere2.glb?v=1726913544885" scale="0.006 0.006 0.006" position="-1.5 1.5 -0.85" animation="property: rotation; to: 10 10 10; loop: true; dur: 7500; dir: alternate; easing: easeInOutSine"></a-entity>
+    <a-entity class="critical-model jewellery" gltf-model="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/anillo_coral_nascere1.glb?v=1726913476758" scale="0.01 0.01 0.01" position="-2 1.5 2.5" rotation="20 20 20" animation="property: rotation; to: 0 360 0; loop: true; dur: 18000; easing: linear"></a-entity>
+    <a-entity class="critical-model jewellery" gltf-model="https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/anillo_coral_nascere2.glb?v=1726913672249" scale="0.01 0.01 0.01" position="2 1.5 2.25" rotation="90 90 90" animation="property: rotation; to: 0 360 0; loop: true; dur: 19500; easing: linear"></a-entity>
+
+    <!-- Podios: un mismo GLB local reutilizado cuatro veces -->
+    <a-entity gltf-model="./assets/display_podium.glb" scale="0.1 0.1 0.1" position="-2 0.95 2"></a-entity>
+    <a-entity gltf-model="./assets/display_podium.glb" scale="0.1 0.1 0.1" position="2 0.95 2"></a-entity>
+    <a-entity gltf-model="./assets/display_podium.glb" scale="0.1 0.1 0.1" position="2 0.95 -2"></a-entity>
+    <a-entity gltf-model="./assets/display_podium.glb" scale="0.1 0.1 0.1" position="-2 0.95 -2"></a-entity>
+
+    <!-- Piezas laterales y mobiliario: carga escalonada cuando la visita ya puede empezar -->
+    <a-entity class="jewellery" deferred-gltf="src: https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/pendiente_coral_nascere3.glb?v=1726913555722; delay: 450" scale="0.006 0.006 0.006" position="4.75 1.23 -0.5" rotation="0 90 0"></a-entity>
+    <a-entity class="jewellery" deferred-gltf="src: https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/pendiente_coral_nascere4.glb?v=1726913561175; delay: 650" scale="0.0045 0.0045 0.0045" position="5.36 1.2 -4" rotation="0 90 0"></a-entity>
+    <a-entity class="jewellery" deferred-gltf="src: https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/anillo_coral_nascere3.glb?v=1726913508106; delay: 850" scale="0.007 0.007 0.007" position="3.65 1.2 -0.5" rotation="0 90 0"></a-entity>
+    <a-entity class="jewellery" deferred-gltf="src: https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/anillo_coral_nascere4.glb?v=1726913519350; delay: 1050" scale="0.007 0.007 0.007" position="3.42 1.2 -2.5" rotation="0 90 0"></a-entity>
+
+    <a-entity deferred-gltf="src: ./assets/parametric_bench_002.glb; delay: 1200" scale="0.003 0.003 0.005" position="0.3 3.9 0" rotation="20 90 180"></a-entity>
+    <a-entity deferred-gltf="src: ./assets/modern_door(1).glb; delay: 1450" scale="0.4 0.24 0.24" position="-5.68 0 0"></a-entity>
+    <a-entity deferred-gltf="src: ./assets/ceiling_light.glb; delay: 1700" scale="0.5 0.5 0.9" position="-0.1 3.86 0.2"></a-entity>
+    <a-entity deferred-gltf="src: ./assets/desktop_computer.glb; delay: 1950" scale="0.7 0.7 0.7" position="4 1.22 3" rotation="0 90 0"></a-entity>
+    <a-entity deferred-gltf="src: ./assets/desktop_computer.glb; delay: 2150" scale="0.7 0.7 0.7" position="4 1.22 1" rotation="0 90 0"></a-entity>
+    <a-entity deferred-gltf="src: ./assets/display_case_maya.glb; delay: 2350" scale="6 6 50" position="4 0.8 -2.3"></a-entity>
+    <a-entity deferred-gltf="src: ./assets/bendy_bench_game_ready.glb; delay: 2700" position="0 0 0"></a-entity>
+    <a-entity deferred-gltf="src: ./assets/tablet_folder.glb; delay: 3050" scale="0.01 0.01 0.01" position="4 1 2.4" rotation="0 -20 0"></a-entity>
+    <a-entity deferred-gltf="src: ./assets/office_chair_modern.glb; delay: 3400" position="4.8 0 3" rotation="0 -60 0"></a-entity>
+    <a-entity deferred-gltf="src: ./assets/office_chair_modern.glb; delay: 3600" position="4.8 0 1" rotation="0 -94 0"></a-entity>
+    <a-entity deferred-gltf="src: ./assets/sea_lion_statue_marina_san_francisco_1.glb; delay: 4050" position="-4.8 -0.3 5" rotation="0 40 0"></a-entity>
+    <a-entity deferred-gltf="src: ./assets/abstract_trashcan.glb; delay: 4400" scale="0.8 0.8 0.8" position="0.2 0.37 -0.8" rotation="0 40 0"></a-entity>
+    <a-entity deferred-gltf="src: https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/sello_blanco.glb?v=1726126781433; delay: 4750" scale="0.05 0.05 0.05" position="5.71 2.1 0" rotation="90 -90 0"></a-entity>
+
+    <a-entity id="rig" position="-5 0 0" rotation="0 -90 0" museum-movement="speed: 1.55" rig-collider="wallSelector: .wall; radius: 0.35">
+      <a-entity id="camera" camera="near: 0.05" position="0 1.6 0" look-controls="pointerLockEnabled: false; magicWindowTrackingEnabled: false"></a-entity>
+    </a-entity>
+  </a-scene>
 
   <div id="museum-ui">
     <header class="topbar">
@@ -31,16 +117,11 @@
         <span class="brand-name">NASCERE</span>
         <span class="brand-subtitle" data-i18n="museum">MUSEO VIRTUAL</span>
       </button>
-
       <div class="top-actions">
         <div class="language-switcher" role="group" aria-label="Idioma">
-          <button type="button" data-language="es" aria-pressed="true">ES</button>
-          <span>/</span>
-          <button type="button" data-language="en" aria-pressed="false">EN</button>
+          <button type="button" data-language="es" aria-pressed="true">ES</button><span>/</span><button type="button" data-language="en" aria-pressed="false">EN</button>
         </div>
-        <button id="sound-toggle" class="utility-button" type="button" aria-pressed="false">
-          <span class="status-dot"></span><span data-i18n="sound">SONIDO</span>
-        </button>
+        <button id="sound-toggle" class="utility-button" type="button" aria-pressed="false"><span class="status-dot"></span><span data-i18n="sound">SONIDO</span></button>
         <button id="reset-view" class="utility-button" type="button" data-i18n="reset">INICIO</button>
       </div>
     </header>
@@ -56,34 +137,16 @@
       </div>
     </div>
 
-    <div id="exhibit-hint" aria-hidden="true">
-      <span class="hint-pulse"></span>
-      <span data-i18n="selectPoint">Selecciona un punto</span>
-    </div>
+    <div id="exhibit-hint" aria-hidden="true"><span class="hint-pulse"></span><span data-i18n="selectPoint">Selecciona un punto</span></div>
 
     <aside id="exhibit-panel" role="dialog" aria-modal="false" aria-hidden="true">
       <button class="panel-close" type="button" aria-label="Cerrar">×</button>
-      <div class="panel-header">
-        <span id="panel-index">01</span>
-        <span id="panel-category">NASCERE</span>
-      </div>
-      <div class="panel-content">
-        <p id="panel-eyebrow"></p>
-        <h2 id="panel-title"></h2>
-        <p id="panel-lead"></p>
-        <div id="panel-body"></div>
-      </div>
-      <div class="panel-footer">
-        <span data-i18n="explore">EXPLORA LA EXPOSICIÓN</span>
-        <span id="panel-progress">01 / 04</span>
-      </div>
+      <div class="panel-header"><span id="panel-index">01</span><span id="panel-category">NASCERE</span></div>
+      <div class="panel-content"><p id="panel-eyebrow"></p><h2 id="panel-title"></h2><p id="panel-lead"></p><div id="panel-body"></div></div>
+      <div class="panel-footer"><span data-i18n="explore">EXPLORA LA EXPOSICIÓN</span><span id="panel-progress">01 / 04</span></div>
     </aside>
 
-    <div id="mobile-controls" aria-label="Control de movimiento">
-      <div id="joystick-base"><div id="joystick-nub"></div></div>
-    </div>
+    <div id="mobile-controls" aria-label="Control de movimiento"><div id="joystick-base"><div id="joystick-nub"></div></div></div>
   </div>
-
-  <script src="./script.js?v=2"></script>
 </body>
 </html>

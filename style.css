@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Manrope:wght@400;500;600&display=swap');
-
 :root {
   --ink: #08232c;
   --deep: #102f39;
@@ -20,15 +18,23 @@ body {
   color: var(--white);
 }
 button { font: inherit; }
-
-#museum-frame {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  background: #17363f;
+a-scene {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
   z-index: 0;
+}
+canvas { cursor: grab; }
+canvas:active { cursor: grabbing; }
+.a-enter-vr-button {
+  right: 18px !important;
+  bottom: 18px !important;
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 50% !important;
+  border: 1px solid rgba(232,251,251,.28) !important;
+  background-color: rgba(8,34,42,.62) !important;
 }
 
 #museum-ui {
@@ -377,7 +383,7 @@ button { font: inherit; }
     radial-gradient(circle at 50% 38%, rgba(94,195,202,.2), transparent 32%),
     linear-gradient(155deg, #082731 0%, #123d48 52%, #0b2d36 100%);
   color: var(--white);
-  transition: opacity .7s ease, visibility 0s linear .7s;
+  transition: opacity .55s ease, visibility 0s linear .55s;
 }
 #loading-screen::before,
 #loading-screen::after {
@@ -442,7 +448,7 @@ button { font: inherit; }
 @keyframes dot { 0%,100% { background: transparent; } 50% { background: var(--sea); } }
 
 @media (max-width: 720px) {
-  .topbar { padding: 16px 16px; min-height: 68px; }
+  .topbar { padding: 16px; min-height: 68px; }
   .brand-name { font-size: 17px; }
   .brand-subtitle { font-size: 8px; }
   .utility-button { padding: 0 10px; }
