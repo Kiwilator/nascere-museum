@@ -1,8 +1,8 @@
-/* NASCERE V2 hotfix: movement, display placement and stand controls. */
+/* NASCERE V2 — preserve the original museum layout and modernise interaction only. */
 (() => {
-  /* ------------------------------------------------------------------
+  /* ---------------------------------------------------------------
      1. CAMERA-RELATIVE MOVEMENT
-     ------------------------------------------------------------------ */
+     --------------------------------------------------------------- */
   const movement = AFRAME.components['museum-movement'];
   if (movement?.Component?.prototype) {
     movement.Component.prototype.tick = function (time, delta) {
@@ -33,235 +33,272 @@
     };
   }
 
-  /* ------------------------------------------------------------------
-     2. LOCAL JEWELLERY FALLBACKS
-     ------------------------------------------------------------------ */
-  const localJewellery = {
-    'pendiente_coral_nascere1.glb': './assets/pendiente_coral.glb',
-    'pendiente_coral_nascere2.glb': './assets/pendiente_coral1.glb',
-    'pendiente_coral_nascere3.glb': './assets/pendiente_coral2.glb',
-    'pendiente_coral_nascere4.glb': './assets/pendiente_coral.glb',
-    'anillo_coral_nascere1.glb': './assets/anillo_coral1.glb',
-    'anillo_coral_nascere2.glb': './assets/anillo_coral1.glb',
-    'anillo_coral_nascere3.glb': './assets/anillo_coral1.glb',
-    'anillo_coral_nascere4.glb': './assets/anillo_coral1.glb'
-  };
-
-  function localSource(value) {
-    if (!value) return null;
-    for (const [remoteName, localPath] of Object.entries(localJewellery)) {
-      if (value.includes(remoteName)) return localPath;
+  /* ---------------------------------------------------------------
+     2. ORIGINAL NASCERE JEWELLERY LAYOUT
+     These are the exact models/transforms used by the original museum.
+     They deliberately do NOT sit on the stand axis because several GLBs
+     have off-centre internal origins.
+     --------------------------------------------------------------- */
+  const CDN = 'https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/';
+  const ORIGINAL_JEWELLERY = [
+    {
+      src: `${CDN}pendiente_coral_nascere1.glb?v=1726913537738`,
+      position: '0.7 1.33 -1.7', scale: '0.008 0.008 0.008', rotation: '0 0 0',
+      animation: 'property: rotation; to: 20 20 20; loop: true; dur: 5000; dir: alternate; easing: linear'
+    },
+    {
+      src: `${CDN}pendiente_coral_nascere2.glb?v=1726913544885`,
+      position: '-1.5 1.5 -0.85', scale: '0.006 0.006 0.006', rotation: '0 0 0',
+      animation: 'property: rotation; to: 10 10 10; loop: true; dir: alternate; dur: 5000; easing: linear'
+    },
+    {
+      src: `${CDN}anillo_coral_nascere1.glb?v=1726913476758`,
+      position: '-2 1.5 2.5', scale: '0.01 0.01 0.01', rotation: '20 20 20',
+      animation: 'property: rotation; to: 0 0 360; loop: true; dir: alternate; dur: 15000; easing: linear'
+    },
+    {
+      src: `${CDN}anillo_coral_nascere2.glb?v=1726913672249`,
+      position: '2 1.5 2.25', scale: '0.01 0.01 0.01', rotation: '90 90 90',
+      animation: 'property: rotation; to: 0 0 360; loop: true; dir: alternate; dur: 15000; easing: linear'
+    },
+    {
+      src: `${CDN}pendiente_coral_nascere3.glb?v=1726913555722`,
+      position: '4.75 1.23 -0.5', scale: '0.006 0.006 0.006', rotation: '0 90 0'
+    },
+    {
+      src: `${CDN}pendiente_coral_nascere4.glb?v=1726913561175`,
+      position: '5.36 1.2 -4', scale: '0.0045 0.0045 0.0045', rotation: '0 90 0'
+    },
+    {
+      src: `${CDN}anillo_coral_nascere3.glb?v=1726913508106`,
+      position: '3.65 1.2 -0.5', scale: '0.007 0.007 0.007', rotation: '0 90 0'
+    },
+    {
+      src: `${CDN}anillo_coral_nascere4.glb?v=1726913519350`,
+      position: '3.42 1.2 -2.5', scale: '0.007 0.007 0.007', rotation: '0 90 0'
     }
-    return null;
-  }
-
-  function repairEntity(el) {
-    if (!el?.getAttribute) return;
-    const gltf = el.getAttribute('gltf-model');
-    if (typeof gltf === 'string') {
-      const local = localSource(gltf);
-      if (local && gltf !== local) el.setAttribute('gltf-model', local);
-    }
-    const deferred = el.getAttribute('deferred-gltf');
-    if (deferred) {
-      const raw = typeof deferred === 'string'
-        ? deferred
-        : `src: ${deferred.src || ''}; delay: ${deferred.delay || 0}`;
-      const local = localSource(raw);
-      if (local) {
-        const delayMatch = raw.match(/delay\s*:\s*(\d+)/i);
-        const delay = delayMatch ? Number(delayMatch[1]) : 0;
-        el.setAttribute('deferred-gltf', `src: ${local}; delay: ${Math.min(delay, 250)}`);
-      }
-    }
-  }
-
-  function repairTree(root) {
-    if (root.nodeType === 1) repairEntity(root);
-    root.querySelectorAll?.('[gltf-model], [deferred-gltf]').forEach(repairEntity);
-  }
-
-  const observer = new MutationObserver((records) => {
-    records.forEach((record) => record.addedNodes.forEach(repairTree));
-  });
-  observer.observe(document.documentElement, { childList: true, subtree: true });
-
-  /* ------------------------------------------------------------------
-     3. JEWELLERY PLACEMENT
-     Four main pieces sit inside the four central glass tubes.
-     Four secondary pieces sit inside the transparent side display case.
-     ------------------------------------------------------------------ */
-  function setTransform(el, position, scale, rotation) {
-    if (!el) return;
-    el.setAttribute('position', position);
-    if (scale) el.setAttribute('scale', scale);
-    if (rotation) el.setAttribute('rotation', rotation);
-  }
-
-  function arrangeJewellery() {
-    const central = [...document.querySelectorAll('.critical-model.jewellery')];
-    const side = [...document.querySelectorAll('.jewellery:not(.critical-model)')];
-
-    /* Centre each piece on the actual stand/tube axis. */
-    const centralLayout = [
-      { position: '-2 1.52 -2', scale: '0.0045 0.0045 0.0045', rotation: '0 15 0' },
-      { position: '2 1.52 -2',  scale: '0.0042 0.0042 0.0042', rotation: '0 -20 0' },
-      { position: '-2 1.48 2', scale: '0.0085 0.0085 0.0085', rotation: '20 20 20' },
-      { position: '2 1.48 2',  scale: '0.0085 0.0085 0.0085', rotation: '90 20 90' }
-    ];
-    centralLayout.forEach((layout, index) => {
-      setTransform(central[index], layout.position, layout.scale, layout.rotation);
-    });
-
-    /* Transparent side vitrine: pieces are INSIDE it, not hovering above it. */
-    const sideLayout = [
-      { position: '3.94 0.78 3.25',  scale: '0.0027 0.0027 0.0027', rotation: '0 90 0' },
-      { position: '3.94 0.78 1.15',  scale: '0.0025 0.0025 0.0025', rotation: '0 90 0' },
-      { position: '3.94 0.78 -1.15', scale: '0.0055 0.0055 0.0055', rotation: '0 90 0' },
-      { position: '3.94 0.78 -3.25', scale: '0.0055 0.0055 0.0055', rotation: '0 90 0' }
-    ];
-    sideLayout.forEach((layout, index) => {
-      setTransform(side[index], layout.position, layout.scale, layout.rotation);
-    });
-  }
-
-  function makeSideDisplayTransparent() {
-    const shelf = document.querySelector('a-box.wall[position="4 0.5 0"]');
-    if (!shelf) return;
-
-    /* Turn the old black counter into a glass display case. */
-    shelf.removeAttribute('src');
-    shelf.setAttribute('position', '4 0.82 0');
-    shelf.setAttribute('width', '0.78');
-    shelf.setAttribute('height', '1.42');
-    shelf.setAttribute('depth', '9.4');
-    shelf.setAttribute(
-      'material',
-      'color: #dffcff; opacity: 0.14; transparent: true; roughness: 0.06; metalness: 0.02; side: double; depthWrite: false'
-    );
-
-    const scene = document.getElementById('museum-scene');
-    if (!scene || document.getElementById('side-glass-shelf-1')) return;
-
-    /* Two very subtle glass shelves make it read as a vitrine rather than a box. */
-    [0.48, 1.12].forEach((y, index) => {
-      const plate = document.createElement('a-box');
-      plate.id = `side-glass-shelf-${index + 1}`;
-      plate.setAttribute('position', `4 ${y} 0`);
-      plate.setAttribute('width', '0.72');
-      plate.setAttribute('height', '0.025');
-      plate.setAttribute('depth', '9.1');
-      plate.setAttribute(
-        'material',
-        'color: #eaffff; opacity: 0.28; transparent: true; roughness: 0.05; side: double; depthWrite: false'
-      );
-      scene.appendChild(plate);
-    });
-  }
-
-  /* ------------------------------------------------------------------
-     4. PHYSICAL INFO BUTTONS ON THE STAND BASES
-     Existing hotspot elements keep their original click listeners, but
-     are moved off the glass and rebuilt as crisp physical buttons.
-     ------------------------------------------------------------------ */
-  const buttonLayout = [
-    { position: '1.48 0.68 2', rotation: '0 -90 0', number: '01' },
-    { position: '1.48 0.68 -2', rotation: '0 -90 0', number: '02' },
-    { position: '-2.52 0.68 2', rotation: '0 -90 0', number: '03' },
-    { position: '-2.52 0.68 -2', rotation: '0 -90 0', number: '04' }
   ];
 
-  function makeNumberCanvas(number, index) {
-    const id = `nascere-button-${index + 1}`;
-    let canvas = document.getElementById(id);
-    if (canvas) return canvas;
-
-    canvas = document.createElement('canvas');
-    canvas.id = id;
-    canvas.width = 512;
-    canvas.height = 512;
-    canvas.style.display = 'none';
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, 512, 512);
-    ctx.fillStyle = '#72d8de';
-    ctx.fillRect(0, 0, 512, 512);
-    ctx.strokeStyle = '#eaffff';
-    ctx.lineWidth = 18;
-    ctx.strokeRect(18, 18, 476, 476);
-    ctx.fillStyle = '#0b333b';
-    ctx.font = '600 190px Arial, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(number, 256, 270);
-    document.body.appendChild(canvas);
-    return canvas;
+  function restoreOriginalJewellery() {
+    const jewellery = [...document.querySelectorAll('.jewellery')];
+    ORIGINAL_JEWELLERY.forEach((layout, index) => {
+      const el = jewellery[index];
+      if (!el) return;
+      el.removeAttribute('deferred-gltf');
+      el.setAttribute('gltf-model', layout.src);
+      el.setAttribute('position', layout.position);
+      el.setAttribute('scale', layout.scale);
+      el.setAttribute('rotation', layout.rotation);
+      if (layout.animation) el.setAttribute('animation', layout.animation);
+      else el.removeAttribute('animation');
+    });
   }
 
-  function rebuildStandButtons() {
-    const hotspots = [...document.querySelectorAll('.nascere-hotspot')];
-    if (hotspots.length < 4) return false;
+  function restoreOriginalSideDisplay() {
+    /* The long dark plinth stays exactly as in the original museum. */
+    const plinth = [...document.querySelectorAll('a-box.wall')].find((el) => {
+      const p = el.getAttribute('position');
+      return p && Math.abs(p.x - 4) < 0.01 && Math.abs(p.y - 0.5) < 0.01 && Math.abs(p.z) < 0.01;
+    });
+    if (plinth) {
+      plinth.setAttribute('position', '4 0.5 0');
+      plinth.setAttribute('width', '0.5');
+      plinth.setAttribute('height', '1');
+      plinth.setAttribute('depth', '10');
+      plinth.setAttribute('src', 'https://raw.githubusercontent.com/oluisjuan/LongCovid-Pilot/6cb8541bd70d241880310ad02f84dee1ab6ba867/material/darktexture.jpg');
+      plinth.setAttribute('material', 'repeat: 10 1');
+    }
 
-    hotspots.slice(0, 4).forEach((marker, index) => {
-      const layout = buttonLayout[index];
+    /* Use the actual original display-case GLB rather than rebuilding it. */
+    const display = [...document.querySelectorAll('[deferred-gltf], [gltf-model]')].find((el) => {
+      const a = String(el.getAttribute('gltf-model') || '');
+      const b = String(el.getAttribute('deferred-gltf') || '');
+      return a.includes('display_case_maya.glb') || b.includes('display_case_maya.glb');
+    });
+    if (display) {
+      display.removeAttribute('deferred-gltf');
+      display.setAttribute('gltf-model', './assets/display_case_maya.glb');
+      display.setAttribute('scale', '6 6 50');
+      display.setAttribute('position', '4 0.8 -2.3');
+      display.setAttribute('rotation', '0 0 0');
+    }
+
+    document.querySelectorAll('[id^="side-glass-shelf-"]').forEach((el) => el.remove());
+  }
+
+  /* ---------------------------------------------------------------
+     3. CRISP PHYSICAL BUTTONS — NO SQUARE TEXTURE
+     All four face the entrance in the same direction.
+     --------------------------------------------------------------- */
+  const STANDS = [
+    { key: 'project',  number: '01', x:  2, z:  2 },
+    { key: 'material', number: '02', x:  2, z: -2 },
+    { key: 'circular', number: '03', x: -2, z:  2 },
+    { key: 'ocean',    number: '04', x: -2, z: -2 }
+  ];
+
+  function rebuildStandButtons() {
+    const markers = [...document.querySelectorAll('.nascere-hotspot')]
+      .filter((el) => !el.classList.contains('nascere-stand-hitbox'))
+      .slice(0, 4);
+    if (markers.length < 4) return false;
+
+    markers.forEach((marker, index) => {
+      const stand = STANDS[index];
       marker.removeAttribute('face-camera');
       marker.removeAttribute('animation__appear');
-      marker.setAttribute('position', layout.position);
-      marker.setAttribute('rotation', layout.rotation);
-      marker.setAttribute('radius', '0.115');
+      marker.setAttribute('position', `${stand.x - 0.54} 0.72 ${stand.z}`);
+      marker.setAttribute('rotation', '0 -90 0');
+      marker.setAttribute('radius', '0.17');
       marker.setAttribute('scale', '1 1 1');
+      marker.setAttribute('material', 'color: #ffffff; opacity: 0.001; transparent: true; depthWrite: false; side: double');
 
       while (marker.firstChild) marker.removeChild(marker.firstChild);
-      const canvas = makeNumberCanvas(layout.number, index);
-      marker.setAttribute(
-        'material',
-        `src: #${canvas.id}; shader: flat; side: double; transparent: false; alphaTest: 0.01`
-      );
 
       const body = document.createElement('a-cylinder');
-      body.setAttribute('radius', '0.13');
+      body.setAttribute('radius', '0.145');
       body.setAttribute('height', '0.055');
       body.setAttribute('rotation', '90 0 0');
-      body.setAttribute('position', '0 0 -0.035');
-      body.setAttribute('material', 'color: #173f48; roughness: 0.38; metalness: 0.35');
+      body.setAttribute('position', '0 0 0.018');
+      body.setAttribute('material', 'color: #163b44; roughness: 0.34; metalness: 0.28');
       marker.appendChild(body);
 
-      /* Keep hover subtle and attached to the base. */
-      marker.addEventListener('mouseenter', () => marker.setAttribute('scale', '1.08 1.08 1.08'));
-      marker.addEventListener('mouseleave', () => marker.setAttribute('scale', '1 1 1'));
+      const face = document.createElement('a-circle');
+      face.setAttribute('radius', '0.122');
+      face.setAttribute('position', '0 0 0.051');
+      face.setAttribute('material', 'color: #8de3e6; shader: flat; side: double');
+      marker.appendChild(face);
+
+      const ring = document.createElement('a-ring');
+      ring.setAttribute('radius-inner', '0.123');
+      ring.setAttribute('radius-outer', '0.137');
+      ring.setAttribute('position', '0 0 0.053');
+      ring.setAttribute('material', 'color: #eaffff; shader: flat; side: double');
+      marker.appendChild(ring);
+
+      const label = document.createElement('a-text');
+      label.setAttribute('value', stand.number);
+      label.setAttribute('align', 'center');
+      label.setAttribute('anchor', 'center');
+      label.setAttribute('baseline', 'center');
+      label.setAttribute('width', '0.48');
+      label.setAttribute('color', '#0a3038');
+      label.setAttribute('position', '0 -0.012 0.057');
+      label.setAttribute('material', 'shader: flat; side: double');
+      marker.appendChild(label);
     });
     return true;
   }
 
-  document.addEventListener('DOMContentLoaded', () => {
-    repairTree(document);
-    makeSideDisplayTransparent();
-    arrangeJewellery();
+  /* ---------------------------------------------------------------
+     4. WHOLE STAND CLICKABLE + SUBTLE HOVER FEEDBACK
+     --------------------------------------------------------------- */
+  const baseScales = new WeakMap();
+  const podiumColours = new WeakMap();
 
-    document.querySelectorAll('.jewellery').forEach((el) => {
-      el.addEventListener('model-error', () => {
-        const current = el.getAttribute('gltf-model') || '';
-        const deferred = el.getAttribute('deferred-gltf');
-        const raw = typeof deferred === 'string' ? deferred : deferred?.src || '';
-        const local = localSource(current || raw);
-        if (local) el.setAttribute('gltf-model', local);
+  function findAt(selector, x, y, z, tolerance = 0.08) {
+    return [...document.querySelectorAll(selector)].find((el) => {
+      const p = el.getAttribute('position');
+      return p && Math.abs(p.x - x) < tolerance && Math.abs(p.y - y) < tolerance && Math.abs(p.z - z) < tolerance;
+    });
+  }
+
+  function scaleElement(el, factor) {
+    if (!el?.object3D) return;
+    if (!baseScales.has(el)) baseScales.set(el, el.object3D.scale.clone());
+    const base = baseScales.get(el);
+    el.object3D.scale.copy(base).multiplyScalar(factor);
+  }
+
+  function tintPodium(el, hover) {
+    const mesh = el?.getObject3D('mesh');
+    if (!mesh) return;
+    mesh.traverse((obj) => {
+      if (!obj.isMesh || !obj.material) return;
+      const materials = Array.isArray(obj.material) ? obj.material : [obj.material];
+      materials.forEach((mat) => {
+        if (!mat.color) return;
+        if (!podiumColours.has(mat)) podiumColours.set(mat, mat.color.clone());
+        const original = podiumColours.get(mat);
+        if (hover) mat.color.copy(original).lerp(new THREE.Color('#ffffff'), 0.20);
+        else mat.color.copy(original);
+        mat.needsUpdate = true;
       });
     });
+  }
+
+  function setStandHover(index, hover) {
+    const s = STANDS[index];
+    const base = findAt('[geometry*="primitive: cylinder"]', s.x, 0.5, s.z);
+    const glass = findAt('[geometry*="primitive: cylinder"]', s.x, 1.25, s.z);
+    const podium = findAt('[gltf-model*="display_podium.glb"]', s.x, 0.95, s.z, 0.12);
+
+    [base, glass, podium].forEach((el) => scaleElement(el, hover ? 1.035 : 1));
+    if (base) base.setAttribute('material', 'color', hover ? '#587d83' : '#254f57');
+    if (glass) {
+      glass.setAttribute('material', 'color', hover ? '#ffffff' : '#dffcff');
+      glass.setAttribute('material', 'opacity', hover ? 0.25 : 0.16);
+    }
+    tintPodium(podium, hover);
+  }
+
+  function makeWholeStandsClickable() {
+    const scene = document.getElementById('museum-scene');
+    const markers = [...document.querySelectorAll('.nascere-hotspot')]
+      .filter((el) => !el.classList.contains('nascere-stand-hitbox'))
+      .slice(0, 4);
+    if (!scene || markers.length < 4) return false;
+
+    document.querySelectorAll('.nascere-stand-hitbox').forEach((el) => el.remove());
+
+    STANDS.forEach((stand, index) => {
+      const hitbox = document.createElement('a-cylinder');
+      hitbox.classList.add('nascere-hotspot', 'nascere-stand-hitbox');
+      hitbox.setAttribute('position', `${stand.x} 1.35 ${stand.z}`);
+      hitbox.setAttribute('radius', '0.62');
+      hitbox.setAttribute('height', '2.7');
+      hitbox.setAttribute('material', 'color: #ffffff; opacity: 0.001; transparent: true; depthWrite: false');
+      hitbox.dataset.exhibit = stand.key;
+
+      hitbox.addEventListener('mouseenter', () => {
+        setStandHover(index, true);
+        markers[index].setAttribute('scale', '1.07 1.07 1.07');
+        const canvas = scene.canvas;
+        if (canvas) canvas.style.cursor = 'pointer';
+      });
+      hitbox.addEventListener('mouseleave', () => {
+        setStandHover(index, false);
+        markers[index].setAttribute('scale', '1 1 1');
+        const canvas = scene.canvas;
+        if (canvas) canvas.style.cursor = 'grab';
+      });
+      hitbox.addEventListener('click', () => markers[index].emit('click', {}, false));
+      scene.appendChild(hitbox);
+    });
+    return true;
+  }
+
+  function applyOriginalLayout() {
+    restoreOriginalJewellery();
+    restoreOriginalSideDisplay();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    applyOriginalLayout();
 
     const scene = document.getElementById('museum-scene');
-    const applyAfterScene = () => {
-      arrangeJewellery();
-      makeSideDisplayTransparent();
-      /* script.js adds hotspots in its own scene-loaded handler. Run after it. */
+    const afterScene = () => {
+      applyOriginalLayout();
       requestAnimationFrame(() => {
-        if (!rebuildStandButtons()) {
-          window.setTimeout(rebuildStandButtons, 120);
-        }
+        rebuildStandButtons();
+        makeWholeStandsClickable();
       });
+      /* Re-apply after GLBs resolve so delayed model setup cannot move them. */
+      window.setTimeout(applyOriginalLayout, 500);
+      window.setTimeout(applyOriginalLayout, 1600);
     };
 
-    if (scene?.hasLoaded) applyAfterScene();
-    else scene?.addEventListener('loaded', applyAfterScene, { once: true });
-
-    window.setTimeout(() => observer.disconnect(), 8000);
+    if (scene?.hasLoaded) afterScene();
+    else scene?.addEventListener('loaded', afterScene, { once: true });
   }, { once: true });
 })();
