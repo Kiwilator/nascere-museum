@@ -16,21 +16,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Apply bacteria-style controls
-        run: python .github/scripts/fix_bacteria_controls.py
+      - name: Apply final bacteria-style layout
+        run: python .github/scripts/fix_onboarding_like_bacteria.py
 
       - name: Verify patch
         run: |
-          grep -q 'controls-demo-wrap' index.html
-          grep -q 'controls-mouse-shape' index.html
           grep -q 'WASD O FLECHAS' index.html
           grep -q 'CLIC + ARRASTRAR' index.html
-          grep -q 'bacteria-style onboarding controls' style.css
+          grep -q 'Usa WASD o las flechas del teclado' index.html
+          grep -q 'FINAL bacteria-layout onboarding override' style.css
+          grep -q './style.css?v=7' index.html
 
       - name: Commit changes
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html style.css
-          git commit -m 'Use bacteria-style keyboard and mouse controls'
+          git commit -m 'Match onboarding layout to bacteria museum'
           git push
