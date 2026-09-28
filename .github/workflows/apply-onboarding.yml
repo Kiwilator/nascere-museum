@@ -2,189 +2,29 @@ name: Apply onboarding screen
 
 on:
   push:
-    branches: [nascere-v2-onboarding]
+    branches:
+      - nascere-v2-onboarding
     paths:
       - '.github/workflows/apply-onboarding.yml'
-
-permissions:
-  contents: write
 
 jobs:
   apply:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
-      - uses: actions/checkout@v4
-      - name: Patch onboarding and prevent font-size flash
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-          import re
+      - name: Checkout
+        uses: actions/checkout@v4
 
-          # ---------- index.html ----------
-          p = Path('index.html')
-          s = p.read_text(encoding='utf-8')
-          s = s.replace('./style.css?v=4', './style.css?v=5')
-          s = s.replace('./script.js?v=4', './script.js?v=5')
-          old = '''    <div id="intro-card">
-      <span class="intro-index">01 — 04</span>
-      <p data-i18n="intro">Recorre el espacio y selecciona los puntos de la exposición para descubrir el proyecto.</p>
-      <div class="intro-controls">
-        <span class="desktop-only"><b>WASD</b> <em data-i18n="move">Mover</em></span>
-        <span class="desktop-only"><b>ARRASTRAR</b> <em data-i18n="look">Mirar</em></span>
-        <span class="mobile-only"><b>JOYSTICK</b> <em data-i18n="move">Mover</em></span>
-        <span class="mobile-only"><b>DESLIZAR</b> <em data-i18n="look">Mirar</em></span>
-      </div>
-    </div>'''
-          new = '''    <div id="intro-card" role="dialog" aria-modal="true" aria-labelledby="intro-title">
-      <div class="intro-shell">
-        <span class="intro-kicker" data-i18n="howTo">CÓMO RECORRER EL MUSEO</span>
-        <h2 id="intro-title" data-i18n="introTitle">Explora Nascere</h2>
-        <p data-i18n="intro">Recorre el espacio y selecciona los puntos de la exposición para descubrir el proyecto.</p>
-        <div class="intro-controls" aria-label="Controles de navegación">
-          <span class="desktop-only"><b>W A S D</b><em data-i18n="move">Mover</em></span>
-          <span class="desktop-only"><b>ARRASTRAR</b><em data-i18n="look">Mirar</em></span>
-          <span class="mobile-only"><b>JOYSTICK</b><em data-i18n="move">Mover</em></span>
-          <span class="mobile-only"><b>DESLIZAR</b><em data-i18n="look">Mirar</em></span>
-        </div>
-        <button id="enter-museum" class="enter-museum" type="button" data-i18n="enter">ENTRAR AL MUSEO</button>
-      </div>
-    </div>'''
-          if old not in s:
-              raise SystemExit('Expected intro-card block not found in index.html')
-          s = s.replace(old, new)
-          p.write_text(s, encoding='utf-8')
+      - name: Apply patch
+        run: python .github/scripts/apply_onboarding.py
 
-          # ---------- script.js ----------
-          p = Path('script.js')
-          s = p.read_text(encoding='utf-8')
-          s = s.replace("    if (!camera || !delta) return;\n\n    let x = this.joystickX;", "    if (!camera || !delta) return;\n    const onboarding = document.getElementById('intro-card');\n    if (onboarding && !onboarding.classList.contains('is-hidden')) return;\n\n    let x = this.joystickX;")
-          s = s.replace("  const closeButton = document.querySelector('.panel-close');", "  const closeButton = document.querySelector('.panel-close');\n  const enterButton = document.getElementById('enter-museum');\n\n  const showStableUI = () => document.documentElement.classList.add('ui-ready');\n  if (document.fonts && document.fonts.ready) document.fonts.ready.then(showStableUI).catch(showStableUI);\n  else showStableUI();\n  window.setTimeout(showStableUI, 2500);")
-          s = s.replace("      intro: 'Recorre el espacio y selecciona los puntos de la exposición para descubrir el proyecto.',\n      move: 'Mover', look: 'Mirar', selectPoint: 'Selecciona un punto', explore: 'EXPLORA LA EXPOSICIÓN'", "      howTo: 'CÓMO RECORRER EL MUSEO', introTitle: 'Explora Nascere', enter: 'ENTRAR AL MUSEO',\n      intro: 'Recorre el espacio y selecciona los puntos de la exposición para descubrir el proyecto.',\n      move: 'Mover', look: 'Mirar', selectPoint: 'Selecciona un punto', explore: 'EXPLORA LA EXPOSICIÓN'")
-          s = s.replace("      intro: 'Move through the space and select the exhibition points to discover the project.',\n      move: 'Move', look: 'Look', selectPoint: 'Select a point', explore: 'EXPLORE THE EXHIBITION'", "      howTo: 'HOW TO MOVE AROUND THE MUSEUM', introTitle: 'Explore Nascere', enter: 'ENTER THE MUSEUM',\n      intro: 'Move through the space and select the exhibition points to discover the project.',\n      move: 'Move', look: 'Look', selectPoint: 'Select a point', explore: 'EXPLORE THE EXHIBITION'")
-          s = s.replace("    introTimer = window.setTimeout(hideIntro, 9000);", "    // The onboarding stays visible until the visitor explicitly enters the museum.")
-          s = s.replace("  document.addEventListener('pointerdown', (event) => {\n    if (!event.target.closest('#exhibit-panel') && !event.target.closest('.topbar')) hideIntro();\n  }, { once: true });", "  if (enterButton) enterButton.addEventListener('click', hideIntro);")
-          p.write_text(s, encoding='utf-8')
-
-          # ---------- style.css ----------
-          p = Path('style.css')
-          s = p.read_text(encoding='utf-8')
-          s = s.replace("#museum-ui {\n  position: fixed;\n  inset: 0;\n  z-index: 10;\n  pointer-events: none;\n}", "#museum-ui {\n  position: fixed;\n  inset: 0;\n  z-index: 10;\n  pointer-events: none;\n  opacity: 0;\n  visibility: hidden;\n  transition: opacity .18s ease;\n}\nhtml.ui-ready #museum-ui { opacity: 1; visibility: visible; }")
-
-          start = s.index('#intro-card {')
-          end_marker = '.mobile-only { display: none; }'
-          end = s.index(end_marker, start) + len(end_marker)
-          new_css = r'''#intro-card {
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  display: grid;
-  place-items: center;
-  padding: 24px;
-  background: rgba(4, 24, 30, .72);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  pointer-events: auto;
-  opacity: 1;
-  visibility: visible;
-  transition: opacity .38s ease, visibility 0s linear 0s;
-}
-#intro-card.is-hidden {
-  opacity: 0;
-  visibility: hidden;
-  pointer-events: none;
-  transition: opacity .38s ease, visibility 0s linear .38s;
-}
-.intro-shell {
-  width: min(560px, calc(100vw - 48px));
-  padding: 34px 36px 30px;
-  border: 1px solid rgba(231, 253, 253, .22);
-  border-radius: 22px;
-  background: linear-gradient(155deg, rgba(8, 43, 52, .94), rgba(15, 62, 72, .92));
-  box-shadow: 0 28px 90px rgba(1, 18, 23, .42);
-  text-align: center;
-}
-.intro-kicker {
-  display: block;
-  margin-bottom: 12px;
-  font-size: 9px;
-  font-weight: 600;
-  letter-spacing: .22em;
-  color: var(--sea);
-}
-#intro-card h2 {
-  margin: 0;
-  font-family: 'Manrope', sans-serif;
-  font-size: clamp(28px, 5vw, 42px);
-  line-height: 1.05;
-  font-weight: 500;
-  letter-spacing: -.035em;
-}
-#intro-card p {
-  max-width: 430px;
-  margin: 16px auto 0;
-  font-size: 13px;
-  line-height: 1.6;
-  color: rgba(248,255,255,.78);
-}
-.intro-controls {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin-top: 24px;
-}
-.intro-controls span {
-  min-width: 150px;
-  padding: 13px 16px 12px;
-  border: 1px solid rgba(231,253,253,.16);
-  border-radius: 14px;
-  background: rgba(255,255,255,.055);
-}
-.intro-controls b {
-  display: block;
-  color: var(--white);
-  font-size: 11px;
-  line-height: 1;
-  font-weight: 600;
-  letter-spacing: .12em;
-}
-.intro-controls em {
-  display: block;
-  margin-top: 7px;
-  color: rgba(255,255,255,.55);
-  font-size: 9px;
-  font-style: normal;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-}
-.enter-museum {
-  margin-top: 26px;
-  min-height: 42px;
-  padding: 0 24px;
-  border: 1px solid rgba(232,255,255,.38);
-  border-radius: 999px;
-  background: var(--foam);
-  color: var(--deep);
-  cursor: pointer;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .13em;
-  transition: transform .18s ease, background .18s ease;
-}
-.enter-museum:hover { transform: translateY(-1px); background: #fff; }
-.enter-museum:active { transform: translateY(0); }
-.mobile-only { display: none; }'''
-          s = s[:start] + new_css + s[end:]
-
-          # Replace the old mobile positioning rule for the previous corner card.
-          s = s.replace("  #intro-card { left: 16px; right: 16px; bottom: 146px; width: auto; }", "  #intro-card { padding: 16px; }\n  .intro-shell { width: 100%; padding: 28px 20px 24px; }\n  .intro-controls { gap: 10px; }\n  .intro-controls span { min-width: 0; flex: 1 1 42%; }")
-          p.write_text(s, encoding='utf-8')
-          PY
       - name: Verify patch
         run: |
           grep -q 'id="enter-museum"' index.html
           grep -q 'ui-ready' style.css
           grep -q 'enterButton' script.js
+
       - name: Commit changes
         run: |
           git config user.name 'github-actions[bot]'
