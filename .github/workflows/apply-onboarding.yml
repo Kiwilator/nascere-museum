@@ -16,21 +16,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Apply final bacteria-style layout
-        run: python .github/scripts/fix_onboarding_like_bacteria.py
+      - name: Install final onboarding component
+        run: python .github/scripts/install_final_onboarding.py
 
       - name: Verify patch
         run: |
-          grep -q 'WASD O FLECHAS' index.html
-          grep -q 'CLIC + ARRASTRAR' index.html
-          grep -q 'Usa WASD o las flechas del teclado' index.html
-          grep -q 'FINAL bacteria-layout onboarding override' style.css
-          grep -q './style.css?v=7' index.html
+          grep -q './controls-onboarding-final.js?v=1' index.html
+          test -f controls-onboarding-final.js
+          grep -q 'CÓMO MOVERTE' controls-onboarding-final.js
+          grep -q 'WASD O FLECHAS' controls-onboarding-final.js
+          grep -q 'CLIC + ARRASTRAR' controls-onboarding-final.js
+          grep -q 'hover: none' controls-onboarding-final.js
 
       - name: Commit changes
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html style.css
-          git commit -m 'Match onboarding layout to bacteria museum'
+          git add index.html
+          git commit -m 'Install isolated final controls onboarding'
           git push
