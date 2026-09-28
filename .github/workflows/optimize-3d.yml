@@ -1,0 +1,95 @@
+name: Optimize 3D assets
+
+on:
+  push:
+    branches:
+      - optimize-3d-assets
+    paths:
+      - '.github/workflows/optimize-3d.yml'
+      - 'assets/bendy_bench_game_ready.glb'
+      - 'assets/office_chair_modern.glb'
+      - 'assets/sea_lion_statue_marina_san_francisco_1.glb'
+
+jobs:
+  optimize:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install glTF Transform
+        run: npm install --global @gltf-transform/cli
+
+      - name: Show CLI version
+        run: gltf-transform --version
+
+      - name: Optimize models without decoder-dependent compression
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p optimized tmp
+
+          optimize_model() {
+            input="$1"
+            output="$2"
+            ratio="$3"
+            error="$4"
+            stem=$(basename "$output" .glb)
+
+            gltf-transform dedup "$input" "tmp/${stem}_1.glb"
+            gltf-transform prune "tmp/${stem}_1.glb" "tmp/${stem}_2.glb"
+            gltf-transform weld "tmp/${stem}_2.glb" "tmp/${stem}_3.glb"
+            gltf-transform simplify "tmp/${stem}_3.glb" "tmp/${stem}_4.glb" --ratio "$ratio" --error "$error"
+            gltf-transform resize "tmp/${stem}_4.glb" "$output" --width 1024 --height 1024
+          }
+
+          optimize_model "assets/bendy_bench_game_ready.glb" "optimized/bendy_bench_game_ready_optimized.glb" 0.45 0.002
+          optimize_model "assets/office_chair_modern.glb" "optimized/office_chair_modern_optimized.glb" 0.45 0.002
+          optimize_model "assets/sea_lion_statue_marina_san_francisco_1.glb" "optimized/sea_lion_statue_marina_san_francisco_1_optimized.glb" 0.60 0.001
+
+          echo '--- Original sizes ---'
+          du -h assets/bendy_bench_game_ready.glb assets/office_chair_modern.glb assets/sea_lion_statue_marina_san_francisco_1.glb
+          echo '--- Optimized sizes ---'
+          du -h optimized/*.glb
+
+      - name: Validate optimized models
+        shell: bash
+        run: |
+          set -euxo pipefail
+          for f in optimized/*.glb; do
+            gltf-transform inspect "$f"
+          done
+
+      - name: Save size report
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          pairs = [
+              ('assets/bendy_bench_game_ready.glb','optimized/bendy_bench_game_ready_optimized.glb'),
+              ('assets/office_chair_modern.glb','optimized/office_chair_modern_optimized.glb'),
+              ('assets/sea_lion_statue_marina_san_francisco_1.glb','optimized/sea_lion_statue_marina_san_francisco_1_optimized.glb'),
+          ]
+          lines=['model,original_bytes,optimized_bytes,reduction_percent']
+          for src,dst in pairs:
+              a=Path(src).stat().st_size
+              b=Path(dst).stat().st_size
+              r=(1-b/a)*100
+              lines.append(f'{Path(src).name},{a},{b},{r:.2f}')
+          Path('optimized/size_report.csv').write_text('\n'.join(lines), encoding='utf-8')
+          print('\n'.join(lines))
+          PY
+
+      - name: Upload optimized GLBs
+        uses: actions/upload-artifact@v4
+        with:
+          name: nascere-optimized-glbs
+          path: optimized/
+          if-no-files-found: error
