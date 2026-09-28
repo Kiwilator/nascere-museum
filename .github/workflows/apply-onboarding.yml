@@ -16,19 +16,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Restore full controls with icons
-        run: python .github/scripts/restore_onboarding_controls.py
+      - name: Apply bacteria-style controls
+        run: python .github/scripts/fix_bacteria_controls.py
 
       - name: Verify patch
         run: |
-          grep -q 'WASD + FLECHAS' index.html
-          grep -q 'mouse-icon' index.html
-          grep -q 'ARRASTRAR' index.html
+          grep -q 'controls-demo-wrap' index.html
+          grep -q 'controls-mouse-shape' index.html
+          grep -q 'WASD O FLECHAS' index.html
+          grep -q 'CLIC + ARRASTRAR' index.html
+          grep -q 'bacteria-style onboarding controls' style.css
 
       - name: Commit changes
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html
-          git commit -m 'Restore movement and look controls with keyboard and mouse icons'
+          git add index.html style.css
+          git commit -m 'Use bacteria-style keyboard and mouse controls'
           git push
