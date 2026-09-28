@@ -10,9 +10,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css?v=4" />
+  <link rel="stylesheet" href="./style.css?v=5" />
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-  <script src="./script.js?v=4"></script>
+  <script src="./script.js?v=5"></script>
   <script src="./hotfix-v2.js?v=1"></script>
   <script src="./visual-fix-v2.js?v=1"></script>
   <script src="./interaction-pass-v2.js?v=2"></script>
@@ -133,14 +133,18 @@
       </div>
     </header>
 
-    <div id="intro-card">
-      <span class="intro-index">01 — 04</span>
-      <p data-i18n="intro">Recorre el espacio y selecciona los puntos de la exposición para descubrir el proyecto.</p>
-      <div class="intro-controls">
-        <span class="desktop-only"><b>WASD</b> <em data-i18n="move">Mover</em></span>
-        <span class="desktop-only"><b>ARRASTRAR</b> <em data-i18n="look">Mirar</em></span>
-        <span class="mobile-only"><b>JOYSTICK</b> <em data-i18n="move">Mover</em></span>
-        <span class="mobile-only"><b>DESLIZAR</b> <em data-i18n="look">Mirar</em></span>
+    <div id="intro-card" role="dialog" aria-modal="true" aria-labelledby="intro-title">
+      <div class="intro-shell">
+        <span class="intro-kicker" data-i18n="howTo">CÓMO RECORRER EL MUSEO</span>
+        <h2 id="intro-title" data-i18n="introTitle">Explora Nascere</h2>
+        <p data-i18n="intro">Recorre el espacio y selecciona los puntos de la exposición para descubrir el proyecto.</p>
+        <div class="intro-controls" aria-label="Controles de navegación">
+          <span class="desktop-only"><b>W A S D</b><em data-i18n="move">Mover</em></span>
+          <span class="desktop-only"><b>ARRASTRAR</b><em data-i18n="look">Mirar</em></span>
+          <span class="mobile-only"><b>JOYSTICK</b><em data-i18n="move">Mover</em></span>
+          <span class="mobile-only"><b>DESLIZAR</b><em data-i18n="look">Mirar</em></span>
+        </div>
+        <button id="enter-museum" class="enter-museum" type="button" data-i18n="enter">ENTRAR AL MUSEO</button>
       </div>
     </div>
 

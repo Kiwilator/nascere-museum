@@ -42,7 +42,11 @@ canvas:active { cursor: grabbing; }
   inset: 0;
   z-index: 10;
   pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .18s ease;
 }
+html.ui-ready #museum-ui { opacity: 1; visibility: visible; }
 
 .topbar {
   position: absolute;
@@ -147,46 +151,46 @@ canvas:active { cursor: grabbing; }
 .language-switcher span { color: rgba(255,255,255,.25); }
 
 #intro-card {
-  position: absolute;
-  left: 28px;
-  bottom: 28px;
-  width: min(390px, calc(100vw - 56px));
-  padding: 18px 20px 17px;
-  border: 1px solid rgba(231, 253, 253, 0.2);
-  border-radius: 16px;
-  background: rgba(8, 34, 42, 0.67);
-  backdrop-filter: blur(15px);
-  -webkit-backdrop-filter: blur(15px);
-  box-shadow: var(--shadow);
-  transition: opacity .45s ease, transform .45s ease;
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(4, 24, 30, .72);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity .38s ease, visibility 0s linear 0s;
 }
-#intro-card.is-hidden { opacity: 0; transform: translateY(12px); }
-.intro-index {
-  display: inline-block;
-  margin-bottom: 10px;
-  font-size: 9px;
-  letter-spacing: .18em;
-  color: var(--sea);
+#intro-card.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .38s ease, visibility 0s linear .38s;
 }
-#intro-card p {
-  margin: 0;
-  max-width: 330px;
-  font-size: 13px;
-  line-height: 1.55;
-  color: rgba(248,255,255,.88);
+.intro-shell {
+  width: min(560px, calc(100vw - 48px));
+  padding: 34px 36px 30px;
+  border: 1px solid rgba(231, 253, 253, .22);
+  border-radius: 22px;
+  background: linear-gradient(155deg, rgba(8, 43, 52, .94), rgba(15, 62, 72, .92));
+  box-shadow: 0 28px 90px rgba(1, 18, 23, .42);
+  text-align: center;
 }
-.intro-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin-top: 13px;
-  font-size: 9px;
-  letter-spacing: .08em;
-  color: rgba(255,255,255,.55);
-}
-.intro-controls b { color: var(--white); font-weight: 600; }
-.intro-controls em { font-style: normal; margin-left: 4px; }
-.mobile-only { display: none; }
+.intro-kicker { display:block; margin-bottom:12px; font-size:9px; font-weight:600; letter-spacing:.22em; color:var(--sea); }
+#intro-card h2 { margin:0; font-family:'Manrope',sans-serif; font-size:clamp(28px,5vw,42px); line-height:1.05; font-weight:500; letter-spacing:-.035em; }
+#intro-card p { max-width:430px; margin:16px auto 0; font-size:13px; line-height:1.6; color:rgba(248,255,255,.78); }
+.intro-controls { display:flex; justify-content:center; flex-wrap:wrap; gap:14px; margin-top:24px; }
+.intro-controls span { min-width:150px; padding:13px 16px 12px; border:1px solid rgba(231,253,253,.16); border-radius:14px; background:rgba(255,255,255,.055); }
+.intro-controls b { display:block; color:var(--white); font-size:11px; line-height:1; font-weight:600; letter-spacing:.12em; }
+.intro-controls em { display:block; margin-top:7px; color:rgba(255,255,255,.55); font-size:9px; font-style:normal; letter-spacing:.08em; text-transform:uppercase; }
+.enter-museum { margin-top:26px; min-height:42px; padding:0 24px; border:1px solid rgba(232,255,255,.38); border-radius:999px; background:var(--foam); color:var(--deep); cursor:pointer; font-size:10px; font-weight:600; letter-spacing:.13em; transition:transform .18s ease,background .18s ease; }
+.enter-museum:hover { transform:translateY(-1px); background:#fff; }
+.enter-museum:active { transform:translateY(0); }
+.mobile-only { display:none; }
 
 #exhibit-hint {
   position: absolute;
@@ -453,7 +457,10 @@ canvas:active { cursor: grabbing; }
   .brand-subtitle { font-size: 8px; }
   .utility-button { padding: 0 10px; }
   #reset-view { display: none; }
-  #intro-card { left: 16px; right: 16px; bottom: 146px; width: auto; }
+  #intro-card { padding:16px; }
+  .intro-shell { width:100%; padding:28px 20px 24px; }
+  .intro-controls { gap:10px; }
+  .intro-controls span { min-width:0; flex:1 1 42%; }
   .desktop-only { display: none; }
   .mobile-only { display: inline; }
   #mobile-controls { display: block; }

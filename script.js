@@ -25,6 +25,8 @@ AFRAME.registerComponent('museum-movement', {
   tick(time, delta) {
     const camera = document.getElementById('camera');
     if (!camera || !delta) return;
+    const onboarding = document.getElementById('intro-card');
+    if (onboarding && !onboarding.classList.contains('is-hidden')) return;
 
     let x = this.joystickX;
     let y = this.joystickY;
@@ -132,6 +134,12 @@ window.addEventListener('DOMContentLoaded', () => {
   const resetButton = document.getElementById('reset-view');
   const brandButton = document.getElementById('brand-button');
   const closeButton = document.querySelector('.panel-close');
+  const enterButton = document.getElementById('enter-museum');
+
+  const showStableUI = () => document.documentElement.classList.add('ui-ready');
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(showStableUI).catch(showStableUI);
+  else showStableUI();
+  window.setTimeout(showStableUI, 2500);
 
   let currentLanguage = 'es';
   let soundOn = false;
@@ -144,11 +152,13 @@ window.addEventListener('DOMContentLoaded', () => {
   const UI = {
     es: {
       museum: 'MUSEO VIRTUAL', sound: 'SONIDO', reset: 'INICIO',
+      howTo: 'CÓMO RECORRER EL MUSEO', introTitle: 'Explora Nascere', enter: 'ENTRAR AL MUSEO',
       intro: 'Recorre el espacio y selecciona los puntos de la exposición para descubrir el proyecto.',
       move: 'Mover', look: 'Mirar', selectPoint: 'Selecciona un punto', explore: 'EXPLORA LA EXPOSICIÓN'
     },
     en: {
       museum: 'VIRTUAL MUSEUM', sound: 'SOUND', reset: 'START',
+      howTo: 'HOW TO MOVE AROUND THE MUSEUM', introTitle: 'Explore Nascere', enter: 'ENTER THE MUSEUM',
       intro: 'Move through the space and select the exhibition points to discover the project.',
       move: 'Move', look: 'Look', selectPoint: 'Select a point', explore: 'EXPLORE THE EXHIBITION'
     }
@@ -345,7 +355,7 @@ window.addEventListener('DOMContentLoaded', () => {
     revealed = true;
     loadingStatus.textContent = currentLanguage === 'es' ? 'Exposición lista' : 'Exhibition ready';
     window.setTimeout(() => loading.classList.add('is-hidden'), 220);
-    introTimer = window.setTimeout(hideIntro, 9000);
+    // Onboarding remains until visitor enters.
   }
 
   const criticalModels = [...document.querySelectorAll('.critical-model')];
@@ -465,9 +475,7 @@ window.addEventListener('DOMContentLoaded', () => {
     button.addEventListener('click', () => setLanguage(button.dataset.language));
   });
   document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closePanel(); });
-  document.addEventListener('pointerdown', (event) => {
-    if (!event.target.closest('#exhibit-panel') && !event.target.closest('.topbar')) hideIntro();
-  }, { once: true });
+  if (enterButton) enterButton.addEventListener('click', hideIntro);
 
   setupJoystick();
   setLanguage('es');
