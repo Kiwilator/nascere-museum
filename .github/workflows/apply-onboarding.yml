@@ -16,19 +16,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Apply patch
-        run: python .github/scripts/apply_onboarding.py
+      - name: Simplify controls
+        run: python .github/scripts/simplify_controls.py
 
       - name: Verify patch
         run: |
-          grep -q 'id="enter-museum"' index.html
-          grep -q 'ui-ready' style.css
-          grep -q 'enterButton' script.js
+          grep -q 'W A S D' index.html
+          grep -q '← ↑ ↓ →' index.html
+          if grep -q '<b>ARRASTRAR</b>' index.html; then exit 1; fi
 
       - name: Commit changes
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add index.html style.css script.js
-          git commit -m 'Add onboarding instructions and stabilize UI font loading'
+          git add index.html
+          git commit -m 'Simplify onboarding movement controls'
           git push
