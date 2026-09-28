@@ -184,7 +184,7 @@ html.ui-ready #museum-ui { opacity: 1; visibility: visible; }
 #intro-card h2 { margin:0; font-family:'Manrope',sans-serif; font-size:clamp(28px,5vw,42px); line-height:1.05; font-weight:500; letter-spacing:-.035em; }
 #intro-card p { max-width:430px; margin:16px auto 0; font-size:13px; line-height:1.6; color:rgba(248,255,255,.78); }
 .intro-controls { display:flex; justify-content:center; flex-wrap:wrap; gap:14px; margin-top:24px; }
-.intro-controls span { min-width:150px; padding:13px 16px 12px; border:1px solid rgba(231,253,253,.16); border-radius:14px; background:rgba(255,255,255,.055); }
+.intro-controls > .control-card { min-width:150px; padding:13px 16px 12px; border:1px solid rgba(231,253,253,.16); border-radius:14px; background:rgba(255,255,255,.055); }
 .intro-controls b { display:block; color:var(--white); font-size:11px; line-height:1; font-weight:600; letter-spacing:.12em; }
 .intro-controls em { display:block; margin-top:7px; color:rgba(255,255,255,.55); font-size:9px; font-style:normal; letter-spacing:.08em; text-transform:uppercase; }
 .enter-museum { margin-top:26px; min-height:42px; padding:0 24px; border:1px solid rgba(232,255,255,.38); border-radius:999px; background:var(--foam); color:var(--deep); cursor:pointer; font-size:10px; font-weight:600; letter-spacing:.13em; transition:transform .18s ease,background .18s ease; }
@@ -478,4 +478,168 @@ html.ui-ready #museum-ui { opacity: 1; visibility: visible; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; }
+}
+
+
+/* bacteria-style onboarding controls */
+.intro-controls > .control-card {
+  min-height: 158px;
+  flex: 1 1 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  text-align: left;
+}
+.control-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.intro-controls .control-copy b {
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.25;
+  letter-spacing: .08em;
+  white-space: nowrap;
+}
+.intro-controls .control-copy em {
+  margin: 0;
+  color: var(--sea);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .14em;
+}
+
+/* Keyboard visual copied from the bacteria museum logic, recoloured for Nascere. */
+.controls-demo-wrap {
+  width: 128px;
+  height: 138px;
+  flex: 0 0 128px;
+  position: relative;
+}
+.controls-demo-keys {
+  position: absolute;
+  left: 15px;
+  top: 0;
+  width: 98px;
+  display: grid;
+  grid-template-columns: repeat(3,30px);
+  grid-template-rows: repeat(2,30px);
+  gap: 4px;
+}
+.intro-controls .controls-demo-key {
+  min-width: 0;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  border: 1px solid rgba(232,251,251,.42);
+  border-radius: 6px;
+  background: rgba(255,255,255,.10);
+  color: var(--white);
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 2px 0 rgba(1,18,23,.28);
+  animation: nascere-key-pulse 2.8s ease-in-out infinite;
+}
+.controls-demo-key.w { grid-column: 2; grid-row: 1; }
+.controls-demo-key.a { grid-column: 1; grid-row: 2; animation-delay: .35s; }
+.controls-demo-key.s { grid-column: 2; grid-row: 2; animation-delay: .70s; }
+.controls-demo-key.d { grid-column: 3; grid-row: 2; animation-delay: 1.05s; }
+.controls-demo-arrows {
+  position: absolute;
+  left: 24px;
+  top: 82px;
+  width: 80px;
+  display: grid;
+  grid-template-columns: repeat(3,24px);
+  grid-template-rows: repeat(2,24px);
+  gap: 3px;
+  opacity: .82;
+}
+.intro-controls .controls-demo-arrows .controls-demo-key {
+  width: 24px;
+  height: 24px;
+  font-size: 10px;
+}
+.controls-demo-arrows .up { grid-column: 2; grid-row: 1; }
+.controls-demo-arrows .left { grid-column: 1; grid-row: 2; animation-delay: .35s; }
+.controls-demo-arrows .down { grid-column: 2; grid-row: 2; animation-delay: .70s; }
+.controls-demo-arrows .right { grid-column: 3; grid-row: 2; animation-delay: 1.05s; }
+
+/* Mouse visual copied from the bacteria museum logic, recoloured for Nascere. */
+.controls-mouse-demo {
+  width: 124px;
+  height: 116px;
+  flex: 0 0 124px;
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.controls-mouse-shape {
+  width: 40px;
+  height: 60px;
+  position: relative;
+  border: 2px solid rgba(232,251,251,.72);
+  border-radius: 21px;
+  background: rgba(255,255,255,.08);
+  animation: nascere-mouse-drag 2.4s ease-in-out infinite;
+}
+.controls-mouse-shape::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 1px;
+  height: 23px;
+  background: rgba(232,251,251,.35);
+}
+.controls-mouse-shape::after {
+  content: '';
+  position: absolute;
+  left: 7px;
+  top: 7px;
+  width: 12px;
+  height: 17px;
+  border-radius: 8px 4px 5px 4px;
+  background: var(--sea);
+  animation: nascere-click 2.4s ease-in-out infinite;
+}
+.controls-drag-arrows {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2px;
+  text-align: center;
+  color: var(--sea);
+  font-size: 20px;
+  letter-spacing: .16em;
+}
+
+@keyframes nascere-key-pulse {
+  0%,72%,100% { transform:translateY(0); background:rgba(255,255,255,.10); }
+  10%,28% { transform:translateY(2px); background:rgba(117,216,222,.24); }
+}
+@keyframes nascere-mouse-drag {
+  0%,18%,100% { transform:translateX(-17px); }
+  55%,72% { transform:translateX(17px); }
+}
+@keyframes nascere-click {
+  0%,12%,82%,100% { opacity:.42; transform:scale(1); }
+  20%,68% { opacity:1; transform:scale(.86); }
+}
+
+@media (max-width: 720px) {
+  .intro-controls > .control-card { min-height: 0; flex: 1 1 42%; display: flex; }
+  .intro-controls > .desktop-only { display: none; }
+  .intro-controls > .mobile-only { display: flex; flex-direction: column; text-align: center; gap: 4px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .controls-demo-key, .controls-mouse-shape, .controls-mouse-shape::after { animation: none !important; }
 }
