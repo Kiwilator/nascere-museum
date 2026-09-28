@@ -60,20 +60,20 @@ AFRAME.registerComponent('parametric-bench-harmon', {
       const b = (i + 1) * 4;
 
       // Top.
-      indices.push(a, b, a + 1, b, b + 1, a + 1);
+      indices.push(a, a + 1, b, b, a + 1, b + 1);
       // Bottom.
-      indices.push(a + 2, a + 3, b + 2, b + 2, a + 3, b + 3);
+      indices.push(a + 2, b + 2, a + 3, b + 2, b + 3, a + 3);
       // Front side.
-      indices.push(a, a + 2, b, b, a + 2, b + 2);
+      indices.push(a, b, a + 2, b, b + 2, a + 2);
       // Back side.
-      indices.push(a + 1, b + 1, a + 3, b + 1, b + 3, a + 3);
+      indices.push(a + 1, a + 3, b + 1, b + 1, a + 3, b + 3);
     }
 
     // Close both ends of the extruded seat.
     const first = 0;
     const last = (points.length - 1) * 4;
-    indices.push(first, first + 1, first + 2, first + 1, first + 3, first + 2);
-    indices.push(last, last + 2, last + 1, last + 1, last + 2, last + 3);
+    indices.push(first, first + 2, first + 1, first + 1, first + 2, first + 3);
+    indices.push(last, last + 1, last + 2, last + 1, last + 3, last + 2);
 
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
@@ -83,7 +83,8 @@ AFRAME.registerComponent('parametric-bench-harmon', {
     const material = new THREE.MeshStandardMaterial({
       color: new THREE.Color(data.color),
       roughness: 0.74,
-      metalness: 0.04
+      metalness: 0.04,
+      side: THREE.DoubleSide
     });
 
     const group = new THREE.Group();
