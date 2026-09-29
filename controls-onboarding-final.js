@@ -13,7 +13,12 @@
       joystickHelp: 'Mueve el joystick para desplazarte',
       swipe: 'DESLIZAR',
       swipeHelp: 'Desliza el dedo para mirar alrededor',
-      enter: 'ENTRAR AL MUSEO'
+      enter: 'ENTRAR AL MUSEO',
+      desktopMove: 'WASD / FLECHAS · MOVER',
+      desktopLook: 'CLIC + ARRASTRAR · MIRAR',
+      mobileMove: 'JOYSTICK · MOVER',
+      mobileLook: 'DESLIZAR · MIRAR',
+      help: 'AYUDA'
     },
     en: {
       title: 'HOW TO MOVE',
@@ -27,7 +32,12 @@
       joystickHelp: 'Move the joystick to walk around',
       swipe: 'SWIPE',
       swipeHelp: 'Swipe to look around',
-      enter: 'ENTER THE MUSEUM'
+      enter: 'ENTER THE MUSEUM',
+      desktopMove: 'WASD / ARROWS · MOVE',
+      desktopLook: 'CLICK + DRAG · LOOK',
+      mobileMove: 'JOYSTICK · MOVE',
+      mobileLook: 'SWIPE · LOOK',
+      help: 'HELP'
     }
   };
 
@@ -274,9 +284,25 @@
       #intro-card .nascere-swipe {
         display:grid;
         place-items:center;
-        color:#75d8de;
-        font-size:28px;
+      }
+      #intro-card .nascere-swipe::before {
+        content:'';
+        width:20px;
+        height:20px;
+        border:2px solid #75d8de;
+        border-radius:50%;
+        background:rgba(117,216,222,.14);
         animation:nascereGuideSwipe 2.2s ease-in-out infinite;
+      }
+      #intro-card .nascere-swipe::after {
+        content:'←   →';
+        position:absolute;
+        left:0;
+        right:0;
+        bottom:16px;
+        text-align:center;
+        color:#75d8de;
+        font-size:20px;
       }
 
       @keyframes nascereGuideKeyPulse {
@@ -302,11 +328,14 @@
         50% { transform:translateX(14px); opacity:1; }
       }
 
-      @media (hover: none) and (pointer: coarse) {
+      @media (max-width:720px), (hover:none) and (pointer:coarse) {
         #intro-card .nascere-guide { width:min(410px,calc(100vw - 24px)); padding:20px 14px 16px; }
+        #intro-card .nascere-guide-title { margin-bottom:12px; }
         #intro-card .nascere-guide-desktop { display:none !important; }
         #intro-card .nascere-guide-mobile { display:grid !important; grid-template-columns:1fr; gap:10px; }
-        #intro-card .nascere-guide-card { min-height:112px; grid-template-columns:108px minmax(0,1fr); gap:12px; padding:10px 12px; }
+        #intro-card .nascere-guide-card { min-height:104px; grid-template-columns:96px minmax(0,1fr); gap:12px; padding:10px 12px; }
+        #intro-card .nascere-mobile-visual { width:82px; height:82px; }
+        #intro-card .nascere-joystick::after { left:22px; top:22px; }
       }
 
       @media (prefers-reduced-motion: reduce) {
@@ -381,7 +410,7 @@
           </div>
         </div>
         <div class="nascere-guide-card">
-          <div class="nascere-mobile-visual nascere-swipe" aria-hidden="true">☝︎ ↔</div>
+          <div class="nascere-mobile-visual nascere-swipe" aria-hidden="true"></div>
           <div class="nascere-guide-copy">
             <span class="nascere-guide-kicker" data-guide="look"></span>
             <span class="nascere-guide-name" data-guide="swipe"></span>
@@ -395,6 +424,10 @@
       </div>
     </section>`;
 
+    const reminder = document.getElementById('controls-reminder');
+    const help = document.getElementById('controls-help');
+    let enteredNotified = false;
+
     const applyLanguage = () => {
       const lang = document.documentElement.lang === 'en' ? 'en' : 'es';
       const c = COPY[lang];
@@ -406,16 +439,44 @@
       });
       const enter = document.getElementById('enter-museum');
       if (enter) enter.textContent = c.enter;
+      document.querySelectorAll('[data-guide-reminder]').forEach((node) => {
+        const key = node.dataset.guideReminder;
+        if (c[key]) node.textContent = c[key];
+      });
     };
 
     applyLanguage();
     new MutationObserver(applyLanguage).observe(document.documentElement, { attributes:true, attributeFilter:['lang'] });
 
+    const notifyEntered = () => {
+      if (enteredNotified) return;
+      enteredNotified = true;
+      document.documentElement.classList.add('museum-entered');
+      window.dispatchEvent(new CustomEvent('nascere:entered'));
+    };
+
+    const syncOpenState = () => {
+      const open = !intro.classList.contains('is-hidden');
+      intro.setAttribute('aria-hidden', open ? 'false' : 'true');
+      intro.style.pointerEvents = open ? 'auto' : 'none';
+      if (reminder) {
+        reminder.classList.toggle('is-visible', !open);
+        reminder.setAttribute('aria-hidden', open ? 'true' : 'false');
+      }
+      if (!open) notifyEntered();
+    };
+
+    const setOpen = (open) => {
+      intro.classList.toggle('is-hidden', !open);
+      syncOpenState();
+      if (open) document.getElementById('enter-museum')?.focus({ preventScroll: true });
+    };
+
     const enter = document.getElementById('enter-museum');
-    enter?.addEventListener('click', () => {
-      intro.classList.add('is-hidden');
-      window.setTimeout(() => { intro.style.pointerEvents = 'none'; }, 420);
-    });
+    enter?.addEventListener('click', () => setOpen(false));
+    help?.addEventListener('click', () => setOpen(true));
+    new MutationObserver(syncOpenState).observe(intro, { attributes: true, attributeFilter: ['class'] });
+    syncOpenState();
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render, { once:true });

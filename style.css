@@ -376,6 +376,76 @@ html.ui-ready #museum-ui { opacity: 1; visibility: visible; }
   transform: translate(0,0);
 }
 
+#controls-reminder {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  z-index: 7;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 9px 7px 12px;
+  border: 1px solid rgba(222,249,250,.24);
+  border-radius: 12px;
+  background: rgba(8,43,52,.78);
+  color: var(--white);
+  box-shadow: 0 12px 34px rgba(1,18,23,.22);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 10px);
+  transition: opacity .22s ease, transform .22s ease, visibility 0s linear .22s;
+}
+#controls-reminder.is-visible {
+  pointer-events: auto;
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+  transition-delay: 0s;
+}
+.reminder-desktop,
+.reminder-mobile {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: .08em;
+}
+.reminder-mobile { display: none; }
+#controls-reminder i {
+  width: 1px;
+  height: 17px;
+  background: rgba(222,249,250,.22);
+}
+#controls-help {
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0 8px;
+  border: 1px solid rgba(117,216,222,.34);
+  border-radius: 999px;
+  background: rgba(117,216,222,.10);
+  color: var(--white);
+  cursor: pointer;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .10em;
+}
+#controls-help > span:first-child { color: var(--sea); font-size: 11px; }
+#controls-help:hover { background: rgba(117,216,222,.18); }
+html.panel-open #mobile-controls,
+html.panel-open #controls-reminder {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
 #loading-screen {
   position: fixed;
   inset: 0;
@@ -452,15 +522,15 @@ html.ui-ready #museum-ui { opacity: 1; visibility: visible; }
 @keyframes dot { 0%,100% { background: transparent; } 50% { background: var(--sea); } }
 
 @media (max-width: 720px) {
-  .topbar { padding: 16px; min-height: 68px; }
-  .brand-name { font-size: 17px; }
-  .brand-subtitle { font-size: 8px; }
-  .utility-button { padding: 0 10px; }
-  #reset-view { display: none; }
+  .topbar { padding: 12px; min-height: 62px; gap: 10px; }
+  .brand-name { font-size: 14px; }
+  .brand-subtitle { margin-top: 5px; font-size: 7px; }
+  .top-actions { gap: 4px; }
+  .utility-button { min-height: 28px; padding: 0 7px; font-size: 8px; letter-spacing: .08em; }
+  .language-switcher { height: 28px; min-height: 28px; padding: 0 6px; font-size: 8px; }
   #intro-card { padding:16px; }
   .intro-shell { width:100%; padding:28px 20px 24px; }
   .intro-controls { gap:10px; }
-  .intro-controls span { min-width:0; flex:1 1 42%; }
   .desktop-only { display: none; }
   .mobile-only { display: inline; }
   #mobile-controls { display: block; }
@@ -468,12 +538,38 @@ html.ui-ready #museum-ui { opacity: 1; visibility: visible; }
   #exhibit-panel { top: 10px; right: 10px; bottom: 10px; width: calc(100vw - 20px); border-radius: 19px; }
   .panel-content { padding: 34px 25px 28px; }
   #panel-title { font-size: 34px; }
+  #controls-reminder {
+    left: auto;
+    right: 12px;
+    bottom: 76px;
+    max-width: calc(100vw - 158px);
+    gap: 7px;
+    padding: 6px 7px 6px 9px;
+    transform: translateY(10px);
+  }
+  #controls-reminder.is-visible { transform: translateY(0); }
+  .reminder-desktop { display: none; }
+  .reminder-mobile { display: flex; gap: 5px; font-size: 7px; letter-spacing: .05em; white-space: normal; }
+  #controls-reminder i { height: 14px; }
+  #controls-help { min-height: 22px; padding: 0 6px; font-size: 7px; }
 }
 
 @media (max-width: 430px) {
-  .language-switcher { display: none; }
   .top-actions { gap: 6px; }
   #intro-card p { font-size: 12px; }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  #mobile-controls { display: block; }
+  #controls-reminder {
+    left: auto;
+    right: 12px;
+    bottom: 76px;
+    transform: translateY(10px);
+  }
+  #controls-reminder.is-visible { transform: translateY(0); }
+  .reminder-desktop { display: none; }
+  .reminder-mobile { display: flex; }
 }
 
 @media (prefers-reduced-motion: reduce) {

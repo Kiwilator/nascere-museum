@@ -5,33 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <meta name="theme-color" content="#102c35" />
   <title>NASCERE — Museo virtual</title>
+  <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://aframe.io" crossorigin>
   <link rel="preconnect" href="https://cdn.glitch.global" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css?v=7" />
+  <link rel="stylesheet" href="./style.css?v=8" />
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
-  <script src="./script.js?v=5"></script>
-  <script src="./controls-onboarding-final.js?v=1"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.AFRAME) return;
+      const status = document.getElementById('loading-status');
+      if (status) status.textContent = 'No se pudo iniciar la escena 3D. Comprueba la conexión y recarga.';
+    }, { once: true });
+  </script>
+  <script src="./script.js?v=6"></script>
+  <script src="./controls-onboarding-final.js?v=2"></script>
   <script src="./webgl-onboarding-fix.js?v=1"></script>
   <script src="./hotfix-v2.js?v=1"></script>
   <script src="./visual-fix-v2.js?v=1"></script>
   <script src="./interaction-pass-v2.js?v=2"></script>
   <script src="./jewellery-motion-v2.js?v=1"></script>
-  <style id="onboarding-control-icons">
-    .intro-controls .control-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;min-width:190px;}
-    .control-visual{display:flex;flex-direction:column;align-items:center;gap:4px;min-height:54px;justify-content:center;}
-    .key-row{display:flex;gap:4px;align-items:center;justify-content:center;}
-    .key-row-top{transform:translateX(-31px);}
-    .keycap{display:grid;place-items:center;width:28px;height:28px;border:1px solid rgba(232,255,255,.42);border-radius:6px;background:rgba(255,255,255,.09);box-shadow:inset 0 -2px 0 rgba(255,255,255,.08),0 3px 10px rgba(0,0,0,.12);font:600 10px/1 'DM Sans',sans-serif;font-style:normal;color:#f8ffff;}
-    .arrow-key{color:#75d8de;}
-    .mouse-icon{position:relative;width:34px;height:52px;border:1.5px solid rgba(232,255,255,.62);border-radius:17px;display:block;margin:1px auto 2px;background:rgba(255,255,255,.055);}
-    .mouse-icon::before{content:'';position:absolute;left:50%;top:0;bottom:25px;width:1px;background:rgba(232,255,255,.24);transform:translateX(-50%);}
-    .mouse-icon i{position:absolute;left:50%;top:8px;width:3px;height:9px;border-radius:3px;background:#75d8de;transform:translateX(-50%);}
-    .intro-controls .control-card>b{margin-top:1px;}
-    @media (max-width:720px){.intro-controls .desktop-only{display:none!important}.intro-controls .mobile-only{display:flex!important}}
-  </style>
+  <script src="./label-fix-v2.js?v=2"></script>
+  <script src="./sound-fix-v2.js?v=4"></script>
 </head>
 <body>
   <div id="loading-screen" aria-live="polite">
@@ -195,6 +192,18 @@
     </aside>
 
     <div id="mobile-controls" aria-label="Control de movimiento"><div id="joystick-base"><div id="joystick-nub"></div></div></div>
+
+    <div id="controls-reminder" aria-hidden="true">
+      <div class="reminder-desktop" aria-hidden="true">
+        <span data-guide-reminder="desktopMove"></span>
+        <i></i>
+        <span data-guide-reminder="desktopLook"></span>
+      </div>
+      <div class="reminder-mobile" aria-hidden="true">
+        <span data-guide-reminder="mobileMove"></span><i></i><span data-guide-reminder="mobileLook"></span>
+      </div>
+      <button id="controls-help" type="button"><span aria-hidden="true">?</span><span data-guide-reminder="help"></span></button>
+    </div>
   </div>
 </body>
 </html>

@@ -95,14 +95,21 @@ AFRAME.registerComponent('deferred-gltf', {
     delay: { type: 'number', default: 1000 }
   },
   init() {
+    let scheduled = false;
     const load = () => {
       if (!this.el.isConnected || !this.data.src) return;
       this.el.setAttribute('gltf-model', this.data.src);
     };
-    window.setTimeout(() => {
-      if ('requestIdleCallback' in window) requestIdleCallback(load, { timeout: 1200 });
-      else load();
-    }, this.data.delay);
+    const schedule = () => {
+      if (scheduled) return;
+      scheduled = true;
+      window.setTimeout(() => {
+        if ('requestIdleCallback' in window) requestIdleCallback(load, { timeout: 1200 });
+        else load();
+      }, this.data.delay);
+    };
+    if (document.documentElement.classList.contains('museum-entered')) schedule();
+    else window.addEventListener('nascere:entered', schedule, { once: true });
   }
 });
 
@@ -130,7 +137,6 @@ window.addEventListener('DOMContentLoaded', () => {
   const panelProgress = document.getElementById('panel-progress');
   const introCard = document.getElementById('intro-card');
   const exhibitHint = document.getElementById('exhibit-hint');
-  const soundToggle = document.getElementById('sound-toggle');
   const resetButton = document.getElementById('reset-view');
   const brandButton = document.getElementById('brand-button');
   const closeButton = document.querySelector('.panel-close');
@@ -142,8 +148,6 @@ window.addEventListener('DOMContentLoaded', () => {
   window.setTimeout(showStableUI, 2500);
 
   let currentLanguage = 'es';
-  let soundOn = false;
-  let soundSourceAttached = false;
   let introTimer = null;
   let sceneReady = false;
   let criticalLoaded = 0;
@@ -293,6 +297,7 @@ window.addEventListener('DOMContentLoaded', () => {
   function hideIntro() {
     if (introTimer) clearTimeout(introTimer);
     introCard.classList.add('is-hidden');
+    introCard.setAttribute('aria-hidden', 'true');
     window.setTimeout(() => { introCard.style.pointerEvents = 'none'; }, 500);
   }
 
@@ -350,27 +355,33 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   function revealMuseum(force = false) {
-    if (revealed || !sceneReady) return;
-    if (!force && criticalLoaded < 2) return;
+    if (revealed) return;
+    if (!force && (!sceneReady || criticalLoaded < 2)) return;
     revealed = true;
-    loadingStatus.textContent = currentLanguage === 'es' ? 'Exposición lista' : 'Exhibition ready';
+    const partial = force && (!sceneReady || criticalLoaded < 2);
+    loadingStatus.textContent = partial
+      ? (currentLanguage === 'es' ? 'Entrada disponible, piezas en carga' : 'Entry available, pieces still loading')
+      : (currentLanguage === 'es' ? 'Exposición lista' : 'Exhibition ready');
     window.setTimeout(() => loading.classList.add('is-hidden'), 220);
     // Onboarding remains until visitor enters.
   }
 
   const criticalModels = [...document.querySelectorAll('.critical-model')];
   criticalModels.forEach((model) => {
-    const markLoaded = () => {
-      if (model.dataset.ready === '1') return;
-      model.dataset.ready = '1';
+    const markSettled = (failed = false) => {
+      if (model.dataset.ready) return;
+      model.dataset.ready = failed ? 'error' : 'loaded';
       criticalLoaded += 1;
       loadingStatus.textContent = currentLanguage === 'es'
         ? `Cargando piezas ${criticalLoaded}/${criticalModels.length}`
         : `Loading pieces ${criticalLoaded}/${criticalModels.length}`;
       revealMuseum(false);
     };
-    if (model.getObject3D('mesh')) markLoaded();
-    else model.addEventListener('model-loaded', markLoaded, { once: true });
+    if (model.getObject3D('mesh')) markSettled(false);
+    else {
+      model.addEventListener('model-loaded', () => markSettled(false), { once: true });
+      model.addEventListener('model-error', () => markSettled(true), { once: true });
+    }
   });
 
   scene.addEventListener('loaded', () => {
@@ -385,28 +396,6 @@ window.addEventListener('DOMContentLoaded', () => {
   }, { once: true });
 
   window.setTimeout(() => revealMuseum(true), 3400);
-
-  function toggleSound() {
-    const sound = document.getElementById('seaSound');
-    if (!sound || !sound.components || !sound.components.sound) return;
-    soundOn = !soundOn;
-    soundToggle.setAttribute('aria-pressed', soundOn ? 'true' : 'false');
-
-    const play = () => {
-      if (soundOn && sound.components.sound) sound.components.sound.playSound();
-    };
-
-    if (soundOn) {
-      if (!soundSourceAttached) {
-        soundSourceAttached = true;
-        sound.addEventListener('sound-loaded', play, { once: true });
-        sound.setAttribute('sound', 'src', sound.dataset.audioSrc);
-        window.setTimeout(play, 600);
-      } else play();
-    } else {
-      sound.components.sound.pauseSound();
-    }
-  }
 
   function resetView() {
     const rig = document.getElementById('rig');
@@ -467,7 +456,6 @@ window.addEventListener('DOMContentLoaded', () => {
     base.addEventListener('pointercancel', stop);
   }
 
-  soundToggle.addEventListener('click', toggleSound);
   resetButton.addEventListener('click', resetView);
   brandButton.addEventListener('click', () => openPanel('project'));
   closeButton.addEventListener('click', closePanel);
