@@ -1,0 +1,39 @@
+name: Apply WebGL onboarding fix
+
+on:
+  push:
+    branches:
+      - nascere-v2-onboarding
+    paths:
+      - '.github/workflows/apply-webgl-onboarding-fix.yml'
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install WebGL-safe onboarding fix
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          needle = '<script src="./controls-onboarding-final.js?v=1"></script>'
+          insert = needle + '\n  <script src="./webgl-onboarding-fix.js?v=1"></script>'
+          if './webgl-onboarding-fix.js' not in s:
+              if needle not in s:
+                  raise SystemExit('controls onboarding script tag not found')
+              s = s.replace(needle, insert, 1)
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Verify
+        run: grep -q './webgl-onboarding-fix.js?v=1' index.html
+      - name: Commit
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html
+          git diff --cached --quiet || git commit -m 'Load WebGL-safe onboarding fix'
+          git push
