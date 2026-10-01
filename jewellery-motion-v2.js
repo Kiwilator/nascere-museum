@@ -11,7 +11,7 @@
 
   if (!document.querySelector('script[data-nascere-sound-fix]')) {
     const soundScript = document.createElement('script');
-    soundScript.src = './sound-fix-v2.js?v=3';
+    soundScript.src = './sound-fix-v2.js?v=4';
     soundScript.dataset.nascereSoundFix = 'true';
     document.head.appendChild(soundScript);
   }
