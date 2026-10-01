@@ -229,34 +229,33 @@ AFRAME.registerComponent('museum-floor-finish', {
         if (transparent || (Number.isFinite(opacity) && opacity < 0.9)) {
           setCaster(entity, false, false);
         } else {
-          setCaster(entity, false, true);
+          setCaster(entity, true, true);
         }
       });
 
-      // Museum props do not cast floor shadows by default.
-      // The legacy bendy bench is the only deliberate shadow caster.
+      // Solid museum models cast shadows, except the ceiling lamp models.
       [...document.querySelectorAll('[gltf-model], [deferred-gltf]')].forEach((entity) => {
-        const deferred = entity.getAttribute('deferred-gltf');
-        const gltf = entity.getAttribute('gltf-model');
-        const source = typeof deferred === 'string'
-          ? deferred
-          : (deferred && deferred.src) || gltf || '';
-        const isBench = String(source).includes('bendy_bench_game_ready.glb');
-        setCaster(entity, isBench, true);
+        const noShadow = entity.id === 'ceiling-sculptural-lamp' || entity.id === 'ceiling-light-model';
+        setCaster(entity, !noShadow, !noShadow);
       });
 
-      [...document.querySelectorAll('.jewellery')].forEach((entity) => setCaster(entity, false, true));
+      // Jewellery also casts normally.
+      [...document.querySelectorAll('.jewellery')].forEach((entity) => setCaster(entity, true, true));
 
+      // Ceiling lamp geometry must never cast a shadow.
       const noShadowModelIds = ['ceiling-sculptural-lamp', 'ceiling-light-model'];
       noShadowModelIds.forEach((id) => setCaster(document.getElementById(id), false, false));
 
       // Architecture and display graphics never cast shadows.
       [
         ...document.querySelectorAll('.wall'),
-        ...document.querySelectorAll('#museum-ceiling'),
+        ...document.querySelectorAll('#museum-ceiling')
+      ].forEach((entity) => setCaster(entity, false, true));
+
+      [
         ...document.querySelectorAll('#ceiling-sculptural-lamp'),
         ...document.querySelectorAll('#ceiling-light-model')
-      ].forEach((entity) => setCaster(entity, false, true));
+      ].forEach((entity) => setCaster(entity, false, false));
 
       // Never let the floor self-shadow.
       const floorMesh = el.getObject3D('mesh');
