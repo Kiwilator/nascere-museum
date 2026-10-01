@@ -114,33 +114,156 @@ AFRAME.registerComponent('face-camera', {
   }
 });
 
-AFRAME.registerComponent('floor-texture-fix', {
+AFRAME.registerComponent('museum-floor-finish', {
   init() {
-    const applyFix = () => {
-      const mesh = this.el.getObject3D('mesh');
-      const renderer = this.el.sceneEl && this.el.sceneEl.renderer;
+    const el = this.el;
+
+    const applyTexture = () => {
+      const mesh = el.getObject3D('mesh');
+      const renderer = el.sceneEl && el.sceneEl.renderer;
       if (!mesh || !renderer) return;
 
-      const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-      const maxAnisotropy = renderer.capabilities.getMaxAnisotropy
-        ? renderer.capabilities.getMaxAnisotropy()
-        : 1;
+      const image = new Image();
+      image.decoding = 'async';
+      image.onload = () => {
+        // Downsample + soften the source first. This preserves the real stucco
+        // texture while removing the high-frequency detail that caused moire.
+        const canvas = document.createElement('canvas');
+        canvas.width = 384;
+        canvas.height = 384;
+        const ctx = canvas.getContext('2d', { alpha: false });
 
-      materials.forEach((mat) => {
-        if (!mat || !mat.map) return;
-        mat.map.anisotropy = Math.min(16, maxAnisotropy);
-        mat.map.generateMipmaps = true;
-        mat.map.minFilter = THREE.LinearMipmapLinearFilter;
-        mat.map.magFilter = THREE.LinearFilter;
-        mat.map.needsUpdate = true;
-        mat.needsUpdate = true;
-      });
+        ctx.fillStyle = '#dbe6e4';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.filter = 'blur(0.55px) contrast(175%) brightness(88%)';
+        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+        ctx.filter = 'none';
+
+        // A restrained cool overlay keeps the floor in the Nascere palette
+        // without washing the texture away.
+        ctx.fillStyle = 'rgba(205, 226, 224, 0.16)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.repeat.set(5, 5);
+        texture.anisotropy = Math.min(
+          16,
+          renderer.capabilities.getMaxAnisotropy
+            ? renderer.capabilities.getMaxAnisotropy()
+            : 1
+        );
+        texture.minFilter = THREE.LinearMipmapLinearFilter;
+        texture.magFilter = THREE.LinearFilter;
+        texture.generateMipmaps = true;
+        if ('colorSpace' in texture && THREE.SRGBColorSpace) {
+          texture.colorSpace = THREE.SRGBColorSpace;
+        }
+        texture.needsUpdate = true;
+
+        const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+        materials.forEach((mat) => {
+          if (!mat) return;
+          mat.map = texture;
+          mat.color.set('#ffffff');
+          mat.roughness = 1;
+          mat.metalness = 0;
+          mat.needsUpdate = true;
+        });
+
+        mesh.receiveShadow = true;
+        mesh.castShadow = false;
+      };
+      image.src = './assets/white_stucco_diff_1k.jpg?v=7';
     };
 
-    this.el.addEventListener('materialtextureloaded', applyFix);
-    this.el.addEventListener('object3dset', applyFix);
-    if (this.el.sceneEl?.hasLoaded) requestAnimationFrame(applyFix);
-    else this.el.sceneEl?.addEventListener('loaded', () => requestAnimationFrame(applyFix), { once: true });
+    const configureShadows = () => {
+      const scene = el.sceneEl;
+      const renderer = scene && scene.renderer;
+      if (!scene || !renderer) return;
+
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.shadowMap.autoUpdate = true;
+      renderer.shadowMap.needsUpdate = true;
+
+      const shadowLightEl = document.getElementById('museum-shadow-light');
+      const light = shadowLightEl && shadowLightEl.getObject3D('light');
+      if (light && light.shadow) {
+        light.castShadow = true;
+        light.shadow.mapSize.set(2048, 2048);
+        light.shadow.camera.left = -9;
+        light.shadow.camera.right = 9;
+        light.shadow.camera.top = 9;
+        light.shadow.camera.bottom = -9;
+        light.shadow.camera.near = 0.5;
+        light.shadow.camera.far = 22;
+        light.shadow.bias = -0.00015;
+        light.shadow.normalBias = 0.035;
+        light.shadow.camera.updateProjectionMatrix();
+      }
+
+      const setCaster = (entity, cast = true, receive = true) => {
+        if (!entity) return;
+        const apply = () => {
+          const root = entity.getObject3D('mesh');
+          if (!root) return;
+          root.traverse((obj) => {
+            if (!obj.isMesh) return;
+            obj.castShadow = cast;
+            obj.receiveShadow = receive;
+          });
+          renderer.shadowMap.needsUpdate = true;
+        };
+        apply();
+        entity.addEventListener('model-loaded', apply);
+        entity.addEventListener('object3dset', apply);
+      };
+
+      // Solid display bases.
+      [...document.querySelectorAll('a-entity[geometry*="primitive: cylinder"]')].forEach((entity) => {
+        const material = entity.getAttribute('material');
+        const opacity = material && Number(material.opacity);
+        const transparent = material && material.transparent;
+        if (transparent || (Number.isFinite(opacity) && opacity < 0.9)) {
+          setCaster(entity, false, false);
+        } else {
+          setCaster(entity, true, true);
+        }
+      });
+
+      // All solid museum models: furniture, podiums, jewellery and props.
+      [...document.querySelectorAll('[gltf-model], [deferred-gltf]')].forEach((entity) => {
+        if (entity.id === 'ceiling-light-model') {
+          setCaster(entity, false, false);
+        } else {
+          setCaster(entity, true, true);
+        }
+      });
+
+      // Jewellery can be reassigned by hotfix-v2 after initial parsing.
+      [...document.querySelectorAll('.jewellery')].forEach((entity) => setCaster(entity, true, true));
+
+      // Never let the floor self-shadow.
+      const floorMesh = el.getObject3D('mesh');
+      if (floorMesh) {
+        floorMesh.castShadow = false;
+        floorMesh.receiveShadow = true;
+      }
+
+      renderer.shadowMap.needsUpdate = true;
+    };
+
+    const boot = () => {
+      applyTexture();
+      configureShadows();
+      window.setTimeout(configureShadows, 800);
+      window.setTimeout(configureShadows, 2200);
+    };
+
+    if (el.sceneEl?.hasLoaded) requestAnimationFrame(boot);
+    else el.sceneEl?.addEventListener('loaded', () => requestAnimationFrame(boot), { once: true });
   }
 });
 
