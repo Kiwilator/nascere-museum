@@ -247,6 +247,17 @@ AFRAME.registerComponent('museum-floor-finish', {
 
       [...document.querySelectorAll('.jewellery')].forEach((entity) => setCaster(entity, false, true));
 
+      const noShadowModelIds = ['ceiling-sculptural-lamp', 'ceiling-light-model'];
+      noShadowModelIds.forEach((id) => setCaster(document.getElementById(id), false, false));
+
+      // Architecture and display graphics never cast shadows.
+      [
+        ...document.querySelectorAll('.wall'),
+        ...document.querySelectorAll('#museum-ceiling'),
+        ...document.querySelectorAll('#ceiling-sculptural-lamp'),
+        ...document.querySelectorAll('#ceiling-light-model')
+      ].forEach((entity) => setCaster(entity, false, true));
+
       // Never let the floor self-shadow.
       const floorMesh = el.getObject3D('mesh');
       if (floorMesh) {
