@@ -114,6 +114,36 @@ AFRAME.registerComponent('face-camera', {
   }
 });
 
+AFRAME.registerComponent('floor-texture-fix', {
+  init() {
+    const applyFix = () => {
+      const mesh = this.el.getObject3D('mesh');
+      const renderer = this.el.sceneEl && this.el.sceneEl.renderer;
+      if (!mesh || !renderer) return;
+
+      const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+      const maxAnisotropy = renderer.capabilities.getMaxAnisotropy
+        ? renderer.capabilities.getMaxAnisotropy()
+        : 1;
+
+      materials.forEach((mat) => {
+        if (!mat || !mat.map) return;
+        mat.map.anisotropy = Math.min(16, maxAnisotropy);
+        mat.map.generateMipmaps = true;
+        mat.map.minFilter = THREE.LinearMipmapLinearFilter;
+        mat.map.magFilter = THREE.LinearFilter;
+        mat.map.needsUpdate = true;
+        mat.needsUpdate = true;
+      });
+    };
+
+    this.el.addEventListener('materialtextureloaded', applyFix);
+    this.el.addEventListener('object3dset', applyFix);
+    if (this.el.sceneEl?.hasLoaded) requestAnimationFrame(applyFix);
+    else this.el.sceneEl?.addEventListener('loaded', () => requestAnimationFrame(applyFix), { once: true });
+  }
+});
+
 window.addEventListener('DOMContentLoaded', () => {
   const scene = document.getElementById('museum-scene');
   const loading = document.getElementById('loading-screen');
