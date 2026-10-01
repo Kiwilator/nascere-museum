@@ -1,9 +1,7 @@
 /* NASCERE V2 — original sea-theme sound only. No generated noise fallback. */
 (() => {
   const SOURCES = [
-    'https://cdn.glitch.global/875c914b-5bf9-4bd8-8d5b-92c7da9612b5/sea_theme.mp3?v=1726130217666',
-    'https://cdn.glitch.me/875c914b-5bf9-4bd8-8d5b-92c7da9612b5%2Fsea_theme.mp3?v=1726130217666',
-    'https://cdn.glitch.com/875c914b-5bf9-4bd8-8d5b-92c7da9612b5%2Fsea_theme.mp3?v=1726130217666'
+    './assets/sea_theme.mp3?v=1'
   ];
 
   let enabled = false;
