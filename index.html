@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="./style.css?v=4" />
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="./parametric-bench-harmon.js?v=1"></script>
-  <script src="./script.js?v=4"></script>
+  <script src="./script.js?v=5"></script>
   <script src="./hotfix-v2.js?v=3"></script>
   <script src="./visual-fix-v2.js?v=1"></script>
   <script src="./interaction-pass-v2.js?v=2"></script>
@@ -40,14 +40,15 @@
 
     <a-entity id="seaSound" sound="autoplay: false; loop: true; volume: 0.5" data-audio-src="./assets/sea_theme.mp3?v=1"></a-entity>
 
-    <a-entity id="animated-light" light="type: point; intensity: 0.72; color: #e7ffff; castShadow: true" position="0 3 0"></a-entity>
-    <a-entity id="animated-light-right" light="type: point; intensity: 0.28; color: #55b8c4; castShadow: true" position="0 3 10"></a-entity>
-    <a-entity id="animated-light-left" light="type: point; intensity: 0.30; color: #4a9eaa; castShadow: true" position="0 0.5 -10"></a-entity>
+    <a-entity id="animated-light" light="type: point; intensity: 0.72; color: #e7ffff; castShadow: false" position="0 3 0"></a-entity>
+    <a-entity id="animated-light-right" light="type: point; intensity: 0.28; color: #55b8c4; castShadow: false" position="0 3 10"></a-entity>
+    <a-entity id="animated-light-left" light="type: point; intensity: 0.30; color: #4a9eaa; castShadow: false" position="0 0.5 -10"></a-entity>
     <a-entity light="type: hemisphere; color: #f1ffff; groundColor: #163d47; intensity: 0.42"></a-entity>
     <a-entity light="type: directional; color: #c8f6f7; intensity: 0.22" position="-2 3.6 -1"></a-entity>
+    <a-entity id="museum-shadow-light" light="type: directional; color: #e8f8fa; intensity: 0.45; castShadow: true; shadowMapWidth: 2048; shadowMapHeight: 2048; shadowCameraTop: 8; shadowCameraRight: 8; shadowCameraBottom: -8; shadowCameraLeft: -8; shadowBias: -0.0006" position="0 6 2"></a-entity>
 
     <!-- Arquitectura -->
-    <a-plane id="museum-floor" width="40" height="40" position="0 0.002 0" rotation="-90 0 0" material="color: #cfdcdc; roughness: 1; metalness: 0; shader: standard; side: double" shadow="receive: false; cast: false"></a-plane>
+    <a-plane id="museum-floor" width="40" height="40" position="0 0.002 0" rotation="-90 0 0" material="src: url(./assets/white_stucco_diff_1k.jpg?v=6); repeat: 2 2; color: #f2f6f6; roughness: 1; metalness: 0; shader: standard; side: front" shadow="receive: true; cast: false" floor-texture-fix></a-plane>
     <a-box class="wall" src="./assets/white_stucco_diff_1k.jpg" depth="40" height="5" width="0.5" position="0 1.5 -6" rotation="0 90 0" material="repeat: 10 1" shadow="receive: true"></a-box>
     <a-box class="wall" src="./assets/white_stucco_diff_1k.jpg" depth="40" height="5" width="0.5" position="6 1.5 0" material="repeat: 10 1" shadow="receive: true"></a-box>
     <a-box class="wall" src="./assets/white_stucco_diff_1k.jpg" depth="40" height="5" width="0.5" position="0 1.5 6" rotation="0 90 0" material="repeat: 10 1" shadow="receive: true"></a-box>
@@ -60,10 +61,10 @@
     <a-entity class="wall" geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6" material="color: #254f57; roughness: 0.48; metalness: 0.14" position="-2 0.5 2"></a-entity>
     <a-entity class="wall" geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6" material="color: #254f57; roughness: 0.48; metalness: 0.14" position="2 0.5 2"></a-entity>
 
-    <a-entity geometry="primitive: cylinder; radius: 0.45; height: 5; segmentsRadial: 6" material="color: #dffcff; opacity: 0.16; transparent: true; roughness: 0.08; side: double" position="-2 1.25 -2"></a-entity>
-    <a-entity geometry="primitive: cylinder; radius: 0.45; height: 5; segmentsRadial: 6" material="color: #dffcff; opacity: 0.16; transparent: true; roughness: 0.08; side: double" position="2 1.25 -2"></a-entity>
-    <a-entity geometry="primitive: cylinder; radius: 0.45; height: 5; segmentsRadial: 6" material="color: #dffcff; opacity: 0.16; transparent: true; roughness: 0.08; side: double" position="-2 1.25 2"></a-entity>
-    <a-entity geometry="primitive: cylinder; radius: 0.45; height: 5; segmentsRadial: 6" material="color: #dffcff; opacity: 0.16; transparent: true; roughness: 0.08; side: double" position="2 1.25 2"></a-entity>
+    <a-entity geometry="primitive: cylinder; radius: 0.45; height: 5; segmentsRadial: 6" material="color: #dffcff; opacity: 0.16; transparent: true; roughness: 0.08; side: double" position="-2 1.25 -2" shadow="cast: false; receive: false"></a-entity>
+    <a-entity geometry="primitive: cylinder; radius: 0.45; height: 5; segmentsRadial: 6" material="color: #dffcff; opacity: 0.16; transparent: true; roughness: 0.08; side: double" position="2 1.25 -2" shadow="cast: false; receive: false"></a-entity>
+    <a-entity geometry="primitive: cylinder; radius: 0.45; height: 5; segmentsRadial: 6" material="color: #dffcff; opacity: 0.16; transparent: true; roughness: 0.08; side: double" position="-2 1.25 2" shadow="cast: false; receive: false"></a-entity>
+    <a-entity geometry="primitive: cylinder; radius: 0.45; height: 5; segmentsRadial: 6" material="color: #dffcff; opacity: 0.16; transparent: true; roughness: 0.08; side: double" position="2 1.25 2" shadow="cast: false; receive: false"></a-entity>
 
     <a-ring position="-2 0.055 -2" rotation="-90 0 0" radius-inner="0.53" radius-outer="0.555" material="color: #75d8de; shader: flat; opacity: 0.42; transparent: true"></a-ring>
     <a-ring position="2 0.055 -2" rotation="-90 0 0" radius-inner="0.53" radius-outer="0.555" material="color: #75d8de; shader: flat; opacity: 0.42; transparent: true"></a-ring>
@@ -101,7 +102,7 @@
     <!-- Mobiliario original y banco paramétrico adaptado para Nascere. -->
     <a-entity deferred-gltf="src: ./assets/parametric_bench_002.glb; delay: 250" scale="0.003 0.003 0.005" position="0.3 3.9 0" rotation="20 90 180"></a-entity>
     <a-entity deferred-gltf="src: ./assets/modern_door(1).glb; delay: 450" scale="0.4 0.24 0.24" position="-5.68 0 0"></a-entity>
-    <a-entity deferred-gltf="src: ./assets/ceiling_light.glb; delay: 650" scale="0.5 0.5 0.9" position="-0.1 3.86 0.2"></a-entity>
+    <a-entity id="ceiling-light-model" deferred-gltf="src: ./assets/ceiling_light.glb; delay: 650" scale="0.5 0.5 0.9" position="-0.1 3.86 0.2" shadow="cast: false; receive: false"></a-entity>
     <a-entity deferred-gltf="src: ./assets/desktop_computer.glb; delay: 850" scale="0.7 0.7 0.7" position="4 1.22 3" rotation="0 90 0"></a-entity>
     <a-entity deferred-gltf="src: ./assets/desktop_computer.glb; delay: 1000" scale="0.7 0.7 0.7" position="4 1.22 1" rotation="0 90 0"></a-entity>
     <a-entity deferred-gltf="src: ./assets/display_case_maya.glb; delay: 1150" scale="6 6 50" position="4 0.8 -2.3"></a-entity>
