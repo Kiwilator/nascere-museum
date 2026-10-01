@@ -248,7 +248,7 @@ AFRAME.registerComponent('museum-floor-finish', {
 
       // Architecture and display graphics never cast shadows.
       [
-        ...document.querySelectorAll('.wall'),
+        ...document.querySelectorAll('a-box.wall'),
         ...document.querySelectorAll('#museum-ceiling')
       ].forEach((entity) => setCaster(entity, false, true));
 
