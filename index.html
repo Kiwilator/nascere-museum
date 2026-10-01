@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="./style.css?v=4" />
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="./parametric-bench-harmon.js?v=1"></script>
-  <script src="./script.js?v=5"></script>
+  <script src="./script.js?v=6"></script>
   <script src="./hotfix-v2.js?v=3"></script>
   <script src="./visual-fix-v2.js?v=1"></script>
   <script src="./interaction-pass-v2.js?v=2"></script>
@@ -40,15 +40,15 @@
 
     <a-entity id="seaSound" sound="autoplay: false; loop: true; volume: 0.5" data-audio-src="./assets/sea_theme.mp3?v=1"></a-entity>
 
-    <a-entity id="animated-light" light="type: point; intensity: 0.72; color: #e7ffff; castShadow: false" position="0 3 0"></a-entity>
-    <a-entity id="animated-light-right" light="type: point; intensity: 0.28; color: #55b8c4; castShadow: false" position="0 3 10"></a-entity>
-    <a-entity id="animated-light-left" light="type: point; intensity: 0.30; color: #4a9eaa; castShadow: false" position="0 0.5 -10"></a-entity>
-    <a-entity light="type: hemisphere; color: #f1ffff; groundColor: #163d47; intensity: 0.42"></a-entity>
+    <a-entity id="animated-light" light="type: point; intensity: 0.38; color: #e7ffff; castShadow: false" position="0 3 0"></a-entity>
+    <a-entity id="animated-light-right" light="type: point; intensity: 0.16; color: #55b8c4; castShadow: false" position="0 3 10"></a-entity>
+    <a-entity id="animated-light-left" light="type: point; intensity: 0.16; color: #4a9eaa; castShadow: false" position="0 0.5 -10"></a-entity>
+    <a-entity light="type: hemisphere; color: #f1ffff; groundColor: #163d47; intensity: 0.26"></a-entity>
     <a-entity light="type: directional; color: #c8f6f7; intensity: 0.22" position="-2 3.6 -1"></a-entity>
-    <a-entity id="museum-shadow-light" light="type: directional; color: #e8f8fa; intensity: 0.45; castShadow: true; shadowMapWidth: 2048; shadowMapHeight: 2048; shadowCameraTop: 8; shadowCameraRight: 8; shadowCameraBottom: -8; shadowCameraLeft: -8; shadowBias: -0.0006" position="0 6 2"></a-entity>
+    <a-entity id="museum-shadow-light" light="type: directional; color: #f4ffff; intensity: 0.78; castShadow: true" position="-2 6 3"></a-entity>
 
     <!-- Arquitectura -->
-    <a-plane id="museum-floor" width="40" height="40" position="0 0.002 0" rotation="-90 0 0" material="src: url(./assets/white_stucco_diff_1k.jpg?v=6); repeat: 2 2; color: #f2f6f6; roughness: 1; metalness: 0; shader: standard; side: front" shadow="receive: true; cast: false" floor-texture-fix></a-plane>
+    <a-plane id="museum-floor" width="40" height="40" position="0 0.002 0" rotation="-90 0 0" material="color: #dbe6e4; roughness: 1; metalness: 0; shader: standard; side: front" shadow="receive: true; cast: false" museum-floor-finish></a-plane>
     <a-box class="wall" src="./assets/white_stucco_diff_1k.jpg" depth="40" height="5" width="0.5" position="0 1.5 -6" rotation="0 90 0" material="repeat: 10 1" shadow="receive: true"></a-box>
     <a-box class="wall" src="./assets/white_stucco_diff_1k.jpg" depth="40" height="5" width="0.5" position="6 1.5 0" material="repeat: 10 1" shadow="receive: true"></a-box>
     <a-box class="wall" src="./assets/white_stucco_diff_1k.jpg" depth="40" height="5" width="0.5" position="0 1.5 6" rotation="0 90 0" material="repeat: 10 1" shadow="receive: true"></a-box>
