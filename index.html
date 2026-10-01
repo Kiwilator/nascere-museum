@@ -14,7 +14,7 @@
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
   <script src="./parametric-bench-harmon.js?v=1"></script>
   <script src="./script.js?v=4"></script>
-  <script src="./hotfix-v2.js?v=1"></script>
+  <script src="./hotfix-v2.js?v=3"></script>
   <script src="./visual-fix-v2.js?v=1"></script>
   <script src="./interaction-pass-v2.js?v=2"></script>
   <script src="./jewellery-motion-v2.js?v=1"></script>
@@ -47,7 +47,8 @@
     <a-entity light="type: directional; color: #c8f6f7; intensity: 0.22" position="-2 3.6 -1"></a-entity>
 
     <!-- Arquitectura -->
-    <a-box src="./assets/white_stucco_diff_1k.jpg" depth="40" height="0.1" width="40" position="0 0 0" material="repeat: 18 18; color: #d4e6e7; roughness: 0.88" shadow="receive: true"></a-box>
+    <a-box depth="40" height="0.1" width="40" position="0 0 0" material="color: #d9e6e6; roughness: 1; metalness: 0" shadow="receive: true"></a-box>
+    <a-plane id="museum-floor-texture" width="40" height="40" position="0 0.056 0" rotation="-90 0 0" material="src: url(./assets/white_stucco_diff_1k.jpg?v=3); repeat: 18 18; color: #ffffff; roughness: 1; metalness: 0; side: double" shadow="receive: true"></a-plane>
     <a-box class="wall" src="./assets/white_stucco_diff_1k.jpg" depth="40" height="5" width="0.5" position="0 1.5 -6" rotation="0 90 0" material="repeat: 10 1" shadow="receive: true"></a-box>
     <a-box class="wall" src="./assets/white_stucco_diff_1k.jpg" depth="40" height="5" width="0.5" position="6 1.5 0" material="repeat: 10 1" shadow="receive: true"></a-box>
     <a-box class="wall" src="./assets/white_stucco_diff_1k.jpg" depth="40" height="5" width="0.5" position="0 1.5 6" rotation="0 90 0" material="repeat: 10 1" shadow="receive: true"></a-box>
