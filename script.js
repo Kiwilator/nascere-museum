@@ -133,21 +133,21 @@ AFRAME.registerComponent('museum-floor-finish', {
         canvas.height = 384;
         const ctx = canvas.getContext('2d', { alpha: false });
 
-        ctx.fillStyle = '#dbe6e4';
+        ctx.fillStyle = '#b7c9c8';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.filter = 'blur(0.55px) contrast(175%) brightness(88%)';
+        ctx.filter = 'blur(0.4px) contrast(205%) brightness(72%)';
         ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
         ctx.filter = 'none';
 
         // A restrained cool overlay keeps the floor in the Nascere palette
         // without washing the texture away.
-        ctx.fillStyle = 'rgba(205, 226, 224, 0.16)';
+        ctx.fillStyle = 'rgba(128, 154, 153, 0.10)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         const texture = new THREE.CanvasTexture(canvas);
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(5, 5);
+        texture.repeat.set(2, 2);
         texture.anisotropy = Math.min(
           16,
           renderer.capabilities.getMaxAnisotropy
@@ -175,7 +175,7 @@ AFRAME.registerComponent('museum-floor-finish', {
         mesh.receiveShadow = true;
         mesh.castShadow = false;
       };
-      image.src = './assets/white_stucco_diff_1k.jpg?v=7';
+      image.src = './assets/white_stucco_diff_1k.jpg?v=8';
     };
 
     const configureShadows = () => {
@@ -229,21 +229,23 @@ AFRAME.registerComponent('museum-floor-finish', {
         if (transparent || (Number.isFinite(opacity) && opacity < 0.9)) {
           setCaster(entity, false, false);
         } else {
-          setCaster(entity, true, true);
+          setCaster(entity, false, true);
         }
       });
 
-      // All solid museum models: furniture, podiums, jewellery and props.
+      // Museum props do not cast floor shadows by default.
+      // The legacy bendy bench is the only deliberate shadow caster.
       [...document.querySelectorAll('[gltf-model], [deferred-gltf]')].forEach((entity) => {
-        if (entity.id === 'ceiling-light-model') {
-          setCaster(entity, false, false);
-        } else {
-          setCaster(entity, true, true);
-        }
+        const deferred = entity.getAttribute('deferred-gltf');
+        const gltf = entity.getAttribute('gltf-model');
+        const source = typeof deferred === 'string'
+          ? deferred
+          : (deferred && deferred.src) || gltf || '';
+        const isBench = String(source).includes('bendy_bench_game_ready.glb');
+        setCaster(entity, isBench, true);
       });
 
-      // Jewellery can be reassigned by hotfix-v2 after initial parsing.
-      [...document.querySelectorAll('.jewellery')].forEach((entity) => setCaster(entity, true, true));
+      [...document.querySelectorAll('.jewellery')].forEach((entity) => setCaster(entity, false, true));
 
       // Never let the floor self-shadow.
       const floorMesh = el.getObject3D('mesh');
