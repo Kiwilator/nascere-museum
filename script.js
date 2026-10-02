@@ -428,18 +428,18 @@ window.addEventListener('DOMContentLoaded', () => {
       index: '01',
       es: {
         category: 'NASCERE', eyebrow: 'PROYECTO', title: 'Diseñar a partir del residuo',
-        lead: 'Nascere combina diseño de joyería, reutilización material y exposición digital en un mismo proyecto.',
+        lead: 'Nascere parte de una pregunta sencilla: ¿puede un residuo convertirse en una pieza que queramos conservar?',
         body: [
-          'La propuesta parte del poliestireno expandido (EPS) como residuo y lo transforma en materia para crear piezas de joyería. El objetivo es dar valor a un material de uso cotidiano que suele resultar difícil de gestionar una vez desechado.',
-          'El museo virtual permite mostrar las piezas y explicar el proceso sin depender de una exposición física. La visita se convierte así en una parte del propio proyecto: no solo enseña el resultado, también hace visible la relación entre material, diseño y sostenibilidad.'
+          'El proyecto trabaja con poliestireno expandido (EPS), un material muy habitual en embalajes y difícil de recuperar una vez utilizado. En lugar de desecharlo, se transforma y se utiliza como materia para experimentar con nuevas piezas de joyería.',
+          'El museo virtual reúne todo ese proceso en un mismo lugar. No está pensado solo para enseñar la colección terminada: permite recorrer las piezas, conocer el material del que proceden y entender las decisiones de diseño que hay detrás de ellas.'
         ]
       },
       en: {
         category: 'NASCERE', eyebrow: 'PROJECT', title: 'Designing from waste',
-        lead: 'Nascere brings jewellery design, material reuse and digital exhibition together in one project.',
+        lead: 'Nascere begins with a simple question: can a piece of waste become an object we want to keep?',
         body: [
-          'The project starts with expanded polystyrene (EPS) as waste and transforms it into material for jewellery pieces. Its aim is to give new value to an everyday material that is often difficult to manage once discarded.',
-          'The virtual museum presents the pieces and explains the process without relying on a physical exhibition. The visit therefore becomes part of the project itself: it shows not only the final objects, but also the relationship between material, design and sustainability.'
+          'The project works with expanded polystyrene (EPS), a material commonly used in packaging that is difficult to reclaim after use. Instead of discarding it, the material is transformed and used as a medium for experimenting with new jewelry pieces.',
+          'The virtual museum brings this entire process together in one place. It is not designed merely to showcase the finished collection; it allows visitors to explore the pieces, learn about their source material, and understand the design decisions behind them.'
         ]
       }
     },
@@ -447,56 +447,58 @@ window.addEventListener('DOMContentLoaded', () => {
       index: '02',
       es: {
         category: 'MATERIAL', eyebrow: 'POLIESTIRENO EXPANDIDO', title: 'Un residuo ligero, un problema real',
-        lead: 'El EPS contiene una gran proporción de aire. Esa ligereza es útil durante su vida como embalaje, pero complica su recuperación posterior.',
+        lead: 'El EPS pesa muy poco, pero ocupa muchísimo espacio. Ahí empieza buena parte del problema.',
         body: [
-          'El poliestireno expandido es habitual en envases y embalajes. Su baja densidad implica transportar mucho volumen para recuperar relativamente poca materia, lo que puede hacer poco eficiente su reciclaje convencional.',
-          'Nascere investiga una transformación a pequeña escala y próxima al lugar donde se genera el residuo. En vez de entender el EPS únicamente como desecho, el proyecto lo utiliza como punto de partida para desarrollar objetos con un nuevo valor formal y simbólico.'
+          'Está presente en embalajes, protecciones y envases de uso cotidiano. Su estructura contiene una gran cantidad de aire, por lo que transportar grandes volúmenes para recuperar poca materia puede hacer que su reciclaje resulte poco eficiente.',
+          'Nascere trabaja con este residuo a pequeña escala. El EPS se reduce y se transforma para volver a utilizarlo como material de diseño. El interés no está en ocultar su origen, sino justamente en comprobar hasta dónde puede llegar un material que normalmente consideraríamos desecho.'
         ]
       },
       en: {
         category: 'MATERIAL', eyebrow: 'EXPANDED POLYSTYRENE', title: 'Lightweight waste, a real problem',
-        lead: 'EPS contains a very high proportion of air. That lightness is useful as packaging, but makes its recovery more difficult afterwards.',
+        lead: 'EPS is very lightweight but takes up a huge amount of space. That is where much of the problem lies.',
         body: [
-          'Expanded polystyrene is common in packaging. Its low density means transporting a large volume to recover a comparatively small amount of material, which can make conventional recycling inefficient.',
-          'Nascere explores small-scale transformation close to where the waste is generated. Rather than treating EPS only as refuse, the project uses it as a starting point for objects with new formal and symbolic value.'
+          'It is found in everyday packaging, protective materials, and containers. Its structure contains a large amount of air, meaning that transporting large volumes to recover only a small amount of material can make recycling it inefficient.',
+          'Nascere works with this waste on a small scale. The EPS is reduced and transformed for reuse as a design material. The goal is not to hide its origins, but rather to see what can be achieved with a material normally considered waste.'
         ]
       }
     },
     circular: {
       index: '03',
       es: {
-        category: 'SISTEMA', eyebrow: 'ECONOMÍA CIRCULAR', title: 'Mantener el material en uso',
-        lead: 'La lógica circular cambia la pregunta: no qué hacer con el residuo al final, sino cómo volver a introducirlo en un ciclo de uso.',
+        category: 'SISTEMA', eyebrow: 'DEL RESIDUO A UNA NUEVA PIEZA', title: 'Mantener el material en uso',
+        lead: 'La economía circular intenta que los materiales permanezcan en uso el mayor tiempo posible. Nascere aplica esa idea a una escala muy concreta.',
         body: [
-          'Procesar el material localmente permite reducir desplazamientos y explorar usos que no dependen de grandes volúmenes industriales. El residuo se convierte en un recurso disponible para experimentar desde el diseño.',
-          'En este contexto, la joyería funciona como un campo de prueba especialmente interesante: trabaja con poca cantidad de materia, admite procesos experimentales y permite comunicar el origen del material a través del propio objeto.'
+          'El residuo de EPS se recoge, se transforma y vuelve a utilizarse como materia para fabricar nuevas piezas. En lugar de seguir una secuencia de usar y tirar, el proyecto busca introducir de nuevo ese material en un proceso de diseño.',
+          'La joyería permite experimentar con pequeñas cantidades y probar formas, acabados y procesos sin necesitar grandes volúmenes de materia. Por eso funciona aquí como un campo de ensayo: el residuo deja de ser el final del recorrido y se convierte en el comienzo de otro.'
         ]
       },
       en: {
-        category: 'SYSTEM', eyebrow: 'CIRCULAR ECONOMY', title: 'Keeping material in use',
-        lead: 'Circular thinking changes the question: not simply what to do with waste at the end, but how to introduce it into another cycle of use.',
+        category: 'SYSTEM', eyebrow: 'FROM WASTE TO A NEW PIECE', title: 'Keeping material in use',
+        lead: 'The circular economy aims to keep materials in use for as long as possible. Nascere applies this concept on a very specific scale.',
         body: [
-          'Processing material locally can reduce transport and open up uses that do not depend on industrial-scale volumes. Waste becomes a resource available for design experimentation.',
-          'Jewellery is a particularly useful testing ground in this context: it uses small amounts of material, allows experimental processes and can communicate the origin of that material through the object itself.'
+          'EPS waste is collected, transformed, and reused as raw material for new pieces. Instead of following a "use-and-discard" sequence, the project seeks to reintroduce the material into the design process.',
+          'Jewelry offers the opportunity to experiment with small quantities and test shapes, finishes, and processes without requiring large volumes of material. That is why it functions here as a testing ground: waste ceases to be the end of the journey and becomes the beginning of another.'
         ]
       }
     },
     ocean: {
       index: '04',
       es: {
-        category: 'COLECCIÓN', eyebrow: 'INSPIRACIÓN MARINA', title: 'El océano como forma y mensaje',
-        lead: 'Corales, conchas y estructuras orgánicas conectan la forma de las piezas con el destino ambiental de muchos residuos plásticos.',
+        category: 'COLECCIÓN', eyebrow: 'DEL OCÉANO A LA FORMA', title: 'El océano como forma y mensaje',
+        lead: 'Corales, conchas y estructuras marinas inspiran las piezas porque el mar también está en el origen del proyecto.',
         body: [
-          'La colección utiliza referencias marinas para construir una narrativa visual alrededor del material. Las formas no funcionan solo como decoración: sitúan las piezas dentro de una reflexión sobre contaminación, transformación y cuidado de los ecosistemas.',
-          'Esta relación también orienta la atmósfera del museo. Luz, color, sonido y movimiento buscan que la exposición digital tenga una identidad propia y que el visitante entienda las joyas como parte de un relato más amplio.'
+          'Parte de los residuos plásticos que no se gestionan correctamente termina llegando a ríos y océanos. Nascere utiliza esa relación como punto de partida para construir la identidad de la colección.',
+          'Las formas orgánicas no están ahí solo como decoración. Conectan el material reutilizado con aquello que se quiere evitar: que siga formando parte de un sistema de usar y desechar.',
+          'Esa idea continúa en el propio museo. Los colores, las imágenes, el movimiento lento de las piezas y el sonido crean una atmósfera marina que une la colección con la historia que hay detrás del material.'
         ]
       },
       en: {
-        category: 'COLLECTION', eyebrow: 'MARINE INSPIRATION', title: 'The ocean as form and message',
-        lead: 'Corals, shells and organic structures connect the pieces with the environmental destination of many plastic wastes.',
+        category: 'COLLECTION', eyebrow: 'FROM OCEAN TO FORM', title: 'The ocean as form and message',
+        lead: 'Corals, shells, and marine structures inspire the pieces, as the sea lies at the very origin of the project.',
         body: [
-          'The collection uses marine references to build a visual narrative around the material. The forms are not merely decorative: they place the pieces within a reflection on pollution, transformation and the care of ecosystems.',
-          'This relationship also shapes the atmosphere of the museum. Light, colour, sound and movement give the digital exhibition its own identity and connect each jewel to a wider story.'
+          'Some mismanaged plastic waste ends up in rivers and oceans. Nascere uses this connection as a starting point to build the collection’s identity.',
+          'The organic forms are not merely decorative. They link the reused material to what the project seeks to prevent: its continued role in a "use-and-discard" system.',
+          'This concept extends into the museum space itself. Colors, imagery, the slow movement of the pieces, and sound create a marine atmosphere that unites the collection with the story behind the material.'
         ]
       }
     }
