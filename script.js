@@ -228,7 +228,7 @@ AFRAME.registerComponent('museum-floor-finish', {
 
       // Solid museum models cast shadows, except the ceiling lamp models.
       [...document.querySelectorAll('[gltf-model], [deferred-gltf]')].forEach((entity) => {
-        const noShadow = entity.id === 'ceiling-sculptural-lamp' || entity.id === 'ceiling-light-model';
+        const noShadow = entity.id === 'ceiling-sculptural-lamp' || entity.id === 'ceiling-light-model' || entity.id === 'museum-entry-door';
         setCaster(entity, !noShadow, !noShadow);
       });
 
@@ -236,7 +236,7 @@ AFRAME.registerComponent('museum-floor-finish', {
       [...document.querySelectorAll('.jewellery')].forEach((entity) => setCaster(entity, true, true));
 
       // Ceiling lamp geometry must never cast a shadow.
-      const noShadowModelIds = ['ceiling-sculptural-lamp', 'ceiling-light-model'];
+      const noShadowModelIds = ['ceiling-sculptural-lamp', 'ceiling-light-model', 'museum-entry-door'];
       noShadowModelIds.forEach((id) => setCaster(document.getElementById(id), false, false));
 
       // Architecture and display graphics never cast shadows.
