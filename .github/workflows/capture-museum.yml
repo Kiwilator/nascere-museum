@@ -1,0 +1,41 @@
+name: Capture museum screenshots
+
+on:
+  push:
+    branches:
+      - chatgpt-captures-2026-10-02
+    paths:
+      - '.github/workflows/capture-museum.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright
+        run: |
+          npm init -y
+          npm install playwright@1.55.0
+          npx playwright install --with-deps chromium
+
+      - name: Capture current nascere-v2 museum
+        run: node .github/capture-museum.js
+
+      - name: Upload screenshots
+        uses: actions/upload-artifact@v4
+        with:
+          name: nascere-museum-captures-2026-10-02
+          path: captures/*.png
+          if-no-files-found: error
+          retention-days: 7
