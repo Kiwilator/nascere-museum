@@ -29,7 +29,15 @@ jobs:
           npm install playwright@1.55.0
           npx playwright install --with-deps chromium
 
+      - name: Start local museum server
+        run: |
+          python3 -m http.server 8000 > /tmp/nascere-server.log 2>&1 &
+          sleep 2
+          curl --fail http://127.0.0.1:8000/index.html > /dev/null
+
       - name: Capture current nascere-v2 museum
+        env:
+          TARGET_URL: http://127.0.0.1:8000/index.html
         run: node .github/capture-museum.js
 
       - name: Upload screenshots
