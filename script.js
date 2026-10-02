@@ -114,6 +114,30 @@ AFRAME.registerComponent('face-camera', {
   }
 });
 
+AFRAME.registerComponent('no-cast-shadow', {
+  init() {
+    const apply = () => {
+      const root = this.el.getObject3D('mesh');
+      if (!root) return;
+      root.traverse((obj) => {
+        if (!obj.isMesh) return;
+        obj.castShadow = false;
+      });
+      const renderer = this.el.sceneEl && this.el.sceneEl.renderer;
+      if (renderer && renderer.shadowMap) {
+        renderer.shadowMap.needsUpdate = true;
+      }
+    };
+
+    apply();
+    this.el.addEventListener('model-loaded', apply);
+    this.el.addEventListener('object3dset', apply);
+    window.setTimeout(apply, 500);
+    window.setTimeout(apply, 1500);
+    window.setTimeout(apply, 3000);
+  }
+});
+
 AFRAME.registerComponent('museum-floor-finish', {
   init() {
     const el = this.el;
