@@ -35,7 +35,7 @@ jobs:
           sleep 2
           curl --fail http://127.0.0.1:8000/index.html > /dev/null
 
-      - name: Capture current nascere-v2 museum
+      - name: Capture corrected museum views
         env:
           TARGET_URL: http://127.0.0.1:8000/index.html
         run: node .github/capture-museum.js
@@ -43,7 +43,7 @@ jobs:
       - name: Upload screenshots
         uses: actions/upload-artifact@v4
         with:
-          name: nascere-museum-captures-2026-10-02
+          name: nascere-museum-captures-2026-10-02-v2
           path: captures/*.png
           if-no-files-found: error
           retention-days: 7
