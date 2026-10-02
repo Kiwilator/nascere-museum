@@ -53,7 +53,46 @@
     <a-box class="wall" src="./assets/white_wall_stucko.png?v=1" depth="40" height="5" width="0.5" position="6 1.5 0" material="repeat: 10 1" shadow="cast: false; receive: true"></a-box>
     <a-box class="wall" src="./assets/white_wall_stucko.png?v=1" depth="40" height="5" width="0.5" position="0 1.5 6" rotation="0 90 0" material="repeat: 10 1" shadow="cast: false; receive: true"></a-box>
     <a-box class="wall" src="./assets/white_wall_stucko.png?v=1" depth="40" height="5" width="0.5" position="-6 1.5 0" material="repeat: 10 1" shadow="cast: false; receive: true"></a-box>
-    <a-box id="museum-ceiling" src="./assets/white_ceiling_stucko.png?v=1" depth="40" height="0.2" width="40" position="0 4 0" rotation="180 0 0" material="shader: flat; repeat: 6 6; color: #eef4f4; side: double" shadow="cast: false; receive: false"></a-box>
+    <a-box id="museum-ceiling" src="./assets/white_ceiling_stucko.png?v=2" depth="40" height="0.2" width="40" position="0 4 0" rotation="180 0 0" material="shader: flat; repeat: 6 6; color: #dfe7e7; side: double" shadow="cast: false; receive: false"></a-box>
+    <a-entity id="ceiling-edge-shading">
+      <!-- Front / back ceiling perimeter -->
+      <a-plane
+        width="12"
+        height="1.25"
+        position="0 3.892 -5.38"
+        rotation="-90 0 0"
+        material="color: #40565a; opacity: 0.055; transparent: true; shader: flat; side: double; depthWrite: false"
+        shadow="cast: false; receive: false">
+      </a-plane>
+
+      <a-plane
+        width="12"
+        height="1.25"
+        position="0 3.892 5.38"
+        rotation="-90 0 0"
+        material="color: #40565a; opacity: 0.055; transparent: true; shader: flat; side: double; depthWrite: false"
+        shadow="cast: false; receive: false">
+      </a-plane>
+
+      <!-- Left / right ceiling perimeter -->
+      <a-plane
+        width="1.25"
+        height="12"
+        position="-5.38 3.891 0"
+        rotation="-90 0 0"
+        material="color: #40565a; opacity: 0.055; transparent: true; shader: flat; side: double; depthWrite: false"
+        shadow="cast: false; receive: false">
+      </a-plane>
+
+      <a-plane
+        width="1.25"
+        height="12"
+        position="5.38 3.891 0"
+        rotation="-90 0 0"
+        material="color: #40565a; opacity: 0.055; transparent: true; shader: flat; side: double; depthWrite: false"
+        shadow="cast: false; receive: false">
+      </a-plane>
+    </a-entity>
 
     <!-- Peanas y vitrinas -->
     <a-entity class="wall" geometry="primitive: cylinder; radius: 0.5; height: 1; segmentsRadial: 6" material="color: #254f57; roughness: 0.48; metalness: 0.14" position="-2 0.5 -2"></a-entity>
