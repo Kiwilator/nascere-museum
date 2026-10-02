@@ -29,6 +29,13 @@ const OUT = 'captures';
   await page.waitForFunction(() => !!window.AFRAME && document.querySelector('#museum-scene')?.hasLoaded === true, null, { timeout: 120000 });
   await page.waitForTimeout(14000);
 
+  await page.evaluate(() => {
+    const camera = document.getElementById('camera');
+    const look = camera?.components?.['look-controls'];
+    if (look?.pause) look.pause();
+    camera?.removeAttribute('look-controls');
+  });
+
   const cleanOverlays = async (hideAllUI = false) => {
     await page.evaluate((hideAll) => {
       const loading = document.getElementById('loading-screen');
@@ -52,18 +59,24 @@ const OUT = 'captures';
       const camera = document.getElementById('camera');
       if (!rig || !camera || !window.THREE) return;
 
-      const look = camera.components?.['look-controls'];
-      if (look?.pause) look.pause();
-
       rig.object3D.position.set(x, 0, z);
       rig.object3D.rotation.set(0, 0, 0);
+
       camera.object3D.position.set(0, 1.6, 0);
       camera.object3D.rotation.set(0, 0, 0);
-      camera.object3D.lookAt(new THREE.Vector3(tx, ty, tz));
-      camera.object3D.updateMatrixWorld(true);
+
+      const worldPos = new THREE.Vector3(x, 1.6, z);
+      const target = new THREE.Vector3(tx, ty, tz);
+      const d = target.clone().sub(worldPos);
+      const horizontal = Math.hypot(d.x, d.z);
+      const yaw = Math.atan2(-d.x, -d.z);
+      const pitch = Math.atan2(d.y, horizontal);
+
+      camera.object3D.rotation.set(pitch, yaw, 0, 'YXZ');
       rig.object3D.updateMatrixWorld(true);
+      camera.object3D.updateMatrixWorld(true);
     }, {x,z,tx,ty,tz});
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(1100);
   };
 
   const shot = async (name) => {
@@ -71,29 +84,37 @@ const OUT = 'captures';
     console.log('captured', name);
   };
 
+  // 1. Visitor entrance view with interface visible.
   await cleanOverlays(false);
-  await setView(-5.0, 0.0, 0.0, 1.45, 0.0);
+  await setView(-4.55, 0.0, 0.0, 1.35, 0.0);
   await shot('01_entrada_con_interfaz');
 
+  // 2. Clean entrance view for the TFG.
   await cleanOverlays(true);
   await shot('02_entrada_limpia');
 
-  await setView(-4.65, 4.45, 0.15, 1.30, -0.15);
+  // 3. General diagonal showing the four stands, central bench and walls.
+  await setView(-4.25, 4.10, 0.0, 1.25, 0.0);
   await shot('03_vista_general_diagonal');
 
-  await setView(-4.65, -4.35, 0.0, 1.20, 0.0);
-  await shot('04_peanas_banco_y_recorrido');
+  // 4. Opposite diagonal for spatial organization.
+  await setView(-4.15, -4.10, 0.15, 1.20, 0.10);
+  await shot('04_vista_general_opuesta');
 
-  await setView(1.35, 1.15, 4.05, 1.22, -2.05);
+  // 5. Side vitrine and jewellery display.
+  await setView(1.15, 1.70, 4.05, 1.18, -1.65);
   await shot('05_vitrina_lateral_y_joyas');
 
-  await setView(-0.7, 4.65, -1.0, 1.45, -4.9);
-  await shot('06_mural_y_coleccion');
+  // 6. Close view of the collection/ocean stand and graphic wall.
+  await setView(-0.30, -4.15, -2.0, 1.42, -2.0);
+  await shot('06_coleccion_y_mural');
 
+  // 7. Project stand with information panel open.
   await cleanOverlays(false);
-  await setView(-3.7, 3.55, 1.85, 1.28, 1.9);
+  await setView(-2.75, 3.35, 2.0, 1.30, 2.0);
   await page.evaluate(() => {
-    document.getElementById('museum-ui')?.style.removeProperty('display');
+    const ui = document.getElementById('museum-ui');
+    if (ui) ui.style.display = '';
     const intro = document.getElementById('intro-card');
     if (intro) intro.style.display = 'none';
     document.getElementById('brand-button')?.click();
@@ -101,8 +122,9 @@ const OUT = 'captures';
   await page.waitForTimeout(800);
   await shot('07_panel_interactivo_proyecto');
 
+  // 8. Material point with UI visible but unobstructed.
   await page.evaluate(() => document.querySelector('.panel-close')?.click());
-  await setView(0.3, -4.45, 2.0, 1.35, -2.0);
+  await setView(0.15, -4.20, 2.0, 1.32, -2.0);
   await shot('08_punto_material');
 
   await browser.close();
