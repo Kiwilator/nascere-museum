@@ -115,7 +115,37 @@
     <a-entity deferred-gltf="src: ./assets/abstract_trashcan.glb; delay: 2450" scale="0.8 0.8 0.8" position="0.2 0.37 -0.8" rotation="0 40 0"></a-entity>
 
     <!-- Sustitución robusta del antiguo sello remoto -->
-    <a-text value="NASCERE" position="5.68 2.15 0" rotation="0 -90 0" align="center" width="3.2" color="#e8fbfb" material="shader: flat"></a-text>
+    <a-entity id="museum-wall-title" position="5.675 2.15 0" rotation="0 -90 0">
+      <a-plane
+        width="2.6"
+        height="0.55"
+        position="0 0 0"
+        material="color: #20343a; opacity: 0.10; transparent: true; shader: flat"
+        shadow="cast: false; receive: false">
+      </a-plane>
+
+      <a-text
+        value="NASCERE"
+        align="center"
+        anchor="center"
+        color="#6f8f94"
+        width="4.2"
+        opacity="0.55"
+        position="0.012 -0.012 0.003"
+        material="shader: flat">
+      </a-text>
+
+      <a-text
+        value="NASCERE"
+        align="center"
+        anchor="center"
+        color="#e9ffff"
+        width="4.2"
+        opacity="0.98"
+        position="0 0 0.006"
+        material="shader: flat">
+      </a-text>
+    </a-entity>
 
     <a-entity id="rig" position="-5 0 0" rotation="0 -90 0" museum-movement="speed: 1.55" rig-collider="wallSelector: .wall; radius: 0.35">
       <a-entity id="camera" camera="near: 0.05" position="0 1.6 0" look-controls="pointerLockEnabled: false; magicWindowTrackingEnabled: false"></a-entity>
