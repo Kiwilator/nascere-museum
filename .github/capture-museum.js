@@ -1,7 +1,7 @@
 const { chromium } = require('playwright');
 const fs = require('fs');
 
-const TARGET = 'https://raw.githack.com/Kiwilator/nascere-museum/nascere-v2/index.html';
+const TARGET = process.env.TARGET_URL || 'http://127.0.0.1:8000/index.html';
 const OUT = 'captures';
 
 (async () => {
@@ -26,7 +26,7 @@ const OUT = 'captures';
   page.on('pageerror', err => console.log('[pageerror]', err.message));
 
   await page.goto(TARGET, { waitUntil: 'domcontentloaded', timeout: 120000 });
-  await page.waitForFunction(() => document.querySelector('#museum-scene')?.hasLoaded === true, null, { timeout: 120000 });
+  await page.waitForFunction(() => !!window.AFRAME && document.querySelector('#museum-scene')?.hasLoaded === true, null, { timeout: 120000 });
   await page.waitForTimeout(14000);
 
   const cleanOverlays = async (hideAllUI = false) => {
@@ -63,7 +63,7 @@ const OUT = 'captures';
       camera.object3D.updateMatrixWorld(true);
       rig.object3D.updateMatrixWorld(true);
     }, {x,z,tx,ty,tz});
-    await page.waitForTimeout(900);
+    await page.waitForTimeout(1000);
   };
 
   const shot = async (name) => {
@@ -71,46 +71,37 @@ const OUT = 'captures';
     console.log('captured', name);
   };
 
-  // 1. Initial visitor view with the museum UI visible.
   await cleanOverlays(false);
   await setView(-5.0, 0.0, 0.0, 1.45, 0.0);
   await shot('01_entrada_con_interfaz');
 
-  // 2. Same entrance view, clean for the TFG.
   await cleanOverlays(true);
   await shot('02_entrada_limpia');
 
-  // 3. Broad diagonal view showing the spatial organization.
   await setView(-4.65, 4.45, 0.15, 1.30, -0.15);
   await shot('03_vista_general_diagonal');
 
-  // 4. Central composition: four exhibition points + bench.
   await setView(-4.65, -4.35, 0.0, 1.20, 0.0);
   await shot('04_peanas_banco_y_recorrido');
 
-  // 5. Side display/vitrine and jewellery.
   await setView(1.35, 1.15, 4.05, 1.22, -2.05);
   await shot('05_vitrina_lateral_y_joyas');
 
-  // 6. Marine graphic wall and collection area.
   await setView(-0.7, 4.65, -1.0, 1.45, -4.9);
   await shot('06_mural_y_coleccion');
 
-  // 7. Interaction example with the project information panel.
   await cleanOverlays(false);
   await setView(-3.7, 3.55, 1.85, 1.28, 1.9);
   await page.evaluate(() => {
     document.getElementById('museum-ui')?.style.removeProperty('display');
-    document.getElementById('intro-card')?.style.setProperty('display','none');
+    const intro = document.getElementById('intro-card');
+    if (intro) intro.style.display = 'none';
     document.getElementById('brand-button')?.click();
   });
-  await page.waitForTimeout(700);
+  await page.waitForTimeout(800);
   await shot('07_panel_interactivo_proyecto');
 
-  // 8. Material point with interface but panel closed.
-  await page.evaluate(() => {
-    document.querySelector('.panel-close')?.click();
-  });
+  await page.evaluate(() => document.querySelector('.panel-close')?.click());
   await setView(0.3, -4.45, 2.0, 1.35, -2.0);
   await shot('08_punto_material');
 
