@@ -123,59 +123,52 @@ AFRAME.registerComponent('museum-floor-finish', {
       const renderer = el.sceneEl && el.sceneEl.renderer;
       if (!mesh || !renderer) return;
 
-      const image = new Image();
-      image.decoding = 'async';
-      image.onload = () => {
-        // Downsample + soften the source first. This preserves the real stucco
-        // texture while removing the high-frequency detail that caused moire.
-        const canvas = document.createElement('canvas');
-        canvas.width = 384;
-        canvas.height = 384;
-        const ctx = canvas.getContext('2d', { alpha: false });
+      const loader = new THREE.TextureLoader();
+      loader.load(
+        './assets/floor_tiles.png?v=1',
+        (texture) => {
+          // The source image contains a 2 x 2 tile grid. Repeating the whole
+          // texture 20 x 20 produces roughly 1 m tiles across the 40 m floor,
+          // rather than four oversized tiles stretched across the museum.
+          texture.wrapS = THREE.RepeatWrapping;
+          texture.wrapT = THREE.RepeatWrapping;
+          texture.repeat.set(20, 20);
 
-        ctx.fillStyle = '#b7c9c8';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.filter = 'blur(0.4px) contrast(205%) brightness(72%)';
-        ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-        ctx.filter = 'none';
+          texture.anisotropy = Math.min(
+            16,
+            renderer.capabilities.getMaxAnisotropy
+              ? renderer.capabilities.getMaxAnisotropy()
+              : 1
+          );
+          texture.generateMipmaps = true;
+          texture.minFilter = THREE.LinearMipmapLinearFilter;
+          texture.magFilter = THREE.LinearFilter;
 
-        // A restrained cool overlay keeps the floor in the Nascere palette
-        // without washing the texture away.
-        ctx.fillStyle = 'rgba(128, 154, 153, 0.10)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+          if ('colorSpace' in texture && THREE.SRGBColorSpace) {
+            texture.colorSpace = THREE.SRGBColorSpace;
+          }
 
-        const texture = new THREE.CanvasTexture(canvas);
-        texture.wrapS = THREE.RepeatWrapping;
-        texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(2, 2);
-        texture.anisotropy = Math.min(
-          16,
-          renderer.capabilities.getMaxAnisotropy
-            ? renderer.capabilities.getMaxAnisotropy()
-            : 1
-        );
-        texture.minFilter = THREE.LinearMipmapLinearFilter;
-        texture.magFilter = THREE.LinearFilter;
-        texture.generateMipmaps = true;
-        if ('colorSpace' in texture && THREE.SRGBColorSpace) {
-          texture.colorSpace = THREE.SRGBColorSpace;
+          texture.needsUpdate = true;
+
+          const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+          materials.forEach((mat) => {
+            if (!mat) return;
+            mat.map = texture;
+            mat.color.set('#ffffff');
+            mat.roughness = 0.96;
+            mat.metalness = 0;
+            mat.needsUpdate = true;
+          });
+
+          mesh.receiveShadow = true;
+          mesh.castShadow = false;
+          renderer.shadowMap.needsUpdate = true;
+        },
+        undefined,
+        (error) => {
+          console.warn('Could not load floor tile texture.', error);
         }
-        texture.needsUpdate = true;
-
-        const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-        materials.forEach((mat) => {
-          if (!mat) return;
-          mat.map = texture;
-          mat.color.set('#ffffff');
-          mat.roughness = 1;
-          mat.metalness = 0;
-          mat.needsUpdate = true;
-        });
-
-        mesh.receiveShadow = true;
-        mesh.castShadow = false;
-      };
-      image.src = './assets/white_stucco_diff_1k.jpg?v=8';
+      );
     };
 
     const configureShadows = () => {
