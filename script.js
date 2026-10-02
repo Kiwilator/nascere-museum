@@ -114,6 +114,93 @@ AFRAME.registerComponent('face-camera', {
   }
 });
 
+AFRAME.registerComponent('binary-stl-model', {
+  schema: {
+    src: { type: 'string' },
+    color: { type: 'color', default: '#315861' },
+    roughness: { type: 'number', default: 0.46 },
+    metalness: { type: 'number', default: 0.22 }
+  },
+
+  init() {
+    fetch(this.data.src)
+      .then((response) => {
+        if (!response.ok) throw new Error('STL request failed: ' + response.status);
+        return response.arrayBuffer();
+      })
+      .then((buffer) => {
+        if (buffer.byteLength < 84) throw new Error('Invalid binary STL');
+
+        const view = new DataView(buffer);
+        const triangleCount = view.getUint32(80, true);
+        const expectedBytes = 84 + triangleCount * 50;
+        if (expectedBytes > buffer.byteLength) throw new Error('Malformed binary STL');
+
+        const positions = new Float32Array(triangleCount * 9);
+        const normals = new Float32Array(triangleCount * 9);
+
+        let pIndex = 0;
+        let offset = 84;
+
+        for (let i = 0; i < triangleCount; i++) {
+          const nx = view.getFloat32(offset, true);
+          const ny = view.getFloat32(offset + 4, true);
+          const nz = view.getFloat32(offset + 8, true);
+          offset += 12;
+
+          for (let v = 0; v < 3; v++) {
+            positions[pIndex] = view.getFloat32(offset, true);
+            positions[pIndex + 1] = view.getFloat32(offset + 4, true);
+            positions[pIndex + 2] = view.getFloat32(offset + 8, true);
+
+            normals[pIndex] = nx;
+            normals[pIndex + 1] = ny;
+            normals[pIndex + 2] = nz;
+
+            pIndex += 3;
+            offset += 12;
+          }
+
+          offset += 2; // attribute byte count
+        }
+
+        const geometry = new THREE.BufferGeometry();
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('normal', new THREE.BufferAttribute(normals, 3));
+        geometry.computeBoundingBox();
+
+        if (geometry.boundingBox) {
+          const center = new THREE.Vector3();
+          geometry.boundingBox.getCenter(center);
+          geometry.translate(-center.x, -center.y, -center.z);
+        }
+
+        geometry.computeBoundingSphere();
+
+        const material = new THREE.MeshStandardMaterial({
+          color: this.data.color,
+          roughness: this.data.roughness,
+          metalness: this.data.metalness
+        });
+
+        const mesh = new THREE.Mesh(geometry, material);
+        mesh.castShadow = false;
+        mesh.receiveShadow = false;
+        this.el.setObject3D('mesh', mesh);
+      })
+      .catch((error) => console.warn('Could not load NASCERE STL seal.', error));
+  },
+
+  remove() {
+    const mesh = this.el.getObject3D('mesh');
+    if (mesh) {
+      if (mesh.geometry) mesh.geometry.dispose();
+      if (mesh.material) mesh.material.dispose();
+      this.el.removeObject3D('mesh');
+    }
+  }
+});
+
 AFRAME.registerComponent('no-cast-shadow', {
   init() {
     const apply = () => {
