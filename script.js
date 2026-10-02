@@ -117,9 +117,12 @@ AFRAME.registerComponent('face-camera', {
 AFRAME.registerComponent('binary-stl-model', {
   schema: {
     src: { type: 'string' },
-    color: { type: 'color', default: '#315861' },
-    roughness: { type: 'number', default: 0.46 },
-    metalness: { type: 'number', default: 0.22 }
+    color: { type: 'color', default: '#dceced' },
+    edgeColor: { type: 'color', default: '#24454d' },
+    roughness: { type: 'number', default: 0.38 },
+    metalness: { type: 'number', default: 0.08 },
+    emissive: { type: 'color', default: '#17343b' },
+    emissiveIntensity: { type: 'number', default: 0.16 }
   },
 
   init() {
@@ -180,12 +183,27 @@ AFRAME.registerComponent('binary-stl-model', {
         const material = new THREE.MeshStandardMaterial({
           color: this.data.color,
           roughness: this.data.roughness,
-          metalness: this.data.metalness
+          metalness: this.data.metalness,
+          emissive: new THREE.Color(this.data.emissive),
+          emissiveIntensity: this.data.emissiveIntensity
         });
 
         const mesh = new THREE.Mesh(geometry, material);
         mesh.castShadow = false;
         mesh.receiveShadow = false;
+
+        // Outline the relief edges so the logo and NASCERE lettering remain legible
+        // even against the pale stucco wall and from oblique camera angles.
+        const edges = new THREE.EdgesGeometry(geometry, 28);
+        const edgeMaterial = new THREE.LineBasicMaterial({
+          color: this.data.edgeColor,
+          transparent: true,
+          opacity: 0.78
+        });
+        const edgeLines = new THREE.LineSegments(edges, edgeMaterial);
+        edgeLines.renderOrder = 2;
+        mesh.add(edgeLines);
+
         this.el.setObject3D('mesh', mesh);
       })
       .catch((error) => console.warn('Could not load NASCERE STL seal.', error));
@@ -194,6 +212,10 @@ AFRAME.registerComponent('binary-stl-model', {
   remove() {
     const mesh = this.el.getObject3D('mesh');
     if (mesh) {
+      mesh.traverse((obj) => {
+        if (obj !== mesh && obj.geometry) obj.geometry.dispose();
+        if (obj !== mesh && obj.material) obj.material.dispose();
+      });
       if (mesh.geometry) mesh.geometry.dispose();
       if (mesh.material) mesh.material.dispose();
       this.el.removeObject3D('mesh');
