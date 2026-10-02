@@ -80,8 +80,12 @@ const OUT = 'captures';
   };
 
   const shot = async (name) => {
-    await page.screenshot({ path: `${OUT}/${name}.png`, fullPage: false });
-    console.log('captured', name);
+    try {
+      await page.screenshot({ path: `${OUT}/${name}.png`, fullPage: false, timeout: 120000 });
+      console.log('captured', name);
+    } catch (err) {
+      console.log('capture failed', name, err.message);
+    }
   };
 
   // 1. Visitor entrance view with interface visible.
